@@ -12,23 +12,6 @@ Status: built for both loaders, in-game testing pending. The desk has these apps
 - Viruses and pop-ups (`src/Virus`): infections, money theft, and the two antivirus apps.
 
 Shop delivery: Parcel (picked up at the parcel locker) or Mail (one cardboard box in the mailbox, whose items go into inventory only when they all fit).
-## What changed since the last build
-
-- Jobs is its own site app (`web\apps\jobs.js`). It has skill and hardness filters and a sort. Apply sends a reply to Stalburg Mail. Applied marks are saved with the game save, and stations with the same name, pay and area are marked together.
-- Kolhola Warez lists ten downloads and shows a visitor counter. FREE RM GENERATOR shows an online counter and testimonials. VOITTAJA! has a prize terms page and a decoy button; both buttons run the same claim, and no RM is credited.
-- PC Master has a sidebar catalogue of read-only categories.
-- Stal-Ex footer links open information panels. The "prices delayed" note was removed, because the code has no delay.
-- Stalburg Times footer links open About us, Corrections, Privacy and Terms of use pages. Local headlines no longer repeat across kept editions.
-- EYEbook has a status composer (140 characters, the newest 10 kept, log in needed), Stalburg Times cards on the home feed, and routes such as `/profile` and `/search`.
-- NaSpoBet has a Standings tab with one table per sport, and Responsible gambling and Contact us pages.
-- Escape in a mod app or site window closes that window, after any open menu. Start search clears when Start is reopened.
-- Explorer: Enter, Space and Delete work on the focused row, New text file is disabled while it writes, and the list refreshes after a Recycle Bin restore.
-- Mail: a full inbox never drops Inbox mail. Trash and Sent messages make room first. Search pages through older mail.
-- Bank: a cash order shows its fee before you confirm. `[Bank] WithdrawFeePercent` is clamped to 0 to 20.
-- A Recycle Bin restore into a full mod folder (64 files or 1 MB) is refused and the item stays in the bin.
-- The laptop screen restores its controls, collision, camera and pin in separate steps, so one failure does not skip the others.
-- The shop does not refresh its listings while the game is busy saving or loading.
-
 ## Stock market (Stal-Ex)
 
 Since 0.2.0 the stock market is part of the OS. Stal-Ex is its window: shares, charts, dividends and short selling. The old ObenseuerStockMarket mod is not needed, so remove it from `BepInEx\plugins`.
