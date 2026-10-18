@@ -14,11 +14,7 @@ Status: built for both loaders, in-game testing pending. The desk has these apps
 Shop delivery: Parcel (picked up at the parcel locker) or Mail (one cardboard box in the mailbox, whose items go into inventory only when they all fit).
 ## Stock market (Stal-Ex)
 
-Since 0.2.0 the stock market is part of the OS. Stal-Ex is its window: shares, charts, dividends and short selling. The old ObenseuerStockMarket mod is not needed, so remove it from `BepInEx\plugins`.
-
-- Your saves carry over. When a save has no OS market file yet, the OS reads the old market from it once. Positions, ledger and news come across as they were. The old file is not changed.
-- Your currency setting carries over. The OS uses the old `[Market] Currency` value as its default.
-- If the old mod is still installed, the OS market stays closed and the OS logs one warning. Remove the old mod to trade in the OS market.
+Stal-Ex is the OS stock market: shares, charts, dividends and short selling. Prices move with market news. Mods can read prices, trade and start market events through the mod API.
 
 ## Mod API
 
@@ -51,7 +47,7 @@ The WebUi module ships `ObxWebView.dll` and `web\obx-theme.css` next to `Obenseu
 - `[Debug] SelfCheck = false`: runs the path and limit self-check at start and logs the result.
 - `[Laptop] ExtraNames = ` (empty): extra object names to treat as laptops, comma separated, besides `laptop_001b` and `Laptop`.
 - `[Debug] LogLookTarget = false`: logs each object the look ray hits (path, layer, usable layer, colliders, interactables) to find a laptop name.
-- `[Market] Currency = RM`: the money the stock market trades in, `RM` or `OC`. The default is the old Stock Market mod's setting when it left one.
+- `[Market] Currency = RM`: the money the stock market trades in, `RM` or `OC`.
 - `[Bank] WithdrawFeePercent = 2`: the fee taken from a cash order by post, as a percent of the amount (at least one unit). Values are clamped to 0 to 20; NaN or infinite values become 2.
 - `[Wiki] Enabled = true`: allow the Stalburg Wiki to contact stalburg.net. Off keeps the wiki offline even after the player allows it.
 - `[Wiki] CacheMaxMB = 128`: most space the saved wiki copy may use, in megabytes. The oldest pages are removed first.
