@@ -1,0 +1,207 @@
+@keyframes vx-blink {
+  50% { visibility: hidden; }
+}
+
+body.busy,
+body.busy * {
+  cursor: progress !important;
+}
+
+.vx-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 1000000;
+  pointer-events: none;
+}
+
+.vx-pop {
+  position: absolute;
+  width: 250px;
+  font: 12px Verdana, Arial, sans-serif;
+  color: #000;
+  background: #ffff66;
+  border: 4px outset #ff9900;
+  box-shadow: 6px 6px 0 #0000aa;
+  pointer-events: auto;
+}
+
+.vx-bar {
+  padding: 4px 34px 4px 6px;
+  font: bold 13px Impact, Verdana, sans-serif;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #ffff00;
+  background: linear-gradient(90deg, #000088, #ff00ff);
+}
+
+.vx-body {
+  padding: 10px 12px 14px;
+  text-align: center;
+}
+
+.vx-big {
+  margin: 0 0 6px;
+  font: 900 22px Impact, "Arial Black", sans-serif;
+  color: #ff0000;
+  text-shadow: 2px 2px 0 #ffffff;
+  animation: vx-blink 1s steps(2, start) infinite;
+}
+
+.vx-text {
+  margin: 0 0 10px;
+}
+
+.vx-go {
+  padding: 6px 14px;
+  font: bold 16px Impact, Verdana, sans-serif;
+  color: #000;
+  background: linear-gradient(#66ff66, #00aa00);
+  border: 3px outset #ffffff;
+  cursor: pointer;
+}
+
+.vx-x {
+  position: absolute;
+  z-index: 1;
+  min-width: 28px;
+  padding: 0 6px;
+  font: bold 13px Verdana, sans-serif;
+  color: #ffffff;
+  background: #cc0000;
+  border: 2px outset #ffffff;
+  cursor: pointer;
+}
+
+.vx-x[data-corner="0"] { top: 2px; right: 2px; }
+.vx-x[data-corner="1"] { top: 2px; left: 2px; }
+.vx-x[data-corner="2"] { bottom: 2px; left: 2px; }
+.vx-x[data-corner="3"] { bottom: 2px; right: 2px; }
+
+.vx-winner {
+  background: repeating-linear-gradient(45deg, #ffd700 0 12px, #fff3a0 12px 24px);
+  border-color: #ff0000;
+}
+
+.vx-winner .vx-bar {
+  background: linear-gradient(90deg, #ff0000, #ffcc00);
+}
+
+.vx-moca .vx-body {
+  background: #ffffff;
+}
+
+.vx-moca .vx-bar {
+  background: #cc0000;
+}
+
+.vx-moca .vx-big {
+  color: #cc0000;
+}
+
+.vx-rm {
+  font-family: "Courier New", monospace;
+  color: #00ff00;
+  background: #000000;
+  border-color: #00ff00;
+}
+
+.vx-rm .vx-bar {
+  color: #00ff00;
+  background: #003300;
+  font-family: "Courier New", monospace;
+}
+
+.vx-rm .vx-big {
+  color: #00ff00;
+  font-family: "Courier New", monospace;
+  font-size: 18px;
+  text-shadow: none;
+}
+
+.vx-rm .vx-go {
+  color: #000000;
+  background: #00ff00;
+}
+
+.vx-speed {
+  background: #c0c0c0;
+}
+
+.vx-speed .vx-bar {
+  background: #800000;
+}
+
+.vx-speed .vx-big {
+  color: #0000cc;
+}
+
+.vx-error {
+  background: #c0c0c0;
+  border: 2px solid #808080;
+  box-shadow: none;
+}
+
+.vx-error .vx-bar {
+  background: #000080;
+}
+
+.vx-error .vx-big {
+  font: bold 13px Verdana, sans-serif;
+  color: #000000;
+  text-shadow: none;
+  animation: none;
+}
+
+.vx-nag {
+  background: #ff0000;
+  color: #ffffff;
+}
+
+.vx-nag .vx-bar {
+  color: #000000;
+  background: #ffff00;
+}
+
+.vx-nag .vx-big {
+  color: #ffff00;
+  text-shadow: 2px 2px 0 #000000;
+}
+
+.vx-claimed {
+  background: #ccffcc;
+}
+
+.vx-claimed .vx-bar {
+  background: #008000;
+}
+
+.vx-claimed .vx-big {
+  color: #006600;
+  text-shadow: none;
+  animation: none;
+}
+
+.vx-wall {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  overflow: hidden;
+  background: repeating-linear-gradient(-45deg, #ff0000 0 40px, #ffee00 40px 80px, #0088ff 80px 120px);
+  pointer-events: none;
+}
+
+.vx-wall-line {
+  margin: 0;
+  font: 900 34px Impact, "Arial Black", sans-serif;
+  color: #ffffff;
+  text-shadow: 3px 3px 0 #000000;
+  white-space: nowrap;
+  transform: rotate(-12deg);
+}
+
+.vx-wall-line:nth-child(even) {
+  color: #ffee00;
+  transform: rotate(8deg) translateX(-60px);
+}

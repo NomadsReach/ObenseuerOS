@@ -1,0 +1,117 @@
+.jobs-hero { padding: 12px 14px 8px; }
+
+.jobs-title {
+  margin: 0 0 10px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--bw-line);
+  font: 700 18px Arial, Helvetica, sans-serif;
+}
+
+.jobs-lead { margin: 0 0 6px; }
+
+.jobs-warn {
+  margin: 0 0 6px;
+  color: var(--bw-meta);
+  font-size: 12px;
+}
+
+.jobs-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px 14px;
+  margin: 0 14px 8px;
+}
+
+.jobs-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 12px;
+}
+
+.jobs-select {
+  min-width: 150px;
+  height: 24px;
+  padding: 0 4px;
+  color: var(--bw-ink);
+  background: #ffffff;
+  border: 1px solid var(--bw-line);
+  border-radius: 0;
+  font: 13px Arial, Helvetica, sans-serif;
+}
+
+.jobs-count {
+  margin: 0 14px 6px;
+  color: var(--bw-meta);
+  font-size: 11px;
+}
+
+.jobs-notice {
+  margin: 0 14px 8px;
+  color: var(--bw-red);
+  font-weight: 700;
+}
+
+.jobs-notice[hidden] { display: none; }
+
+.jobs-list {
+  margin: 0 14px 12px;
+  padding: 0;
+  list-style: none;
+  background: #ffffff;
+  border: 1px solid var(--bw-line);
+}
+
+.jobs-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 16px;
+  padding: 8px 10px;
+  border-bottom: 1px solid #cfd3cf;
+}
+
+.jobs-row:last-child { border-bottom: 0; }
+
+.jobs-main { min-width: 0; }
+
+.jobs-name {
+  margin: 0 0 4px;
+  color: var(--bw-link);
+  font: 700 14px Arial, Helvetica, sans-serif;
+}
+
+.jobs-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 16px;
+  margin: 0;
+  font-size: 12px;
+}
+
+.jobs-fact { display: flex; gap: 4px; }
+
+.jobs-fact dt { color: var(--bw-meta); }
+
+.jobs-fact dd {
+  margin: 0;
+  font-weight: 700;
+}
+
+.jobs-act { white-space: nowrap; }
+
+.jobs-applied {
+  display: inline-block;
+  padding: 2px 8px;
+  color: var(--bw-url);
+  border: 1px solid var(--bw-url);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.jobs-empty {
+  padding: 12px 10px;
+  color: var(--bw-meta);
+}

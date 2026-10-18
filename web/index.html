@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' https://obx-core.obx; img-src 'self' https://*.nomad-obenseuer-os.obx; frame-src https://*.nomad-obenseuer-os.obx https://stalburg.net; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Viewports 8</title>
+<link rel="stylesheet" href="https://obx-core.obx/obx-theme.css">
+<link rel="stylesheet" href="obx-theme.css">
+<link rel="stylesheet" href="shell.css">
+<link rel="stylesheet" href="apps.css">
+<link rel="stylesheet" href="browser.css">
+<link rel="stylesheet" href="apps/browser-pages.css">
+<link rel="stylesheet" href="apps/jobs.css">
+<link rel="stylesheet" href="apps/shop.css">
+<link rel="stylesheet" href="apps/shop-items.css">
+<link rel="stylesheet" href="apps/exchange.css">
+<link rel="stylesheet" href="apps/lottery.css">
+<link rel="stylesheet" href="apps/news.css">
+<link rel="stylesheet" href="apps/files.css">
+<link rel="stylesheet" href="apps/bets.css">
+<link rel="stylesheet" href="apps/mail.css">
+<link rel="stylesheet" href="apps/bank.css">
+<link rel="stylesheet" href="apps/wiki.css">
+<link rel="stylesheet" href="apps/eyebook.css">
+<link rel="stylesheet" href="apps/games.css">
+<link rel="stylesheet" href="apps/virusfx.css">
+<link rel="stylesheet" href="apps/shady.css">
+<link rel="stylesheet" href="apps/antivirus.css">
+</head>
+<body>
+<div class="os" data-wallpaper="game">
+  <main class="desktop" id="desktop">
+    <div class="desk" id="desk" role="group" aria-label="Apps"></div>
+  </main>
+  <footer class="taskbar">
+    <button type="button" class="start" id="start" aria-label="Start" aria-expanded="false" aria-controls="startMenu"><img class="os-mark" src="brand/viewports.svg" alt=""></button>
+    <div class="task-list" id="taskList"></div>
+    <div class="tray">
+      <span class="tray-lang">EN</span>
+      <button type="button" class="tray-btn" id="bell" aria-label="Notifications" aria-expanded="false" aria-controls="notify">
+        <span class="tray-up" aria-hidden="true">▲</span>
+        <span class="bell-dot" id="bellDot" hidden></span>
+      </button>
+      <div class="tray-money" id="money" hidden><span id="moneyOc"></span><span id="moneyRm"></span></div>
+      <span class="ico" data-icon="wifi" role="img" aria-label="Network: Obenseuer" title="Network: Obenseuer"></span>
+      <svg class="tray-svg" viewBox="0 0 24 24" role="img" aria-label="Volume"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/></svg>
+      <div class="clock" id="clock" aria-live="off">
+        <span id="clockTime"></span>
+        <span id="clockDay"></span>
+      </div>
+    </div>
+  </footer>
+  <section class="start-menu" id="startMenu" aria-label="Start menu" hidden>
+    <div class="sm-head" id="smUser">Stalburg resident</div>
+    <input type="search" class="obx-input sm-search" id="smSearch" placeholder="Search apps" aria-label="Search apps">
+    <div class="sm-grid" id="smGrid"></div>
+    <div class="sm-foot">
+      <button type="button" class="icon-btn" id="power" aria-label="Close Viewports 8" title="Close Viewports 8"><span class="ico" data-icon="power" aria-hidden="true"></span></button>
+    </div>
+  </section>
+  <section class="notify" id="notify" aria-label="Notifications" hidden>
+    <div class="notify-head">
+      <span class="obx-label">Notifications</span>
+      <button type="button" class="obx-btn ghost sm" id="clearAll">Clear all</button>
+    </div>
+    <p class="notify-empty" id="notifyEmpty">No notifications</p>
+    <ul class="notify-list" id="notifyList"></ul>
+  </section>
+  <nav class="ctx" id="ctx" aria-label="Desktop menu" hidden>
+    <button type="button" class="ctx-item" id="ctxWall" aria-expanded="false" aria-controls="ctxSub">Change wallpaper <span aria-hidden="true">▸</span></button>
+    <div class="ctx-sub" id="ctxSub" hidden>
+      <span class="obx-label ctx-group">Game</span>
+      <button type="button" class="ctx-item" data-wall="game">Computer wallpaper</button>
+      <div id="ctxArt"></div>
+      <span class="obx-label ctx-group">Presets</span>
+      <button type="button" class="ctx-item" data-wall="sewer">Sewer</button>
+      <button type="button" class="ctx-item" data-wall="plain">Plain</button>
+    </div>
+    <button type="button" class="ctx-item" id="ctxSettings">Control Panel</button>
+    <button type="button" class="ctx-item" id="ctxRefresh">Refresh</button>
+  </nav>
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+  <div class="boot" id="boot" aria-hidden="true">
+    <img class="os-mark" src="brand/viewports.svg" alt="">
+    <span class="boot-name">Viewports® <strong>8</strong></span>
+  </div>
+  <template id="winTpl">
+    <section class="window" aria-label="App window">
+      <header class="window-bar">
+        <span class="win-icon"></span>
+        <span class="window-title"></span>
+        <button type="button" class="win-btn" data-act="min" aria-label="Minimise" title="Minimise"><span class="ico" data-icon="minus" aria-hidden="true"></span></button>
+        <button type="button" class="win-btn" data-act="max" aria-label="Maximise" title="Maximise"><span class="ico" data-icon="maximize" aria-hidden="true"></span></button>
+        <button type="button" class="win-btn" data-act="close" aria-label="Close window" title="Close window"><span class="ico" data-icon="x" aria-hidden="true"></span></button>
+      </header>
+      <div class="frame-slot"></div>
+      <div class="grip" aria-hidden="true"></div>
+    </section>
+  </template>
+</div>
+<script src="photos/photos-data.js"></script>
+<script src="apps/registry.js"></script>
+<script src="apps/pictures-data.js"></script>
+<script src="apps/files.js"></script>
+<script src="apps/mail.js"></script>
+<script src="apps/browser-sites.js"></script>
+<script src="apps/browser.js"></script>
+<script src="apps/shady.js"></script>
+<script src="apps/avsites.js"></script>
+<script src="apps/antivirus.js"></script>
+<script src="apps/news.js"></script>
+<script src="apps/bank.js"></script>
+<script src="apps/recycle.js"></script>
+<script src="apps/notes.js"></script>
+<script src="apps/terminal.js"></script>
+<script src="apps/exchange.js"></script>
+<script src="apps/exchange-trade.js"></script>
+<script src="apps/exchange-chart.js"></script>
+<script src="apps/chat.js"></script>
+<script src="apps/shop-view.js"></script>
+<script src="apps/shop.js"></script>
+<script src="apps/jobs.js"></script>
+<script src="apps/bets-pages.js"></script>
+<script src="apps/bets.js"></script>
+<script src="apps/lottery-rules.js"></script>
+<script src="apps/lottery.js"></script>
+<script src="apps/eyebook.js"></script>
+<script src="apps/wiki-net.js"></script>
+<script src="apps/wiki.js"></script>
+<script src="apps/minesweeper-logic.js"></script>
+<script src="apps/minesweeper.js"></script>
+<script src="apps/solitaire-logic.js"></script>
+<script src="apps/solitaire.js"></script>
+<script src="apps/virus-rules.js"></script>
+<script src="apps/virusfx.js"></script>
+<script src="apps/modframe.js"></script>
+<script src="shell-start.js"></script>
+<script src="shell.js"></script>
+</body>
+</html>

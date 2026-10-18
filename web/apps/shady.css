@@ -1,0 +1,367 @@
+@keyframes sh-blink {
+  50% { visibility: hidden; }
+}
+
+@keyframes sh-fill {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes sh-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes sh-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}
+
+.sh {
+  min-height: 100%;
+  box-sizing: border-box;
+  padding: 8px;
+  font: 12px Verdana, Arial, sans-serif;
+}
+
+.sh-blink {
+  animation: sh-blink 1s steps(1) infinite;
+}
+
+.sh-ticker {
+  overflow: hidden;
+  white-space: nowrap;
+  font: bold 12px "Courier New", monospace;
+}
+
+.sh-ticker span {
+  display: inline-block;
+  padding-left: 100%;
+  animation: sh-scroll 14s linear infinite;
+}
+
+.sh-btn {
+  font: bold 14px Verdana, Arial, sans-serif;
+  color: #000000;
+  background: linear-gradient(#ffff66, #ff9900);
+  border: 3px outset #ffcc00;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.sh-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.sh-link {
+  font: inherit;
+  color: #00ffff;
+  background: none;
+  border: 0;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0 6px;
+}
+
+.sh-foot {
+  margin-top: 12px;
+  padding: 8px;
+  background: #000000;
+  color: #cccccc;
+  text-align: center;
+}
+
+.sh-copy {
+  margin: 6px 0 0;
+  font-size: 11px;
+}
+
+.sh-out {
+  min-height: 1.4em;
+  margin: 8px 0;
+  font-weight: bold;
+  color: #ffff00;
+}
+
+.sh-freerm {
+  background: #000000;
+  color: #00ff00;
+  font: 14px "Courier New", monospace;
+}
+
+.sh-flash {
+  padding: 6px;
+  text-align: center;
+  font-weight: bold;
+  color: #000000;
+  background: repeating-linear-gradient(90deg, #ff0000 0 24px, #ffff00 24px 48px);
+}
+
+.sh-freerm .sh-title {
+  margin: 12px 0 4px;
+  text-align: center;
+  font: bold 40px Impact, Verdana, sans-serif;
+  color: #ffff00;
+  text-shadow: 3px 3px #ff0000;
+}
+
+.sh-freerm .sh-ticker {
+  color: #ffffff;
+  background: #000080;
+}
+
+.sh-freerm .sh-lead {
+  text-align: center;
+  color: #ffffff;
+}
+
+.sh-bar {
+  width: 80%;
+  height: 20px;
+  margin: 10px auto;
+  border: 2px solid #00ff00;
+  background: #003300;
+}
+
+.sh-bar-fill {
+  height: 100%;
+  width: 0;
+  background: repeating-linear-gradient(90deg, #00ff00 0 10px, #008800 10px 14px);
+}
+
+.sh-bar.run .sh-bar-fill {
+  animation: sh-fill 3s linear forwards;
+}
+
+.sh-freerm {
+  text-align: center;
+}
+
+.sh-freerm .sh-btn {
+  margin: 8px;
+}
+
+.sh-freerm .sh-out {
+  color: #ffffff;
+}
+
+.sh-warez {
+  background: #000033;
+  color: #ffffff;
+}
+
+.sh-warez-head {
+  padding: 8px;
+  background: linear-gradient(#3333aa, #000066);
+  border: 2px ridge #6666ff;
+}
+
+.sh-warez-title {
+  margin: 0;
+  font: bold 30px "Comic Sans MS", cursive;
+  color: #00ff00;
+  text-shadow: 2px 2px #ff00ff;
+}
+
+.sh-warez-tag {
+  margin: 4px 0 0;
+  color: #ffff00;
+}
+
+.sh-warez .sh-ticker {
+  margin: 6px 0;
+  color: #66ffff;
+}
+
+.sh-top {
+  margin: 10px 0 4px;
+  font: bold 16px Verdana, sans-serif;
+  color: #ff6600;
+}
+
+.sh-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #000066;
+  border: 2px ridge #6666ff;
+}
+
+.sh-table th {
+  padding: 3px 5px;
+  text-align: left;
+  background: #3333aa;
+  color: #ffff00;
+}
+
+.sh-table td {
+  padding: 3px 5px;
+  border: 1px solid #3333aa;
+}
+
+.sh-name {
+  font-weight: bold;
+  color: #66ffff;
+}
+
+.sh-cell {
+  min-width: 110px;
+  color: #ffff00;
+}
+
+.sh-note {
+  margin: 10px 0;
+  color: #ff66ff;
+  text-align: center;
+}
+
+.sh-voittaja {
+  background: linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
+  color: #000000;
+  text-align: center;
+}
+
+.sh-wheel {
+  width: 160px;
+  height: 160px;
+  margin: 8px auto;
+  border-radius: 50%;
+  border: 6px double #000000;
+  background: conic-gradient(#ff0000 0 45deg, #ffff00 45deg 90deg, #00aa00 90deg 135deg, #0000ff 135deg 180deg, #ff00ff 180deg 225deg, #00ffff 225deg 270deg, #ff8800 270deg 315deg, #ffffff 315deg 360deg);
+  animation: sh-spin 2s linear infinite;
+}
+
+.sh-big {
+  margin: 4px 0;
+  font: 900 56px Impact, Verdana, sans-serif;
+  color: #ffffff;
+  text-shadow: 4px 4px #000000;
+}
+
+.sh-voittaja .sh-ticker {
+  color: #ffffff;
+  background: #000000;
+}
+
+.sh-voittaja .sh-lead {
+  font-weight: bold;
+}
+
+.sh-prize {
+  margin: 6px 0;
+  font: 900 34px Impact, Verdana, sans-serif;
+  color: #ff0066;
+  background: #ffffff;
+  display: inline-block;
+  padding: 2px 16px;
+  border: 3px dashed #ff0066;
+}
+
+.sh-voittaja .sh-btn {
+  display: block;
+  margin: 8px auto;
+  font-size: 20px;
+  padding: 10px 24px;
+}
+
+.sh-voittaja .sh-out {
+  color: #000000;
+  background: #ffffff;
+  text-align: center;
+}
+
+.sh-rules {
+  display: block;
+  margin: 10px auto 0;
+  font: bold 12px Verdana, Arial, sans-serif;
+  color: #000080;
+  background: #ffffff;
+  border: 1px dashed #000080;
+  padding: 2px 8px;
+  cursor: pointer;
+}
+
+.sh-decoy {
+  display: block;
+  margin: 10px auto 0;
+  font: 10px Verdana, Arial, sans-serif;
+  color: #444444;
+  background: #cccccc;
+  border: 1px outset #999999;
+  padding: 1px 6px;
+  cursor: pointer;
+}
+
+.sh-decoy:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.sh-terms {
+  max-width: 520px;
+  margin: 10px auto;
+  padding: 8px;
+  background: #ffffff;
+  border: 3px dashed #ff0066;
+  color: #000000;
+  text-align: left;
+}
+
+.sh-terms .sh-h {
+  margin-top: 0;
+  text-align: center;
+  color: #ff0066;
+}
+
+.sh-terms .sh-link {
+  color: #000080;
+}
+
+.sh-small {
+  margin: 4px 0 8px;
+  padding-left: 16px;
+  font: 10px Verdana, Arial, sans-serif;
+  color: #333333;
+}
+
+.sh-h {
+  margin: 10px 0 4px;
+  font: bold 16px Verdana, Arial, sans-serif;
+  color: #ffff00;
+}
+
+.sh-count {
+  font-weight: bold;
+}
+
+.sh-online {
+  margin: 6px 0;
+  text-align: center;
+  color: #ffffff;
+}
+
+.sh-quotes {
+  width: 80%;
+  margin: 12px auto;
+  padding: 6px;
+  background: #001100;
+  border: 2px ridge #00ff00;
+  text-align: center;
+}
+
+.sh-quote {
+  margin: 4px 0;
+  color: #ffff00;
+}
+
+.sh-visits {
+  margin: 6px 0;
+  color: #ffffff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sh-blink,
+  .sh-ticker span,
+  .sh-wheel {
+    animation: none;
+  }
+}

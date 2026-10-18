@@ -1,0 +1,545 @@
+.web-page:has(.lotto) { padding: 0; }
+
+.lotto {
+  --lt-page: #ece9d8;
+  --lt-panel: #ffffff;
+  --lt-ink: #000000;
+  --lt-muted: #444444;
+  --lt-line: #808080;
+  --lt-line-soft: #c0c0c0;
+  --lt-red: #b0101e;
+  --lt-red-deep: #7a0a15;
+  --lt-yellow: #ffcc00;
+  --lt-yellow-wash: #fff6c4;
+  --lt-green: #006600;
+  --lt-wrap: 960px;
+  container-type: inline-size;
+  min-height: 100%;
+  background: var(--lt-page);
+  color: var(--lt-ink);
+  font: 12px/1.45 Verdana, Tahoma, Arial, sans-serif;
+  letter-spacing: normal;
+}
+
+.lotto,
+.lotto * { transition: none; }
+
+.lotto [hidden] { display: none !important; }
+
+.lotto :focus-visible {
+  outline: 1px dotted var(--lt-ink);
+  outline-offset: 1px;
+}
+
+.lotto-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 16px;
+  min-height: 72px;
+  padding: 6px max(8px, calc((100% - var(--lt-wrap)) / 2));
+  background: var(--lt-red);
+  border-bottom: 4px solid var(--lt-yellow);
+}
+
+.lotto-brand {
+  margin: 0;
+  font-size: 0;
+}
+
+.lotto-logo {
+  display: block;
+  width: auto;
+  height: 60px;
+}
+
+.lotto-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.lotto-nav-link {
+  height: 26px;
+  padding: 0 12px;
+  background: #d9d3b8;
+  border: 2px outset #f4f0dc;
+  color: var(--lt-ink);
+  font: inherit;
+  font-weight: 700;
+}
+
+.lotto-nav-link[aria-pressed="true"] {
+  background: var(--lt-yellow);
+  border-style: inset;
+}
+
+.lotto-wallet {
+  margin-left: auto;
+  padding: 4px 8px;
+  background: #ffffff;
+  border: 1px solid #000000;
+  color: var(--lt-ink);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.lotto-notice {
+  margin: 8px max(8px, calc((100% - var(--lt-wrap)) / 2)) 0;
+  padding: 6px 8px;
+  background: var(--lt-yellow-wash);
+  border: 1px solid #806600;
+  font-weight: 700;
+}
+
+.lotto-draw-tab,
+.lotto-scratch {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px max(8px, calc((100% - var(--lt-wrap)) / 2)) 12px;
+}
+
+.lotto-cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 8px;
+  align-items: start;
+}
+
+@container (max-width: 700px) {
+  .lotto-cols { grid-template-columns: minmax(0, 1fr); }
+}
+
+.lotto-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  padding: 0 8px 8px;
+  background: var(--lt-panel);
+  border: 1px solid var(--lt-line);
+}
+
+.lotto-heading {
+  margin: 0 -8px 4px;
+  padding: 4px 8px;
+  background: var(--lt-red);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.lotto-draw-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--lt-red-deep);
+}
+
+.lotto-count,
+.lotto-price,
+.lotto-empty,
+.lotto-meta,
+.lotto-note {
+  margin: 0;
+  color: var(--lt-muted);
+}
+
+.lotto-note {
+  padding: 4px 6px;
+  background: #f4f1e2;
+  border: 1px solid var(--lt-line-soft);
+}
+
+.lotto-owed {
+  margin: 0;
+  font-weight: 700;
+  color: var(--lt-green);
+}
+
+.lotto-grid {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.lotto-grid td {
+  padding: 2px;
+  text-align: center;
+}
+
+.lotto-num {
+  display: block;
+  width: 100%;
+  max-width: 36px;
+  aspect-ratio: 1;
+  height: auto;
+  margin: 0 auto;
+  padding: 0;
+  background: #ffffff;
+  border: 1px solid #000000;
+  border-radius: 50%;
+  color: var(--lt-ink);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.lotto-num:hover:not(:disabled):not([aria-pressed="true"]) { background: var(--lt-yellow-wash); }
+
+.lotto-num[aria-pressed="true"] {
+  background: var(--lt-yellow);
+  box-shadow: inset 0 0 0 2px var(--lt-red);
+  color: var(--lt-ink);
+}
+
+.lotto-num:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.lotto-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.lotto-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lotto-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.lotto-chips {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+
+.lotto-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: #ffffff;
+  border: 1px solid #000000;
+  border-radius: 50%;
+  color: var(--lt-ink);
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.lotto-chip.hit {
+  background: var(--lt-yellow);
+  box-shadow: inset 0 0 0 2px var(--lt-red);
+}
+
+.lotto-btn {
+  height: 24px;
+  padding: 0 10px;
+  background: #d9d3b8;
+  border: 2px outset #f4f0dc;
+  color: var(--lt-ink);
+  font: inherit;
+  font-weight: 700;
+}
+
+.lotto-btn:hover:not(:disabled) { background: #cdc6a6; }
+
+.lotto-btn:active:not(:disabled) { border-style: inset; }
+
+.lotto-btn:disabled {
+  color: #7a7a7a;
+  cursor: default;
+}
+
+.lotto-btn.primary {
+  background: var(--lt-red);
+  border-color: #d04050 #5a0009 #5a0009 #d04050;
+  color: #ffffff;
+}
+
+.lotto-btn.primary:hover:not(:disabled) { background: var(--lt-red-deep); }
+
+.lotto-btn.sm {
+  height: 20px;
+  padding: 0 6px;
+  font-size: 11px;
+}
+
+.lotto-btn.ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--lt-red);
+}
+
+.lotto-btn.ghost:hover:not(:disabled) { text-decoration: underline; }
+
+.lotto-btn.block {
+  width: 100%;
+  height: 30px;
+  font-size: 13px;
+}
+
+.lotto-buy .lotto-btn.block { margin-top: 2px; }
+
+.lotto-seg {
+  display: inline-flex;
+  align-self: flex-start;
+}
+
+.lotto-seg > button {
+  height: 24px;
+  padding: 0 10px;
+  background: #d9d3b8;
+  border: 1px solid #808080;
+  color: var(--lt-ink);
+  font: inherit;
+  font-weight: 700;
+}
+
+.lotto-seg > button[aria-pressed="true"] {
+  background: var(--lt-yellow);
+  box-shadow: inset 0 0 0 1px #000000;
+}
+
+.lotto-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.lotto-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--lt-line-soft);
+}
+
+.lotto-row:last-child { border-bottom: 0; }
+
+.lotto-info {
+  flex: 1 1 160px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.lotto-name { font-weight: 700; }
+
+.lotto-status {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.lotto-status.won { color: var(--lt-green); }
+
+.lotto-status.lost { color: var(--lt-muted); }
+
+.lotto-status.open { color: var(--lt-red-deep); }
+
+.lotto-more { align-self: flex-start; }
+
+.lotto-badge {
+  display: inline-block;
+  padding: 0 4px;
+  background: var(--lt-yellow);
+  border: 1px solid #000000;
+  color: var(--lt-ink);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.lotto-tbl {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.lotto-tbl th,
+.lotto-tbl td {
+  padding: 4px 6px;
+  border: 1px solid var(--lt-line-soft);
+  text-align: left;
+  vertical-align: middle;
+}
+
+.lotto-tbl th {
+  background: #d9d3b8;
+  color: var(--lt-ink);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.lotto-tbl tbody tr:nth-child(even) { background: #f4f1e2; }
+
+.lotto-results { overflow-x: auto; }
+
+.lotto-kinds {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lotto-ship {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+}
+
+.lotto-ship-box {
+  appearance: none;
+  display: inline-grid;
+  place-content: center;
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  background: #ffffff;
+  border: 1px solid #555555;
+  border-radius: 0;
+}
+
+.lotto-ship-box:checked {
+  background: var(--lt-red);
+  border-color: var(--lt-red);
+}
+
+.lotto-ship-box:checked::after {
+  content: "";
+  width: 7px;
+  height: 4px;
+  border-left: 2px solid #ffffff;
+  border-bottom: 2px solid #ffffff;
+  transform: rotate(-45deg) translate(1px, -1px);
+}
+
+.lotto-card { gap: 8px; }
+
+.lotto-info .lotto-btn { align-self: flex-start; }
+
+.lotto-ticket {
+  position: relative;
+  flex: none;
+  width: 320px;
+  max-width: 100%;
+  container-type: inline-size;
+  background: #ffffff;
+  border: 1px solid #777777;
+}
+
+.lotto-ticket.sm { width: 160px; }
+
+.lotto-ticket.thumb { width: 96px; }
+
+.lotto-art {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.lotto-play {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5cqw;
+  box-sizing: border-box;
+  overflow: hidden;
+  background: var(--obx-scratch-paper);
+  border-radius: 1.2cqw;
+  box-shadow: inset 0 0 0 1px var(--obx-scratch-edge);
+}
+
+.lotto-prize-big {
+  color: var(--obx-scratch-win);
+  font-size: 10cqw;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.lotto-stamp {
+  padding: 0.5cqw 2cqw;
+  border: 0.45cqw solid var(--obx-scratch-madder);
+  color: var(--obx-scratch-madder);
+  font-size: 4.5cqw;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  transform: rotate(-8deg);
+}
+
+.lotto-nowin {
+  padding: 0 2cqw;
+  color: var(--obx-scratch-muted);
+  font-size: 4.5cqw;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.lotto-cover {
+  position: absolute;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.lotto-foot {
+  padding: 10px max(8px, calc((100% - var(--lt-wrap)) / 2));
+  background: var(--lt-red-deep);
+  border-top: 4px solid var(--lt-yellow);
+  color: #f3d9dc;
+}
+
+.lotto-age {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.lotto-age p { margin: 0; }
+
+.lotto-age-badge {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 2px solid var(--lt-yellow);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.lotto-foot-link {
+  margin-top: 8px;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--lt-yellow);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.lotto-copy {
+  margin: 8px 0 0;
+  color: #e0a9b0;
+  font-size: 10px;
+}

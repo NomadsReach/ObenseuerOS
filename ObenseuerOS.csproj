@@ -1,0 +1,149 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <AssemblyName>ObenseuerOS</AssemblyName>
+    <OutputType>Library</OutputType>
+    <OutputPath>bin\$(LoaderOut)</OutputPath>
+    <EnableDefaultItems>false</EnableDefaultItems>
+    <NoStdLib>true</NoStdLib>
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+    <GenerateDependencyFile>false</GenerateDependencyFile>
+    <Optimize>true</Optimize>
+    <NoWarn>1701</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsNotAsErrors>1685</WarningsNotAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="src\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="mscorlib">
+      <HintPath>$(ManagedDir)/mscorlib.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="netstandard">
+      <HintPath>$(ManagedDir)/netstandard.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="System">
+      <HintPath>$(ManagedDir)/System.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="System.Core">
+      <HintPath>$(ManagedDir)/System.Core.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>$(ManagedDir)/UnityEngine.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(ManagedDir)/UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.InputLegacyModule">
+      <HintPath>$(ManagedDir)/UnityEngine.InputLegacyModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>$(ManagedDir)/UnityEngine.PhysicsModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.ImageConversionModule">
+      <HintPath>$(ManagedDir)/UnityEngine.ImageConversionModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>$(ManagedDir)/UnityEngine.UI.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UIModule">
+      <HintPath>$(ManagedDir)/UnityEngine.UIModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>$(ManagedDir)/UnityEngine.TextRenderingModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestModule">
+      <HintPath>$(ManagedDir)/UnityEngine.UnityWebRequestModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>$(ManagedDir)/Newtonsoft.Json.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>$(ManagedDir)/Assembly-CSharp-firstpass.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(ManagedDir)/Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Unity.Addressables">
+      <HintPath>$(ManagedDir)/Unity.Addressables.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Unity.ResourceManager">
+      <HintPath>$(ManagedDir)/Unity.ResourceManager.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="BepInEx.Core" Condition="'$(Loader)' == 'BepInEx6'">
+      <HintPath>$(BepInExCore)/BepInEx.Core.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="BepInEx.Unity.Mono" Condition="'$(Loader)' == 'BepInEx6'">
+      <HintPath>$(BepInExCore)/BepInEx.Unity.Mono.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="SemanticVersioning" Condition="'$(Loader)' == 'BepInEx6'">
+      <HintPath>$(BepInExCore)/SemanticVersioning.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="ObenseuerCore">
+      <HintPath>$(CORE_BIN)/ObenseuerCore.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="ObenseuerCore.WebUi">
+      <HintPath>$(CORE_BIN)/webui/ObenseuerCore.WebUi.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Loader)' == 'BepInEx5'">
+    <PackageReference Include="BepInEx.BaseLib" Version="$(BepInEx5BaseLibVersion)" GeneratePathProperty="true" ExcludeAssets="all" PrivateAssets="all" />
+    <Reference Include="BepInEx">
+      <HintPath>$(PkgBepInEx_BaseLib)/lib/net35/BepInEx.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <Target Name="CheckObenseuerDependencies" BeforeTargets="PrepareForBuild">
+    <Error Condition="'$(Loader)' != 'BepInEx5' And '$(Loader)' != 'BepInEx6'" Text="Loader must be BepInEx5 or BepInEx6, not '$(Loader)'." />
+    <Error Condition="!Exists('$(ManagedDir)/Assembly-CSharp.dll') Or ('$(Loader)' == 'BepInEx6' And !Exists('$(BepInExCore)/BepInEx.Core.dll'))" Text="Obenseuer game files not found in GameDir '$(GameDir)'. Expected Obenseuer_Data\Managed\Assembly-CSharp.dll and, for BepInEx 6, BepInEx\core\BepInEx.Core.dll. Set GameDir with -p:GameDir=..., the OBENSEUER_DIR environment variable or GameDir.user.props. For BepInEx 6, install it in the game folder or set -p:BepInExCore=... (or BEPINEX). For BepInEx 5, build with -p:Loader=BepInEx5." />
+    <Error Condition="!Exists('$(CORE_BIN)/ObenseuerCore.dll') Or !Exists('$(CORE_BIN)/webui/ObenseuerCore.WebUi.dll')" Text="Obenseuer Modding Framework not found in CORE_BIN '$(CORE_BIN)' for $(Loader). Expected ObenseuerCore.dll and webui\ObenseuerCore.WebUi.dll. Build Core for $(Loader) or set CORE_BIN to its bin folder (bin for BepInEx 6, bin\be5 for BepInEx 5)." />
+  </Target>
+
+  <Target Name="Package">
+    <Error Condition="'$(ZipVersion)' == ''" Text="Set -p:ZipVersion=x.y.z for the zip name (PackageVersion is defaulted by the SDK to 1.0.0, so it cannot be used)." />
+    <Error Condition="!Exists('$(MSBuildProjectDirectory)\bin\$(AssemblyName).dll') Or !Exists('$(MSBuildProjectDirectory)\bin\be5\$(AssemblyName).dll')" Text="Build both loaders first: dotnet build -c Release and dotnet build -c Release -p:Loader=BepInEx5." />
+    <PropertyGroup>
+      <PackageStage>$(MSBuildProjectDirectory)\obj\package\BepInEx\plugins\$(AssemblyName)\</PackageStage>
+    </PropertyGroup>
+    <ItemGroup>
+      <PackageWeb Include="$(MSBuildProjectDirectory)\web\**\*" Exclude="$(MSBuildProjectDirectory)\web\wallpapers\game.jpg;$(MSBuildProjectDirectory)\web\wallpapers\game\**" />
+    </ItemGroup>
+    <RemoveDir Directories="$(MSBuildProjectDirectory)\obj\package" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).dll" DestinationFolder="$(PackageStage)" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\be5\$(AssemblyName).dll" DestinationFiles="$(PackageStage)$(AssemblyName).BepInEx5.dll" />
+    <Copy SourceFiles="@(PackageWeb)" DestinationFolder="$(PackageStage)web\%(RecursiveDir)" />
+    <MakeDir Directories="$(MSBuildProjectDirectory)\dist" />
+    <ZipDirectory SourceDirectory="$(MSBuildProjectDirectory)\obj\package" DestinationFile="$(MSBuildProjectDirectory)\dist\$(AssemblyName)-$(ZipVersion).zip" Overwrite="true" />
+    <RemoveDir Directories="$(MSBuildProjectDirectory)\obj\package" />
+  </Target>
+
+</Project>

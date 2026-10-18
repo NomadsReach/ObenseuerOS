@@ -1,0 +1,6069 @@
+{
+  "format": 1,
+  "modGuid": "nomad.obenseuer.os",
+  "shops": [
+    {
+      "id": "general-tenement",
+      "name": "General Store",
+      "scene": "Interior Tenement General Store"
+    },
+    {
+      "id": "o-market",
+      "name": "O-Market",
+      "scene": "Interior Tenement O Market"
+    },
+    {
+      "id": "skeida-pharmacy",
+      "name": "Skeida pharmacy",
+      "scene": "Interior Tenement Pharmacy"
+    },
+    {
+      "id": "books",
+      "name": "Bazaar Bookstore",
+      "scene": "Interior Bazaar Books"
+    },
+    {
+      "id": "goldshop",
+      "name": "Bazaar Goldshop",
+      "scene": "Interior Bazaar Gold Shop"
+    },
+    {
+      "id": "bakery",
+      "name": "Bazaar Bakery",
+      "scene": "Interior Bazaar Bakery"
+    },
+    {
+      "id": "mines-market",
+      "name": "Mines Market",
+      "scene": "Interior Mines Market"
+    },
+    {
+      "id": "bazaar-general",
+      "name": "Bazaar General Store",
+      "scene": "Interior Bazaar General Store"
+    },
+    {
+      "id": "pawn",
+      "name": "Bazaar Pawnshop",
+      "scene": "Interior Bazaar Pawn"
+    },
+    {
+      "id": "bromshop",
+      "name": "Bazaar Bromshop",
+      "scene": "Interior Bazaar Bromshop"
+    }
+  ],
+  "delivery": [
+    {
+      "id": "standard",
+      "label": "Standard parcel",
+      "hours": 24,
+      "flat": 10,
+      "pct": 0.05
+    },
+    {
+      "id": "express",
+      "label": "Express parcel",
+      "hours": 6,
+      "flat": 30,
+      "pct": 0.1,
+      "gate": {
+        "quest": "specialdelivery0"
+      }
+    }
+  ],
+  "listings": [
+    {
+      "id": "notebook",
+      "item": 17340,
+      "category": "Stationery",
+      "shop": "books",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "tags": [
+        "paper",
+        "notes"
+      ],
+      "gate": {
+        "any": [
+          {
+            "visited": "Interior Bazaar Books"
+          },
+          {
+            "bought": "books"
+          }
+        ]
+      }
+    },
+    {
+      "id": "plank",
+      "item": 35010,
+      "category": "Building",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "tags": [
+        "wood",
+        "renovation"
+      ],
+      "gate": {
+        "any": [
+          {
+            "quest": "Started6"
+          },
+          {
+            "visited": "Interior Tenement General Store"
+          }
+        ]
+      }
+    },
+    {
+      "id": "nails",
+      "item": 35050,
+      "category": "Building",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 50,
+      "tags": [
+        "metal",
+        "renovation"
+      ],
+      "gate": {
+        "quest": "Started6"
+      }
+    },
+    {
+      "id": "cement",
+      "item": 35060,
+      "category": "Building",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "tags": [
+        "renovation"
+      ],
+      "gate": {
+        "quest": "Started6"
+      }
+    },
+    {
+      "id": "turnip-seeds",
+      "item": 10970,
+      "category": "Seeds",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "tags": [
+        "farm",
+        "plants"
+      ],
+      "gate": {
+        "quest": "Farmer1"
+      }
+    },
+    {
+      "id": "bandage",
+      "item": 10940,
+      "category": "Medical",
+      "shop": "o-market",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "tags": [
+        "medical",
+        "cloth"
+      ],
+      "gate": {
+        "any": [
+          {
+            "visited": "Interior Tenement O Market"
+          },
+          {
+            "bought": "o-market"
+          }
+        ]
+      }
+    },
+    {
+      "id": "painkillers",
+      "item": 140010,
+      "category": "Medical",
+      "shop": "skeida-pharmacy",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 10,
+      "tags": [
+        "medical",
+        "pills"
+      ],
+      "gate": {
+        "any": [
+          {
+            "visited": "Interior Tenement Pharmacy"
+          },
+          {
+            "bought": "skeida-pharmacy"
+          }
+        ]
+      }
+    },
+    {
+      "id": "gold-watch",
+      "item": 12450,
+      "category": "Valuables",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 1,
+      "tags": [
+        "gold",
+        "watch"
+      ],
+      "gate": {
+        "any": [
+          {
+            "visited": "Interior Bazaar Gold Shop"
+          },
+          {
+            "bought": "goldshop"
+          }
+        ]
+      }
+    },
+    {
+      "id": "sugar",
+      "item": 180050,
+      "category": "Food",
+      "shop": "bakery",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "tags": [
+        "baking"
+      ],
+      "gate": {
+        "any": [
+          {
+            "visited": "Interior Bazaar Bakery"
+          },
+          {
+            "bought": "bakery"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flashlight",
+      "item": 10570,
+      "category": "Tools",
+      "shop": "mines-market",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 5,
+      "tags": [
+        "light",
+        "mine"
+      ],
+      "gate": {
+        "any": [
+          {
+            "quest": "Glowstick7"
+          },
+          {
+            "visited": "Interior Mines Market"
+          },
+          {
+            "bought": "mines-market"
+          }
+        ]
+      }
+    },
+    {
+      "id": "bgen-4",
+      "item": 4,
+      "category": "Lockpick",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-9",
+      "item": 9,
+      "category": "Junk",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-11",
+      "item": 11,
+      "category": "Junk",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-10060",
+      "item": 10060,
+      "category": "Burnable",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-10370",
+      "item": 10370,
+      "category": "Seeds",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-10520",
+      "item": 10520,
+      "category": "Burnable",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-10530",
+      "item": 10530,
+      "category": "Burnable",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-10570",
+      "item": 10570,
+      "category": "Wieldable Secondary",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-10580",
+      "item": 10580,
+      "category": "Batteries",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-10590",
+      "item": 10590,
+      "category": "Wieldable Secondary",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-10730",
+      "item": 10730,
+      "category": "Batteries",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-10760",
+      "item": 10760,
+      "category": "Utility",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-10860",
+      "item": 10860,
+      "category": "Tableware",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-10940",
+      "item": 10940,
+      "category": "Medical",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-10950",
+      "item": 10950,
+      "category": "Smokes",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-10990",
+      "item": 10990,
+      "category": "Chemical",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-11020",
+      "item": 11020,
+      "category": "Chemical",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-11280",
+      "item": 11280,
+      "category": "Seeds",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-11290",
+      "item": 11290,
+      "category": "Seeds",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-11320",
+      "item": 11320,
+      "category": "Food",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-11450",
+      "item": 11450,
+      "category": "Food",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-11540",
+      "item": 11540,
+      "category": "Smokes",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-11550",
+      "item": 11550,
+      "category": "Smokes",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-12670",
+      "item": 12670,
+      "category": "Medical",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-12740",
+      "item": 12740,
+      "category": "Junk",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-12750",
+      "item": 12750,
+      "category": "Junk",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-12760",
+      "item": 12760,
+      "category": "Junk",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-12770",
+      "item": 12770,
+      "category": "Junk",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-12790",
+      "item": 12790,
+      "category": "Wieldable Primary",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-12831",
+      "item": 12831,
+      "category": "Burnable",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-12860",
+      "item": 12860,
+      "category": "Food",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-12880",
+      "item": 12880,
+      "category": "Food",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-12890",
+      "item": 12890,
+      "category": "Food",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-12900",
+      "item": 12900,
+      "category": "Food",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-12910",
+      "item": 12910,
+      "category": "Food",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-12920",
+      "item": 12920,
+      "category": "Food",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-12930",
+      "item": 12930,
+      "category": "Food",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-12940",
+      "item": 12940,
+      "category": "Food",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-12950",
+      "item": 12950,
+      "category": "Food",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-12960",
+      "item": 12960,
+      "category": "Food",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-12970",
+      "item": 12970,
+      "category": "Food",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-13310",
+      "item": 13310,
+      "category": "Food",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-13430",
+      "item": 13430,
+      "category": "Coffee",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-13450",
+      "item": 13450,
+      "category": "Burnable",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-13470",
+      "item": 13470,
+      "category": "Utility",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-13800",
+      "item": 13800,
+      "category": "Burnable",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-13810",
+      "item": 13810,
+      "category": "Burnable",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-13980",
+      "item": 13980,
+      "category": "Wieldable Secondary",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-14140",
+      "item": 14140,
+      "category": "Hardware",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-14180",
+      "item": 14180,
+      "category": "Alcohol",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-14220",
+      "item": 14220,
+      "category": "Wood",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-14230",
+      "item": 14230,
+      "category": "Hardware",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-14240",
+      "item": 14240,
+      "category": "Hardware",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-14350",
+      "item": 14350,
+      "category": "Hardware",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-14360",
+      "item": 14360,
+      "category": "Burnable",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-14380",
+      "item": 14380,
+      "category": "Hardware",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-14390",
+      "item": 14390,
+      "category": "Hardware",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-14590",
+      "item": 14590,
+      "category": "Junk",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-14780",
+      "item": 14780,
+      "category": "Food",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-14830",
+      "item": 14830,
+      "category": "Hardware",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-14860",
+      "item": 14860,
+      "category": "Hardware",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-14930",
+      "item": 14930,
+      "category": "Backpack",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-15000",
+      "item": 15000,
+      "category": "Hardware",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-15010",
+      "item": 15010,
+      "category": "Hardware",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-15050",
+      "item": 15050,
+      "category": "Hardware",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-15090",
+      "item": 15090,
+      "category": "Readable",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-15100",
+      "item": 15100,
+      "category": "Readable",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-15110",
+      "item": 15110,
+      "category": "Readable",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-15120",
+      "item": 15120,
+      "category": "Readable",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-15250",
+      "item": 15250,
+      "category": "Wieldable Primary",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-15260",
+      "item": 15260,
+      "category": "Candle",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-15300",
+      "item": 15300,
+      "category": "Backpack",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-15320",
+      "item": 15320,
+      "category": "Seeds",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-15340",
+      "item": 15340,
+      "category": "Backpack",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-15350",
+      "item": 15350,
+      "category": "Chemical",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-15360",
+      "item": 15360,
+      "category": "Medical",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-15390",
+      "item": 15390,
+      "category": "Wieldable Primary",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-15430",
+      "item": 15430,
+      "category": "Burnable",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-15460",
+      "item": 15460,
+      "category": "Utility",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-15530",
+      "item": 15530,
+      "category": "Smokes",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-15730",
+      "item": 15730,
+      "category": "Hardware",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-15750",
+      "item": 15750,
+      "category": "Crafting Material",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-15780",
+      "item": 15780,
+      "category": "Crafting Material",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-15800",
+      "item": 15800,
+      "category": "Medical",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-15880",
+      "item": 15880,
+      "category": "Burnable",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-15990",
+      "item": 15990,
+      "category": "Readable",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-16000",
+      "item": 16000,
+      "category": "Hardware",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-16020",
+      "item": 16020,
+      "category": "Readable",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-16030",
+      "item": 16030,
+      "category": "Readable",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-16040",
+      "item": 16040,
+      "category": "Hardware",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-16050",
+      "item": 16050,
+      "category": "Readable",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-16080",
+      "item": 16080,
+      "category": "Hardware",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-16120",
+      "item": 16120,
+      "category": "Trap",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-16150",
+      "item": 16150,
+      "category": "Burnable",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-16210",
+      "item": 16210,
+      "category": "Medical",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-16430",
+      "item": 16430,
+      "category": "Smokes",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-16440",
+      "item": 16440,
+      "category": "Smokes",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-16660",
+      "item": 16660,
+      "category": "Readable",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-16670",
+      "item": 16670,
+      "category": "Readable",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-16680",
+      "item": 16680,
+      "category": "Readable",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-16690",
+      "item": 16690,
+      "category": "Hardware",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-16700",
+      "item": 16700,
+      "category": "Hardware",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-17120",
+      "item": 17120,
+      "category": "Utility",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-17130",
+      "item": 17130,
+      "category": "Face",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-17150",
+      "item": 17150,
+      "category": "Junk",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-17260",
+      "item": 17260,
+      "category": "Hygiene",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-17270",
+      "item": 17270,
+      "category": "Hygiene",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-17280",
+      "item": 17280,
+      "category": "Lab",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-17590",
+      "item": 17590,
+      "category": "Seeds",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-17600",
+      "item": 17600,
+      "category": "Seeds",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-17610",
+      "item": 17610,
+      "category": "Seeds",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-17620",
+      "item": 17620,
+      "category": "Seeds",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-17630",
+      "item": 17630,
+      "category": "Seeds",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-17730",
+      "item": 17730,
+      "category": "Head",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-17740",
+      "item": 17740,
+      "category": "Lottery",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-17880",
+      "item": 17880,
+      "category": "Burnable",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-17890",
+      "item": 17890,
+      "category": "Burnable",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-17920",
+      "item": 17920,
+      "category": "Seeds",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-17930",
+      "item": 17930,
+      "category": "Seeds",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-18170",
+      "item": 18170,
+      "category": "Chemical",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-18180",
+      "item": 18180,
+      "category": "Tenement Resource",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-18220",
+      "item": 18220,
+      "category": "Food",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-18230",
+      "item": 18230,
+      "category": "Food",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-18240",
+      "item": 18240,
+      "category": "Food",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-18830",
+      "item": 18830,
+      "category": "Bottle",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-19040",
+      "item": 19040,
+      "category": "Burnable",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-19080",
+      "item": 19080,
+      "category": "Electronic",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-19090",
+      "item": 19090,
+      "category": "Electronic",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-19180",
+      "item": 19180,
+      "category": "Electronic",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-19470",
+      "item": 19470,
+      "category": "Hardware",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-19480",
+      "item": 19480,
+      "category": "Head",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-19680",
+      "item": 19680,
+      "category": "Burnable",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-19960",
+      "item": 19960,
+      "category": "Junk",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-20070",
+      "item": 20070,
+      "category": "Junk",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-24080",
+      "item": 24080,
+      "category": "Food",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-24090",
+      "item": 24090,
+      "category": "Food",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-35010",
+      "item": 35010,
+      "category": "Hardware",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-35040",
+      "item": 35040,
+      "category": "Hardware",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-35050",
+      "item": 35050,
+      "category": "Hardware",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-35060",
+      "item": 35060,
+      "category": "Hardware",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-35070",
+      "item": 35070,
+      "category": "Hardware",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-35080",
+      "item": 35080,
+      "category": "Hardware",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-35090",
+      "item": 35090,
+      "category": "Hardware",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-35100",
+      "item": 35100,
+      "category": "Hardware",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-35110",
+      "item": 35110,
+      "category": "Hardware",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-35120",
+      "item": 35120,
+      "category": "Hardware",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-35140",
+      "item": 35140,
+      "category": "Dynamite",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-35150",
+      "item": 35150,
+      "category": "Hardware",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-35170",
+      "item": 35170,
+      "category": "Hardware",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-35180",
+      "item": 35180,
+      "category": "Hardware",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-90020",
+      "item": 90020,
+      "category": "Junk",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-90030",
+      "item": 90030,
+      "category": "Tableware",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-90040",
+      "item": 90040,
+      "category": "Junk",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-100010",
+      "item": 100010,
+      "category": "Smokes",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-100020",
+      "item": 100020,
+      "category": "Smokes",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-180010",
+      "item": 180010,
+      "category": "Coffee",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-180030",
+      "item": 180030,
+      "category": "Food",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-180040",
+      "item": 180040,
+      "category": "Food",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bgen-180050",
+      "item": 180050,
+      "category": "Food",
+      "shop": "bazaar-general",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar General Store"
+      }
+    },
+    {
+      "id": "bbook-15090",
+      "item": 15090,
+      "category": "Readable",
+      "shop": "books",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Books"
+      }
+    },
+    {
+      "id": "bbook-15100",
+      "item": 15100,
+      "category": "Readable",
+      "shop": "books",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Books"
+      }
+    },
+    {
+      "id": "bbook-15110",
+      "item": 15110,
+      "category": "Readable",
+      "shop": "books",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Books"
+      }
+    },
+    {
+      "id": "bbook-15120",
+      "item": 15120,
+      "category": "Readable",
+      "shop": "books",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Books"
+      }
+    },
+    {
+      "id": "bbook-16030",
+      "item": 16030,
+      "category": "Readable",
+      "shop": "books",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Books"
+      }
+    },
+    {
+      "id": "bbook-16660",
+      "item": 16660,
+      "category": "Readable",
+      "shop": "books",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Books"
+      }
+    },
+    {
+      "id": "bbook-16670",
+      "item": 16670,
+      "category": "Readable",
+      "shop": "books",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Books"
+      }
+    },
+    {
+      "id": "bbook-16680",
+      "item": 16680,
+      "category": "Readable",
+      "shop": "books",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Books"
+      }
+    },
+    {
+      "id": "bbook-19040",
+      "item": 19040,
+      "category": "Burnable",
+      "shop": "books",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Books"
+      }
+    },
+    {
+      "id": "bbook-19050",
+      "item": 19050,
+      "category": "Crafting Material",
+      "shop": "books",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Books"
+      }
+    },
+    {
+      "id": "bbook-19470",
+      "item": 19470,
+      "category": "Hardware",
+      "shop": "books",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Books"
+      }
+    },
+    {
+      "id": "bbrom-4",
+      "item": 4,
+      "category": "Lockpick",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-10540",
+      "item": 10540,
+      "category": "Fuses",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-10570",
+      "item": 10570,
+      "category": "Wieldable Secondary",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-10590",
+      "item": 10590,
+      "category": "Wieldable Secondary",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-10860",
+      "item": 10860,
+      "category": "Tableware",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-10960",
+      "item": 10960,
+      "category": "Seeds",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-10970",
+      "item": 10970,
+      "category": "Seeds",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-11200",
+      "item": 11200,
+      "category": "Seeds",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-11210",
+      "item": 11210,
+      "category": "Seeds",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-11230",
+      "item": 11230,
+      "category": "Seeds",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-13290",
+      "item": 13290,
+      "category": "Junk",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-13300",
+      "item": 13300,
+      "category": "Junk",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-13470",
+      "item": 13470,
+      "category": "Utility",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-13570",
+      "item": 13570,
+      "category": "Hardware",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-14160",
+      "item": 14160,
+      "category": "Fuel",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-14170",
+      "item": 14170,
+      "category": "Hardware",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-14260",
+      "item": 14260,
+      "category": "Hardware",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-14280",
+      "item": 14280,
+      "category": "Hardware",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-14300",
+      "item": 14300,
+      "category": "Waste",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-14590",
+      "item": 14590,
+      "category": "Junk",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-14650",
+      "item": 14650,
+      "category": "Burnable",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-14860",
+      "item": 14860,
+      "category": "Hardware",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-15000",
+      "item": 15000,
+      "category": "Hardware",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-15250",
+      "item": 15250,
+      "category": "Wieldable Primary",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-15320",
+      "item": 15320,
+      "category": "Seeds",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-15390",
+      "item": 15390,
+      "category": "Wieldable Primary",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-15460",
+      "item": 15460,
+      "category": "Utility",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-15740",
+      "item": 15740,
+      "category": "Crafting Material",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-15800",
+      "item": 15800,
+      "category": "Medical",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-16040",
+      "item": 16040,
+      "category": "Hardware",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-16100",
+      "item": 16100,
+      "category": "Hardware",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-16430",
+      "item": 16430,
+      "category": "Smokes",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-16440",
+      "item": 16440,
+      "category": "Smokes",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-16700",
+      "item": 16700,
+      "category": "Hardware",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-17120",
+      "item": 17120,
+      "category": "Utility",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-17130",
+      "item": 17130,
+      "category": "Face",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-17150",
+      "item": 17150,
+      "category": "Junk",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-17330",
+      "item": 17330,
+      "category": "Lab",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-17540",
+      "item": 17540,
+      "category": "Smokes",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-17600",
+      "item": 17600,
+      "category": "Seeds",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-17610",
+      "item": 17610,
+      "category": "Seeds",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-17620",
+      "item": 17620,
+      "category": "Seeds",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-17630",
+      "item": 17630,
+      "category": "Seeds",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-18830",
+      "item": 18830,
+      "category": "Bottle",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-19010",
+      "item": 19010,
+      "category": "Alcohol",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-19080",
+      "item": 19080,
+      "category": "Electronic",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-19090",
+      "item": 19090,
+      "category": "Electronic",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-19130",
+      "item": 19130,
+      "category": "Hardware",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-19140",
+      "item": 19140,
+      "category": "Hardware",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-19470",
+      "item": 19470,
+      "category": "Hardware",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-19680",
+      "item": 19680,
+      "category": "Burnable",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-35010",
+      "item": 35010,
+      "category": "Hardware",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-35020",
+      "item": 35020,
+      "category": "Hardware",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-35140",
+      "item": 35140,
+      "category": "Dynamite",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-35180",
+      "item": 35180,
+      "category": "Hardware",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-90030",
+      "item": 90030,
+      "category": "Tableware",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-90040",
+      "item": 90040,
+      "category": "Junk",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-100020",
+      "item": 100020,
+      "category": "Smokes",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "bbrom-100030",
+      "item": 100030,
+      "category": "Smokes",
+      "shop": "bromshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Bromshop"
+      }
+    },
+    {
+      "id": "tgen-4",
+      "item": 4,
+      "category": "Lockpick",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-8",
+      "item": 8,
+      "category": "Alcohol",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-9",
+      "item": 9,
+      "category": "Junk",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-11",
+      "item": 11,
+      "category": "Junk",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-10060",
+      "item": 10060,
+      "category": "Burnable",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-10520",
+      "item": 10520,
+      "category": "Burnable",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-10530",
+      "item": 10530,
+      "category": "Burnable",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-10540",
+      "item": 10540,
+      "category": "Fuses",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-10560",
+      "item": 10560,
+      "category": "Valves",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-10580",
+      "item": 10580,
+      "category": "Batteries",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-10670",
+      "item": 10670,
+      "category": "Clock",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-10730",
+      "item": 10730,
+      "category": "Batteries",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-10760",
+      "item": 10760,
+      "category": "Utility",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-10860",
+      "item": 10860,
+      "category": "Tableware",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-10980",
+      "item": 10980,
+      "category": "Chemical",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-10990",
+      "item": 10990,
+      "category": "Chemical",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-11000",
+      "item": 11000,
+      "category": "Chemical",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-11010",
+      "item": 11010,
+      "category": "Chemical",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-11020",
+      "item": 11020,
+      "category": "Chemical",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-12430",
+      "item": 12430,
+      "category": "Valuable",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-12440",
+      "item": 12440,
+      "category": "Valuable",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-12490",
+      "item": 12490,
+      "category": "Valuable",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-12500",
+      "item": 12500,
+      "category": "Valuable",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-12510",
+      "item": 12510,
+      "category": "Valuable",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-12520",
+      "item": 12520,
+      "category": "Valuable",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-12700",
+      "item": 12700,
+      "category": "Burnable",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-12710",
+      "item": 12710,
+      "category": "Burnable",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-12790",
+      "item": 12790,
+      "category": "Wieldable Primary",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-13450",
+      "item": 13450,
+      "category": "Burnable",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-14140",
+      "item": 14140,
+      "category": "Hardware",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-14150",
+      "item": 14150,
+      "category": "Hardware",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-14160",
+      "item": 14160,
+      "category": "Fuel",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-14220",
+      "item": 14220,
+      "category": "Wood",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-14230",
+      "item": 14230,
+      "category": "Hardware",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-14240",
+      "item": 14240,
+      "category": "Hardware",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-14380",
+      "item": 14380,
+      "category": "Hardware",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-14390",
+      "item": 14390,
+      "category": "Hardware",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-14830",
+      "item": 14830,
+      "category": "Hardware",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-14860",
+      "item": 14860,
+      "category": "Hardware",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-14930",
+      "item": 14930,
+      "category": "Backpack",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-15000",
+      "item": 15000,
+      "category": "Hardware",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-15050",
+      "item": 15050,
+      "category": "Hardware",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-15260",
+      "item": 15260,
+      "category": "Candle",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-15460",
+      "item": 15460,
+      "category": "Utility",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-15530",
+      "item": 15530,
+      "category": "Smokes",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-15700",
+      "item": 15700,
+      "category": "Metallurgy",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-15720",
+      "item": 15720,
+      "category": "Valuable",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-15730",
+      "item": 15730,
+      "category": "Hardware",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-15750",
+      "item": 15750,
+      "category": "Crafting Material",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-15760",
+      "item": 15760,
+      "category": "Crafting Material",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-15770",
+      "item": 15770,
+      "category": "Crafting Material",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-15780",
+      "item": 15780,
+      "category": "Crafting Material",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-16000",
+      "item": 16000,
+      "category": "Hardware",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-16040",
+      "item": 16040,
+      "category": "Hardware",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-16060",
+      "item": 16060,
+      "category": "Chemical",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-16080",
+      "item": 16080,
+      "category": "Hardware",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-16320",
+      "item": 16320,
+      "category": "Crafting Material",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-17280",
+      "item": 17280,
+      "category": "Lab",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-17340",
+      "item": 17340,
+      "category": "Readable",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-18130",
+      "item": 18130,
+      "category": "Watch",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-18180",
+      "item": 18180,
+      "category": "Tenement Resource",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-19180",
+      "item": 19180,
+      "category": "Electronic",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-19470",
+      "item": 19470,
+      "category": "Hardware",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-19480",
+      "item": 19480,
+      "category": "Head",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-19680",
+      "item": 19680,
+      "category": "Burnable",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-19800",
+      "item": 19800,
+      "category": "Burnable",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-20070",
+      "item": 20070,
+      "category": "Junk",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-30010",
+      "item": 30010,
+      "category": "Hardware",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-35020",
+      "item": 35020,
+      "category": "Hardware",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-35040",
+      "item": 35040,
+      "category": "Hardware",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-35070",
+      "item": 35070,
+      "category": "Hardware",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-35080",
+      "item": 35080,
+      "category": "Hardware",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-35090",
+      "item": 35090,
+      "category": "Hardware",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-35100",
+      "item": 35100,
+      "category": "Hardware",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-35110",
+      "item": 35110,
+      "category": "Hardware",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-35120",
+      "item": 35120,
+      "category": "Hardware",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-35150",
+      "item": 35150,
+      "category": "Hardware",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-35170",
+      "item": 35170,
+      "category": "Hardware",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-35180",
+      "item": 35180,
+      "category": "Hardware",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-90020",
+      "item": 90020,
+      "category": "Junk",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-90030",
+      "item": 90030,
+      "category": "Tableware",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-90040",
+      "item": 90040,
+      "category": "Junk",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-100010",
+      "item": 100010,
+      "category": "Smokes",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-100020",
+      "item": 100020,
+      "category": "Smokes",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-100030",
+      "item": 100030,
+      "category": "Smokes",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-140010",
+      "item": 140010,
+      "category": "Medical",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "tgen-150030",
+      "item": 150030,
+      "category": "Chemical",
+      "shop": "general-tenement",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Tenement General Store"
+      }
+    },
+    {
+      "id": "bgold-10910",
+      "item": 10910,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-10920",
+      "item": 10920,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-10930",
+      "item": 10930,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12220",
+      "item": 12220,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12230",
+      "item": 12230,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12240",
+      "item": 12240,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12250",
+      "item": 12250,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12260",
+      "item": 12260,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12270",
+      "item": 12270,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12280",
+      "item": 12280,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12290",
+      "item": 12290,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12300",
+      "item": 12300,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12310",
+      "item": 12310,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12320",
+      "item": 12320,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12330",
+      "item": 12330,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12340",
+      "item": 12340,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12350",
+      "item": 12350,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12360",
+      "item": 12360,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12370",
+      "item": 12370,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12380",
+      "item": 12380,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12390",
+      "item": 12390,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12400",
+      "item": 12400,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12410",
+      "item": 12410,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12420",
+      "item": 12420,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12470",
+      "item": 12470,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12480",
+      "item": 12480,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12490",
+      "item": 12490,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12500",
+      "item": 12500,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12510",
+      "item": 12510,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12520",
+      "item": 12520,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12530",
+      "item": 12530,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12540",
+      "item": 12540,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12550",
+      "item": 12550,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12560",
+      "item": 12560,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12570",
+      "item": 12570,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12580",
+      "item": 12580,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12590",
+      "item": 12590,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12600",
+      "item": 12600,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12610",
+      "item": 12610,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12620",
+      "item": 12620,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12630",
+      "item": 12630,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-12640",
+      "item": 12640,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-15330",
+      "item": 15330,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-15570",
+      "item": 15570,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-15720",
+      "item": 15720,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-15890",
+      "item": 15890,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-17220",
+      "item": 17220,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-17230",
+      "item": 17230,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-17240",
+      "item": 17240,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bgold-17250",
+      "item": 17250,
+      "category": "Valuable",
+      "shop": "goldshop",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Gold Shop"
+      }
+    },
+    {
+      "id": "bpawn-6",
+      "item": 6,
+      "category": "Alcohol",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-9",
+      "item": 9,
+      "category": "Junk",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-11",
+      "item": 11,
+      "category": "Junk",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-10740",
+      "item": 10740,
+      "category": "Alcohol",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-10750",
+      "item": 10750,
+      "category": "Alcohol",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-10910",
+      "item": 10910,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-10920",
+      "item": 10920,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12220",
+      "item": 12220,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12230",
+      "item": 12230,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12240",
+      "item": 12240,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12260",
+      "item": 12260,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12270",
+      "item": 12270,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12280",
+      "item": 12280,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12300",
+      "item": 12300,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12310",
+      "item": 12310,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12320",
+      "item": 12320,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12340",
+      "item": 12340,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12350",
+      "item": 12350,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12360",
+      "item": 12360,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12380",
+      "item": 12380,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12390",
+      "item": 12390,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12400",
+      "item": 12400,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12420",
+      "item": 12420,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12430",
+      "item": 12430,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12440",
+      "item": 12440,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12450",
+      "item": 12450,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12460",
+      "item": 12460,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12470",
+      "item": 12470,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12480",
+      "item": 12480,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12490",
+      "item": 12490,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12500",
+      "item": 12500,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12510",
+      "item": 12510,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12520",
+      "item": 12520,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12530",
+      "item": 12530,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12540",
+      "item": 12540,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12550",
+      "item": 12550,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12560",
+      "item": 12560,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12570",
+      "item": 12570,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12580",
+      "item": 12580,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12590",
+      "item": 12590,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12600",
+      "item": 12600,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12610",
+      "item": 12610,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12620",
+      "item": 12620,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12630",
+      "item": 12630,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12640",
+      "item": 12640,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12740",
+      "item": 12740,
+      "category": "Junk",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-12750",
+      "item": 12750,
+      "category": "Junk",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-14180",
+      "item": 14180,
+      "category": "Alcohol",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-14590",
+      "item": 14590,
+      "category": "Junk",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-14930",
+      "item": 14930,
+      "category": "Backpack",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-15300",
+      "item": 15300,
+      "category": "Backpack",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-15340",
+      "item": 15340,
+      "category": "Backpack",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-15530",
+      "item": 15530,
+      "category": "Smokes",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-15570",
+      "item": 15570,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-15700",
+      "item": 15700,
+      "category": "Metallurgy",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-15720",
+      "item": 15720,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-15890",
+      "item": 15890,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-17150",
+      "item": 17150,
+      "category": "Junk",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-17160",
+      "item": 17160,
+      "category": "Junk",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-17170",
+      "item": 17170,
+      "category": "Junk",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-17180",
+      "item": 17180,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-17190",
+      "item": 17190,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-17230",
+      "item": 17230,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-17240",
+      "item": 17240,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-17250",
+      "item": 17250,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-18440",
+      "item": 18440,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-18600",
+      "item": 18600,
+      "category": "Wine bottle",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-18620",
+      "item": 18620,
+      "category": "Wine bottle",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-18710",
+      "item": 18710,
+      "category": "Wine bottle",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-18830",
+      "item": 18830,
+      "category": "Bottle",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-18930",
+      "item": 18930,
+      "category": "Wine bottle",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-18950",
+      "item": 18950,
+      "category": "Wine bottle",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-18960",
+      "item": 18960,
+      "category": "Wine bottle",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-18990",
+      "item": 18990,
+      "category": "Alcohol",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-19080",
+      "item": 19080,
+      "category": "Electronic",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-19090",
+      "item": 19090,
+      "category": "Electronic",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-19150",
+      "item": 19150,
+      "category": "Electronic",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    },
+    {
+      "id": "bpawn-40020",
+      "item": 40020,
+      "category": "Valuable",
+      "shop": "pawn",
+      "price": {
+        "auto": 1.5
+      },
+      "maxQty": 20,
+      "gate": {
+        "visited": "Interior Bazaar Pawn"
+      }
+    }
+  ]
+}

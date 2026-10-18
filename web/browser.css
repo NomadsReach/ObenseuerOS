@@ -1,0 +1,109 @@
+.br {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--obx-os-content);
+  color: var(--obx-os-content-ink);
+  font-size: var(--obx-fs-sm);
+}
+
+.br-bar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--obx-s1);
+  padding: var(--obx-s1) var(--obx-s2);
+  background: var(--obx-os-chrome);
+  border-bottom: 1px solid var(--obx-os-rule);
+}
+
+.br-bar .icon-btn { width: 28px; height: 28px; }
+.br-bar .icon-btn:disabled { opacity: 0.4; }
+
+.br-addr {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--obx-s2);
+  height: 28px;
+  padding: 0 var(--obx-s2);
+  background: var(--obx-os-content);
+  border: 1px solid var(--obx-os-rule);
+  border-radius: var(--obx-r-sm);
+}
+
+.br-addr:focus-within { border-color: var(--obx-amber-edge); }
+.br-addr > .ico { width: 12px; height: 12px; color: var(--obx-os-ok); }
+
+.br-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  outline: none;
+  color: inherit;
+  font: inherit;
+}
+
+.br-suggest {
+  position: absolute;
+  top: calc(100% + 2px);
+  left: -1px;
+  right: -1px;
+  z-index: 2;
+  margin: 0;
+  padding: var(--obx-s1) 0;
+  list-style: none;
+  background: var(--obx-surface-2);
+  border: 1px solid var(--obx-line);
+  border-radius: var(--obx-r-sm);
+  box-shadow: var(--obx-shadow-float);
+}
+
+.br-suggest[hidden] { display: none; }
+.br-sug { padding: var(--obx-s1) var(--obx-s2); cursor: default; }
+.br-sug:hover, .br-sug.on { background: var(--obx-hover); }
+
+.br-marks {
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--obx-s1) var(--obx-s3);
+  padding: var(--obx-s1) var(--obx-s2);
+  background: var(--obx-os-chrome);
+  border-bottom: 1px solid var(--obx-os-rule);
+}
+
+.br-marks[hidden] { display: none; }
+
+.br-mark {
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--obx-os-link);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.br-mark:hover { text-decoration: underline; }
+.br-mark:focus-visible { outline: 2px solid var(--obx-focus); outline-offset: 2px; }
+
+.br-page {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--obx-s2);
+  overflow: auto;
+  padding: var(--obx-s3);
+}
+
+.br-page.bw-bleed {
+  gap: 0;
+  padding: 0;
+}

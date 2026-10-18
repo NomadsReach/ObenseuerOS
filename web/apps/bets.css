@@ -1,0 +1,575 @@
+.web-page:has(.bets) { padding: 0; }
+
+.bets {
+  --bt-page: #e9ece9;
+  --bt-panel: #ffffff;
+  --bt-ink: #1a1a1a;
+  --bt-muted: #555555;
+  --bt-line: #a9b0a9;
+  --bt-zebra: #f3f5f3;
+  --bt-head: #0e4d2e;
+  --bt-head-deep: #0a3b23;
+  --bt-head-line: #2f6a48;
+  --bt-yellow: #f7d117;
+  --bt-red: #7a0d0d;
+  container-type: inline-size;
+  min-height: 100%;
+  background: var(--bt-page);
+  color: var(--bt-ink);
+  font: 12px/1.4 Arial, Helvetica, sans-serif;
+  letter-spacing: normal;
+}
+
+.bets,
+.bets * { transition: none; }
+
+.bets [hidden] { display: none !important; }
+
+.bets :focus-visible {
+  outline: 1px dotted var(--bt-ink);
+  outline-offset: 1px;
+}
+
+.bets-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 16px;
+  min-height: 50px;
+  padding: 0 max(8px, calc((100% - 1000px) / 2));
+  background: var(--bt-head);
+  color: #ffffff;
+  border-bottom: 3px solid var(--bt-yellow);
+}
+
+.bets-brand {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 3px 8px;
+  background: #ffffff;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.bets-logo {
+  display: block;
+  height: 44px;
+  width: auto;
+}
+
+.bets-tabs {
+  display: flex;
+  align-self: stretch;
+}
+
+.bets-tab {
+  padding: 0 12px;
+  background: transparent;
+  border: 0;
+  border-left: 1px solid var(--bt-head-line);
+  color: #ffffff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.bets-tab:hover { text-decoration: underline; }
+
+.bets-tab[aria-pressed="true"] {
+  background: var(--bt-yellow);
+  color: #000000;
+}
+
+.bets-wallet {
+  margin-left: auto;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.bets-num { font-variant-numeric: tabular-nums; }
+
+.bets-notice {
+  margin: 8px max(8px, calc((100% - 1000px) / 2)) 0;
+  padding: 6px 8px;
+  background: #fff8d6;
+  border: 1px solid var(--bt-yellow);
+}
+
+.bets-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 8px;
+  align-items: start;
+  padding: 8px max(8px, calc((100% - 1000px) / 2)) 12px;
+}
+
+.bets-body:has(.bets-slip[hidden]) { grid-template-columns: minmax(0, 1fr); }
+
+@container (max-width: 760px) {
+  .bets-body { grid-template-columns: minmax(0, 1fr); }
+  .bets-slip { position: static; }
+}
+
+.bets-main {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.bets-view {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 8px;
+  align-items: start;
+  min-width: 0;
+}
+
+.bets-view > .bets-promo { grid-column: 1 / -1; }
+
+.bets-view > .bets-sportlist {
+  grid-column: 1;
+  grid-row: 2 / span 2;
+}
+
+.bets-view > .bets-league,
+.bets-view > .bets-fixtures {
+  grid-column: 2;
+  min-width: 0;
+}
+
+@container (max-width: 640px) {
+  .bets-view { grid-template-columns: minmax(0, 1fr); }
+  .bets-view > .bets-sportlist,
+  .bets-view > .bets-league,
+  .bets-view > .bets-fixtures {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  .bets-sportlist { flex-direction: row; }
+  .bets-sportlist .bets-sport { width: auto; flex: 1 1 0; }
+}
+
+.bets-promo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  background: var(--bt-yellow);
+  border: 1px solid #b8a000;
+}
+
+.bets-photo {
+  flex: none;
+  width: 120px;
+  margin: 0;
+}
+
+.bets-photo img {
+  display: block;
+  width: 100%;
+  height: 72px;
+  object-fit: cover;
+  border: 1px solid #555555;
+}
+
+.bets-photo figcaption {
+  margin-top: 2px;
+  color: #333333;
+  font-size: 10px;
+}
+
+.bets-promo-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.bets-promo-kicker {
+  margin: 0;
+  color: var(--bt-red);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.bets-promo-title {
+  margin: 0;
+  color: #000000;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.bets-promo-text {
+  margin: 0;
+  color: #000000;
+}
+
+.bets-sports {
+  display: flex;
+  background: var(--bt-panel);
+  border: 1px solid var(--bt-line);
+}
+
+.bets-sport {
+  flex: 1 1 0;
+  height: 30px;
+  padding: 0 8px;
+  background: transparent;
+  border: 0;
+  color: var(--bt-ink);
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+}
+
+.bets-sport:hover { background: #dde6dd; }
+
+.bets-sport[aria-pressed="true"] {
+  background: var(--bt-head);
+  color: #ffffff;
+}
+
+.bets-sportlist {
+  flex-direction: column;
+}
+
+.bets-sportlist .bets-sport {
+  flex: none;
+  width: 100%;
+}
+
+.bets-league {
+  margin: 0;
+  padding: 4px 8px;
+  background: var(--bt-panel);
+  border: 1px solid var(--bt-line);
+  font-weight: 700;
+}
+
+.bets-round {
+  margin: 4px 0 0;
+  padding: 3px 8px;
+  background: var(--bt-head);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.bets-fixtures {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bets-events td:not(:first-child),
+.bets-events th:not(:first-child) {
+  width: 66px;
+  text-align: center;
+}
+
+.bets-team {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.bets-time {
+  display: block;
+  color: var(--bt-muted);
+  font-size: 11px;
+}
+
+.bets-odds { padding: 3px 4px; }
+
+.bets-btn {
+  height: 24px;
+  padding: 0 8px;
+  background: #ececec;
+  border: 1px solid #8c8c8c;
+  border-radius: 0;
+  color: var(--bt-ink);
+  font: inherit;
+  font-weight: 700;
+}
+
+.bets-btn:hover:not(:disabled) { background: #d8d8d8; }
+
+.bets-btn:disabled { opacity: 0.45; }
+
+.bets-btn.sm {
+  height: 20px;
+  padding: 0 6px;
+  font-size: 11px;
+}
+
+.bets-btn.primary {
+  background: var(--bt-head);
+  border-color: var(--bt-head);
+  color: #ffffff;
+}
+
+.bets-btn.primary:hover:not(:disabled) { background: #176a40; }
+
+.bets-btn.block {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 30px;
+  font-size: 13px;
+}
+
+.bets-odd {
+  width: 56px;
+  height: 26px;
+  padding: 0;
+  background: #ffffff;
+  border: 1px solid #777777;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.bets-odd:hover:not(:disabled) {
+  background: var(--bt-yellow);
+  border-color: #000000;
+  color: #000000;
+}
+
+.bets-odd[aria-pressed="true"],
+.bets-odd[aria-pressed="true"]:hover:not(:disabled) {
+  background: var(--bt-head);
+  border-color: var(--bt-head);
+  color: #ffffff;
+}
+
+.bets-empty {
+  margin: 0;
+  padding: 6px;
+  color: var(--bt-muted);
+}
+
+.bets-slip {
+  position: sticky;
+  top: 8px;
+  display: flex;
+  flex-direction: column;
+  background: var(--bt-panel);
+  border: 1px solid var(--bt-line);
+}
+
+.bets-slip > .bets-heading {
+  margin: 0;
+  padding: 4px 8px;
+  background: var(--bt-head);
+  border: 0;
+  color: #ffffff;
+  font-size: 13px;
+}
+
+.bets-slip > .bets-empty { padding: 8px; }
+
+.bets-details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+}
+
+.bets-selection {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.bets-pick {
+  margin: 0;
+  font-size: 11px;
+}
+
+.bets-label {
+  color: var(--bt-muted);
+  font-size: 11px;
+}
+
+.bets-sum {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.bets-sum .bets-num {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.bets-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.bets-input {
+  height: 24px;
+  padding: 0 4px;
+  background: #ffffff;
+  border: 1px solid #999999;
+  border-radius: 0;
+  color: var(--bt-ink);
+  font: inherit;
+}
+
+.bets-input:focus { border-color: var(--bt-head); }
+
+.bets-stake {
+  width: 100%;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.bets-quick {
+  display: flex;
+  gap: 4px;
+}
+
+.bets-quick .bets-btn { flex: 1 1 0; }
+
+.bets-problems {
+  min-height: 1em;
+  margin: 0;
+  color: var(--bt-red);
+  font-size: 11px;
+}
+
+.bets-heading {
+  margin: 0;
+  padding: 0 0 3px;
+  border-bottom: 1px solid var(--bt-line);
+  color: var(--bt-head);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.bets-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px;
+  background: var(--bt-panel);
+  border: 1px solid var(--bt-line);
+  overflow-x: auto;
+}
+
+.bets-rule {
+  margin: 0;
+  color: var(--bt-muted);
+  font-size: 11px;
+}
+
+.bets-page p { margin: 0; }
+
+.bets-results {
+  background: var(--bt-panel);
+  border: 1px solid var(--bt-line);
+  overflow-x: auto;
+}
+
+.bets-tbl {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--bt-panel);
+}
+
+.bets-tbl th,
+.bets-tbl td {
+  padding: 4px 6px;
+  border: 1px solid var(--bt-line);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.bets-tbl th {
+  background: #d9e2d9;
+  color: var(--bt-head);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.bets-tbl tbody tr:nth-child(even) { background: var(--bt-zebra); }
+
+.bets-foot {
+  margin-top: 8px;
+  padding: 12px max(8px, calc((100% - 1000px) / 2)) 10px;
+  background: var(--bt-head-deep);
+  border-top: 3px solid var(--bt-yellow);
+  color: #c9d6cc;
+}
+
+.bets-foot-cols {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.bets-foot-col h3 {
+  margin: 0 0 4px;
+  color: #ffffff;
+  font-size: 12px;
+}
+
+.bets-foot-col ul {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 11px;
+}
+
+.bets-care {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--bt-head-line);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.bets-care p { margin: 0; }
+
+.bets-foot-link {
+  padding: 0;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+
+.bets-foot-link:hover { text-decoration: underline; }
+
+.bets-age {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 2px solid var(--bt-yellow);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.bets-copy {
+  margin: 8px 0 0;
+  color: #9fb3a6;
+  font-size: 10px;
+}

@@ -1,0 +1,122 @@
+Photo library credits (web/photos)
+
+Real photographs (Wikimedia Commons, public domain or CC0 only):
+
+harbour-1.jpg
+  Title: Stora enso oulu 2006 02 05.JPG
+  Author: No machine-readable author provided. Estormiz assumed (based on copyright claims).
+  Source: https://commons.wikimedia.org/wiki/File:Stora_enso_oulu_2006_02_05.JPG
+  Licence: Public domain
+
+apartments-1.jpg
+  Title: EU-EE-Tallinn-Haabersti-Õismäe-Old Soviet "сandle" after modernisation.JPG
+  Author: Dmitry G
+  Source: https://commons.wikimedia.org/wiki/File:EU-EE-Tallinn-Haabersti-%C3%95ism%C3%A4e-Old_Soviet_%22%D1%81andle%22_after_modernisation.JPG
+  Licence: Public domain
+
+apartments-2.jpg
+  Title: EU-EE-Tallinn-LAS-Priisle-Graffiti on elevator's control centre.JPG
+  Author: Dmitry G
+  Source: https://commons.wikimedia.org/wiki/File:EU-EE-Tallinn-LAS-Priisle-Graffiti_on_elevator%27s_control_centre.JPG
+  Licence: Public domain
+
+apartments-3.jpg
+  Title: EU-EE-Tallinn-LAS-Läänemeri.JPG
+  Author: Dmitry G
+  Source: https://commons.wikimedia.org/wiki/File:EU-EE-Tallinn-LAS-L%C3%A4%C3%A4nemeri.JPG
+  Licence: Public domain
+
+dam-1.jpg
+  Title: Бывшая финская ГЭС, заказник «Гряда Вярямянселькя» SE.jpg
+  Author: Borealex
+  Source: https://commons.wikimedia.org/wiki/File:%D0%91%D1%8B%D0%B2%D1%88%D0%B0%D1%8F_%D1%84%D0%B8%D0%BD%D1%81%D0%BA%D0%B0%D1%8F_%D0%93%D0%AD%D0%A1,_%D0%B7%D0%B0%D0%BA%D0%B0%D0%B7%D0%BD%D0%B8%D0%BA_%C2%AB%D0%93%D1%80%D1%8F%D0%B4%D0%B0_%D0%92%D1%8F%D1%80%D1%8F%D0%BC%D1%8F%D0%BD%D1%81%D0%B5%D0%BB%D1%8C%D0%BA%D1%8F%C2%BB_SE.jpg
+  Licence: CC0
+
+dam-2.jpg
+  Title: Dam at Volchaya river.JPG
+  Author: User:Alexey Lavrov
+  Source: https://commons.wikimedia.org/wiki/File:Dam_at_Volchaya_river.JPG
+  Licence: Public domain
+
+dam-3.jpg
+  Title: Бывшая финская ГЭС, заказник «Гряда Вярямянселькя» ENE.jpg
+  Author: Borealex
+  Source: https://commons.wikimedia.org/wiki/File:%D0%91%D1%8B%D0%B2%D1%88%D0%B0%D1%8F_%D1%84%D0%B8%D0%BD%D1%81%D0%BA%D0%B0%D1%8F_%D0%93%D0%AD%D0%A1,_%D0%B7%D0%B0%D0%BA%D0%B0%D0%B7%D0%BD%D0%B8%D0%BA_%C2%AB%D0%93%D1%80%D1%8F%D0%B4%D0%B0_%D0%92%D1%8F%D1%80%D1%8F%D0%BC%D1%8F%D0%BD%D1%81%D0%B5%D0%BB%D1%8C%D0%BA%D1%8F%C2%BB_ENE.jpg
+  Licence: CC0
+
+bank-1.jpg
+  Title: Bank of Finland, Helsinki - DSC05359.JPG
+  Author: Daderot
+  Source: https://commons.wikimedia.org/wiki/File:Bank_of_Finland,_Helsinki_-_DSC05359.JPG
+  Licence: CC0
+
+bank-2.jpg
+  Title: Bank of Finland, Helsinki - DSC05358.JPG
+  Author: Daderot
+  Source: https://commons.wikimedia.org/wiki/File:Bank_of_Finland,_Helsinki_-_DSC05358.JPG
+  Licence: CC0
+
+grocery-1.jpg
+  Title: GroceryStoreEggs.JPG
+  Author: Raysonho @ Open Grid Scheduler / Grid Engine
+  Source: https://commons.wikimedia.org/wiki/File:GroceryStoreEggs.JPG
+  Licence: CC0
+
+bar-1.jpg
+  Title: Jumpru Pub Bar Oulu 20130718.jpg
+  Author: Estormiz
+  Source: https://commons.wikimedia.org/wiki/File:Jumpru_Pub_Bar_Oulu_20130718.jpg
+  Licence: CC0
+
+bar-2.jpg
+  Title: Stalybridge Station Buffet Bar (March 2015) (Interior) (3).jpg
+  Author: User:Hassocks5489
+  Source: https://commons.wikimedia.org/wiki/File:Stalybridge_Station_Buffet_Bar_(March_2015)_(Interior)_(3).jpg
+  Licence: CC0
+
+football-1.jpg
+  Title: Stadium of Football Club FC Barcelona - Camp Nou.jpg
+  Author: ticketsluxury
+  Source: https://commons.wikimedia.org/wiki/File:Stadium_of_Football_Club_FC_Barcelona_-_Camp_Nou.jpg
+  Licence: CC0
+
+office-1.jpg
+  Title: Card puncher - NARA - 513295.jpg
+  Author: Unknown authorUnknown author or not provided
+  Source: https://commons.wikimedia.org/wiki/File:Card_puncher_-_NARA_-_513295.jpg
+  Licence: Public domain
+
+factory-1.jpg
+  Title: StateLibQld 1 52836 Workers in a boot making factory, South Brisbane, 1900.jpg
+  Author: Contributor(s): Queenslander (Brisbane, Qld.: 1866-1939)
+  Source: https://commons.wikimedia.org/wiki/File:StateLibQld_1_52836_Workers_in_a_boot_making_factory,_South_Brisbane,_1900.jpg
+  Licence: Public domain
+
+factory-2.jpg
+  Title: SLNSW 11424 Interior of Slazengers factory showing workers making sporting goods.jpg
+  Author: Sam Hood
+  Source: https://commons.wikimedia.org/wiki/File:SLNSW_11424_Interior_of_Slazengers_factory_showing_workers_making_sporting_goods.jpg
+  Licence: Public domain
+
+factory-3.jpg
+  Title: Factory workers (approximately 1910) - DPLA - 12737a137dc3b45bc5a1b871b500bce2.jpg
+  Author: Korb, E. J
+  Source: https://commons.wikimedia.org/wiki/File:Factory_workers_(approximately_1910)_-_DPLA_-_12737a137dc3b45bc5a1b871b500bce2.jpg
+  Licence: Public domain
+
+weather-1.jpg
+  Title: Streetcars in snow at 4th Ave. and Pike St., February 2, 1916 - DPLA - a042588b3f4ce1a0954da5201f327bf0 (page 1).jpg
+  Author: Unknown
+  Source: https://commons.wikimedia.org/wiki/File:Streetcars_in_snow_at_4th_Ave._and_Pike_St.,_February_2,_1916_-_DPLA_-_a042588b3f4ce1a0954da5201f327bf0_(page_1).jpg
+  Licence: Public domain
+
+lottery-2.jpg
+  Title: Wintario Lottery Ticket.jpg
+  Author: not applicable
+  Source: https://commons.wikimedia.org/wiki/File:Wintario_Lottery_Ticket.jpg
+  Licence: CC0
+
+Game shots (kind "game"): game-01, -03, -05, -08, -10, -11, -12, -13, -14, -15, -20 (.jpg and .thumb.jpg).
+These are re-encoded copies of web/pictures/obenseuer-NN.jpg (Obenseuer Steam store screenshots).
+Source, copyright and permission terms: web/pictures/CREDITS.txt.
+Not covered by this mod's licence. Do not reuse outside this mod without the developers' permission.

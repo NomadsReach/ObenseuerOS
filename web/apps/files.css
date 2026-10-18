@@ -1,0 +1,277 @@
+.explorer,
+.notepad {
+  position: relative;
+}
+
+.explorer [hidden],
+.notepad [hidden] {
+  display: none !important;
+}
+
+.xp-main {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.xp-content {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.xp-table tr.sel {
+  background: var(--obx-os-sel-bg);
+  box-shadow: inset 2px 0 var(--obx-os-sel-edge);
+}
+
+.xp-nav {
+  display: block;
+  width: 100%;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: default;
+}
+
+.xp-nav.sel {
+  color: var(--obx-os-link);
+  font-weight: 600;
+}
+
+.xp-folder {
+  display: block;
+  width: 100%;
+  padding: var(--obx-s2);
+  background: none;
+  border: 0;
+  color: var(--obx-os-link);
+  font: inherit;
+  text-align: left;
+  cursor: default;
+}
+
+.xp-folder:hover {
+  background: var(--obx-os-sel-bg);
+}
+
+.xp-confirm,
+.xp-strip {
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--obx-s1) var(--obx-s2);
+  padding: var(--obx-s1) var(--obx-s2);
+  background: var(--obx-os-pane);
+  border-top: 1px solid var(--obx-os-rule);
+}
+
+.xp-strip {
+  display: block;
+}
+
+.xp-strip p,
+.xp-status,
+.lb-caption {
+  margin: 0;
+}
+
+.xp-status {
+  flex: none;
+  padding: var(--obx-s1) var(--obx-s2);
+  color: var(--obx-os-meta);
+}
+
+.pic-grid {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: var(--obx-s2);
+  padding: var(--obx-s2);
+}
+
+.pic-tile {
+  width: 208px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px;
+  border: 1px solid transparent;
+  cursor: default;
+}
+
+.pic-tile:hover {
+  background: var(--obx-os-sel-bg);
+}
+
+.pic-tile.sel {
+  border-color: var(--obx-os-sel-edge);
+  background: var(--obx-os-sel-bg);
+}
+
+.pic-tile img,
+.pic-thumb {
+  display: block;
+  object-fit: cover;
+  background: var(--obx-os-pane);
+}
+
+.pic-tile img {
+  width: 200px;
+  height: 113px;
+}
+
+.pic-thumb {
+  width: 40px;
+  height: 23px;
+}
+
+.pic-name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: var(--obx-fs-xs);
+}
+
+.lightbox {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  background: var(--obx-os-cmd-bg);
+  color: var(--obx-os-cmd-ink);
+}
+
+.lightbox .icon-btn {
+  color: var(--obx-os-cmd-ink);
+}
+
+.lb-bar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 32px;
+  padding: 0 var(--obx-s2);
+}
+
+.lb-count {
+  font-size: var(--obx-fs-sm);
+}
+
+.lb-stage {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--obx-s2);
+  padding: 0 var(--obx-s2);
+}
+
+.lb-img {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.lb-caption {
+  flex: none;
+  padding: var(--obx-s1) var(--obx-s2);
+  font-size: var(--obx-fs-sm);
+}
+
+.np-menu-btn {
+  padding: 0 var(--obx-s1);
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  cursor: default;
+}
+
+.np-menu-btn:hover,
+.np-menu-btn[aria-expanded="true"] {
+  background: var(--obx-os-sel-bg);
+}
+
+.np-menu {
+  position: absolute;
+  top: 26px;
+  left: var(--obx-s2);
+  z-index: 3;
+  min-width: 160px;
+  display: flex;
+  flex-direction: column;
+  padding: 2px 0;
+  background: var(--obx-os-content);
+  border: 1px solid var(--obx-os-win-edge);
+}
+
+.np-menu[data-menu="Edit"] {
+  left: 56px;
+}
+
+.np-item {
+  padding: 4px var(--obx-s2);
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: default;
+}
+
+.np-item:hover {
+  background: var(--obx-os-sel-bg);
+}
+
+.np-panel {
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--obx-s1);
+  padding: var(--obx-s1) var(--obx-s2);
+  background: var(--obx-os-pane);
+  border-bottom: 1px solid var(--obx-os-rule);
+  font-size: var(--obx-fs-sm);
+}
+
+.np-label {
+  color: var(--obx-os-meta);
+}
+
+.np-name {
+  width: 180px;
+}
+
+.np-list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+.np-list .np-item {
+  padding: 2px 0;
+}
+
+.np-status {
+  flex: none;
+  margin: 0;
+  padding: 2px var(--obx-s2);
+  color: var(--obx-os-meta);
+  font-size: var(--obx-fs-xs);
+  border-top: 1px solid var(--obx-os-rule);
+}

@@ -1,0 +1,32 @@
+<Project>
+  <PropertyGroup>
+    <RepoRoot>$(MSBuildThisFileDirectory)</RepoRoot>
+    <GameDir Condition="'$(GameDir)' == ''">$(OBENSEUER_DIR)</GameDir>
+  </PropertyGroup>
+
+  <Import Project="$(RepoRoot)GameDir.user.props" Condition="'$(GameDir)' == '' And Exists('$(RepoRoot)GameDir.user.props')" />
+
+  <PropertyGroup>
+    <GameDir Condition="'$(GameDir)' == ''">C:\Program Files (x86)\Steam\steamapps\common\Obenseuer</GameDir>
+    <ManagedDir>$(GameDir)/Obenseuer_Data/Managed</ManagedDir>
+    <BepInExCore Condition="'$(BEPINEX)' != ''">$(BEPINEX)</BepInExCore>
+    <BepInExCore Condition="'$(BepInExCore)' == ''">$(GameDir)/BepInEx/core</BepInExCore>
+    <Loader Condition="'$(Loader)' == ''">BepInEx6</Loader>
+    <LoaderOut Condition="'$(Loader)' == 'BepInEx5'">be5\</LoaderOut>
+    <BaseIntermediateOutputPath Condition="'$(Loader)' == 'BepInEx5'">obj\be5\</BaseIntermediateOutputPath>
+    <DefaultItemExcludes Condition="'$(Loader)' == 'BepInEx5'">$(DefaultItemExcludes);obj\**</DefaultItemExcludes>
+    <DefineConstants Condition="'$(Loader)' == 'BepInEx5'">$(DefineConstants);BEPINEX5</DefineConstants>
+    <DefineConstants Condition="'$(Loader)' == 'BepInEx6'">$(DefineConstants);BEPINEX6</DefineConstants>
+    <BepInEx5BaseLibVersion>5.4.20</BepInEx5BaseLibVersion>
+    <HarmonyX5Version>2.9.0</HarmonyX5Version>
+    <CORE_BIN Condition="'$(CORE_BIN)' == ''">$(RepoRoot)..\ObenseuerCore\bin\$(LoaderOut)</CORE_BIN>
+    <LangVersion>5</LangVersion>
+    <Deterministic>true</Deterministic>
+    <DebugType>none</DebugType>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+</Project>
