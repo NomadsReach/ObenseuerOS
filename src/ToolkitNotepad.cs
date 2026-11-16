@@ -1,4 +1,5 @@
 using System;
+using ObenseuerCore.Ui;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -49,6 +50,7 @@ namespace ObenseuerOS
             close.style.color = Color.white;
             bar.Add(close);
             Window.Add(bar);
+            ToolkitUi.MakeDraggable(Window, bar);
             VisualElement menu = new VisualElement();
             menu.style.height = 28;
             menu.style.flexDirection = FlexDirection.Row;

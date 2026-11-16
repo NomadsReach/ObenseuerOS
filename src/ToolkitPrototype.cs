@@ -83,9 +83,17 @@ internal sealed class ToolkitPrototype : MonoBehaviour
             });
             desktop.Add(tile);
         }
-        root.Add(window);
-        root.Add(minesweeper.Window);
-        root.Add(solitaire.Window);
+        VisualElement windows = new VisualElement();
+        windows.pickingMode = PickingMode.Ignore;
+        windows.style.position = UnityEngine.UIElements.Position.Absolute;
+        windows.style.left = 0;
+        windows.style.right = 0;
+        windows.style.top = 0;
+        windows.style.bottom = 40;
+        root.Add(windows);
+        windows.Add(window);
+        windows.Add(minesweeper.Window);
+        windows.Add(solitaire.Window);
         VisualElement taskbar = new VisualElement();
         taskbar.style.height = 40;
         taskbar.style.flexShrink = 0;
