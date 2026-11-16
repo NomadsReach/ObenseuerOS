@@ -18,6 +18,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
     private NotepadStorage storage;
     private ToolkitExplorer explorer;
     private ToolkitSettings settings;
+    private ToolkitNews news;
     private Label clock;
     private Label money;
     private float nextStatusUpdate;
@@ -67,6 +68,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         ToolkitChat chat = new ToolkitChat(osStorage != null, osStorage == null ? (Action)null : osStorage.CheckSession);
         ToolkitMail mail = new ToolkitMail(new MailClient(osStorage == null ? (Func<Newtonsoft.Json.Linq.JObject, Newtonsoft.Json.Linq.JObject>)null : OsBridge.Reply, osStorage == null ? (Action)null : osStorage.CheckSession), osStorage == null ? new MailDraft() : MailDrafts.ForSession(osStorage.SessionId));
         ToolkitBank bank = new ToolkitBank(osStorage == null ? new BankClient(null, null) : BankClients.ForSession(osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession));
+        news = new ToolkitNews(new NewsClient(osStorage == null ? (Func<Newtonsoft.Json.Linq.JObject, Newtonsoft.Json.Linq.JObject>)null : OsBridge.Reply, osStorage == null ? (Action)null : osStorage.CheckSession));
         ToolkitTerminal terminal = null;
         Func<int, bool> launch = delegate(int index)
         {
@@ -79,6 +81,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
                 case 6: terminal.Open(); return true;
                 case 7: notepad.Window.style.display = DisplayStyle.Flex; notepad.Window.BringToFront(); return true;
                 case 8: bank.Open(); return true;
+                case 9: news.Open(); return true;
                 case 10: chat.Open(); return true;
                 case 12: minesweeper.Open(); return true;
                 case 13: solitaire.Open(); return true;
@@ -150,6 +153,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         windows.Add(settings.Window);
         windows.Add(mail.Window);
         windows.Add(bank.Window);
+        windows.Add(news.Window);
         ToolkitStart start = new ToolkitStart(Names, Icons, Texture, launch, delegate { if (canClose()) ComputerApps.Close(storage == null ? "os.toolkit-prototype" : "os.toolkit-os"); });
         VisualElement taskbar = new VisualElement();
         taskbar.style.height = 40;
@@ -245,6 +249,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (news != null) news.Release();
         if (settings != null) settings.Release();
         if (explorer != null) explorer.Release();
         foreach (Texture2D texture in textures) if (texture != null) Destroy(texture);

@@ -13,6 +13,8 @@
     <Compile Include="..\..\src\MailDraft.cs" />
     <Compile Include="..\..\src\BankClient.cs" />
     <Compile Include="..\..\src\BankQuote.cs" />
+    <Compile Include="..\..\src\NewsClient.cs" />
+    <Compile Include="..\..\src\NewsPhotos.cs" />
     <Compile Include="..\..\src\Chat\ChatHistory.cs" />
     <Compile Include="..\..\src\Chat\ChatSave.cs" />
     <Compile Include="..\..\src\ExplorerStorage.cs" />

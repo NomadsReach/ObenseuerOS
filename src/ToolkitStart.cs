@@ -54,7 +54,7 @@ namespace ObenseuerOS
                 button.Add(icon);
                 Label label = new Label(names[i]); label.style.color = Color.white; label.style.fontSize = 12; label.style.whiteSpace = WhiteSpace.Normal;
                 button.Add(label);
-                button.SetEnabled(i == 0 || i == 2 || i == 3 || i == 4 || i == 6 || i == 7 || i == 8 || i == 10 || i == 12 || i == 13);
+                button.SetEnabled(i == 0 || i == 2 || i == 3 || i == 4 || i == 6 || i == 7 || i == 8 || i == 9 || i == 10 || i == 12 || i == 13);
                 buttons.Add(button); scroll.Add(button);
             }
             UnityEngine.UIElements.Button power = new UnityEngine.UIElements.Button(delegate { Hide(); close(); }); power.text = "Close Viewports 8";
