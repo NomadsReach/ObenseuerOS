@@ -11,8 +11,10 @@
 ## `tools/ugui-reference.py:main`
 
 `tools/ugui-reference.py:main` captures the existing web desktop and Notepad at 1280 by 720 in GitHub CI. The screenshots are reference images only: CI has no Unity player or game assets, so it cannot render the prototype or establish visual equivalence.
-- `src/OsUguiPrototype.cs:OsUguiPrototype.Build` and `OsUguiPrototype.MakeWindow` explicitly select Unity UI buttons because the game's global button type has the same name; the desktop color expression uses the project's C# language version.
+- `src/OsUguiPrototype.cs:OsUguiPrototype.MakeWindow` explicitly selects the Unity UI button because the game's global button type has the same name.
 - `src/OsUguiPrototype.cs:OsUguiPrototype.Icon` loads rasterized copies of the OS icon artwork embedded by CI. The sprites are cached for the session; a missing icon leaves its tile blank.
 - `src/OsUguiPrototype.cs:OsUguiPrototype.Build` uses the OS desktop icon sizes, ordering, colors, and dark taskbar as an initial visual match. It remains an incomplete prototype, not an implementation of the other apps.
 - `src/OsUguiPrototype.cs:PrototypeStatus.Update` reads the framework's game clock and wallet for the prototype taskbar while it is visible.
 - `src/OsUguiPrototype.cs:OsUguiPrototype.Build` resolves canvas layout before reading host and desktop sizes; the game trace showed an unsized host caused a one-pixel Notepad window and a single row of icons.
+- `src/OsUguiPrototype.cs:OsUguiPrototype.Build` registers desktop tiles with the framework's selectable control; Notepad opens on double-click while unported apps remain inactive.
+- `src/OsUguiPrototype.cs:OsUguiPrototype.MakeWindow` uses the original close icon and aligns the close button with the right edge of the window title bar.

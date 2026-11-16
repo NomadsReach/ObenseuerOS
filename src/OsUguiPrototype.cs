@@ -38,12 +38,8 @@ namespace ObenseuerOS
                 DesktopUi.TopLeft((RectTransform)icon.transform, 20f, 4f, 48f, 48f, scale);
                 Text title = DesktopUi.Label(tile, font, Names[i], Mathf.RoundToInt(12 * scale), Color.white, TextAnchor.UpperCenter);
                 DesktopUi.TopLeft((RectTransform)title.transform, 4f, 56f, 80f, 42f, scale);
-                if (i == 7)
-                {
-                    UnityEngine.UI.Button open = tile.gameObject.AddComponent<UnityEngine.UI.Button>();
-                    open.targetGraphic = tile.GetComponent<Image>();
-                    open.onClick.AddListener(delegate { window.SetActive(true); window.transform.SetSiblingIndex(desktop.childCount - 2); });
-                }
+                Action activate = i == 7 ? (Action)delegate { window.SetActive(true); window.transform.SetSiblingIndex(desktop.childCount - 2); } : null;
+                DesktopUi.MakeSelectable(tile, activate);
             }
             RectTransform taskbar = DesktopUi.Panel(desktop, "Taskbar", new Color32(38, 50, 64, 209));
             taskbar.anchorMin = new Vector2(0f, 0f);
@@ -120,9 +116,9 @@ namespace ObenseuerOS
             Text title = DesktopUi.Label(bar, font, "Untitled - Notepad", Mathf.RoundToInt(14 * scale), Color.black, TextAnchor.MiddleLeft);
             DesktopUi.TopLeft((RectTransform)title.transform, 8f, 0f, Mathf.Max(0f, width - 150f), 30f, scale);
             RectTransform close = DesktopUi.Panel(bar, "Close", new Color32(199, 55, 47, 255));
-            DesktopUi.TopLeft(close, Mathf.Max(0f, width - 64f), 5f, 46f, 20f, scale);
-            Text closeText = DesktopUi.Label(close, font, "×", Mathf.RoundToInt(17 * scale), Color.white, TextAnchor.MiddleCenter);
-            DesktopUi.Stretch((RectTransform)closeText.transform);
+            DesktopUi.TopLeft(close, Mathf.Max(0f, width - 58f), 5f, 46f, 20f, scale);
+            Image closeIcon = Icon(close, "x", Color.white);
+            DesktopUi.TopLeft((RectTransform)closeIcon.transform, 16f, 3f, 14f, 14f, scale);
             UnityEngine.UI.Button closeButton = close.gameObject.AddComponent<UnityEngine.UI.Button>();
             closeButton.targetGraphic = close.GetComponent<Image>();
             closeButton.onClick.AddListener(delegate { frame.gameObject.SetActive(false); });
