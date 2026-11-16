@@ -16,6 +16,9 @@ internal sealed class ToolkitPrototype : MonoBehaviour
     private VisualElement selected;
     private NotepadStorage storage;
     private ToolkitExplorer explorer;
+    private Label clock;
+    private Label money;
+    private float nextStatusUpdate;
 
     internal static void Open(RectTransform host)
     {
@@ -116,8 +119,24 @@ internal sealed class ToolkitPrototype : MonoBehaviour
             icon.style.height = 26;
             icon.style.marginLeft = 14;
             icon.style.marginTop = 7;
+            if (name == "folder-filled") icon.RegisterCallback<ClickEvent>(delegate(ClickEvent e) { if (e.button == 0) explorer.Open(); });
             taskbar.Add(icon);
         }
+        VisualElement spacer = new VisualElement();
+        spacer.style.flexGrow = 1;
+        taskbar.Add(spacer);
+        money = new Label();
+        money.style.color = Color.white;
+        money.style.unityTextAlign = TextAnchor.MiddleRight;
+        money.style.fontSize = 11;
+        money.style.marginRight = 16;
+        taskbar.Add(money);
+        clock = new Label();
+        clock.style.color = Color.white;
+        clock.style.unityTextAlign = TextAnchor.MiddleRight;
+        clock.style.fontSize = 11;
+        clock.style.marginRight = 8;
+        taskbar.Add(clock);
         root.Add(taskbar);
         UnityEngine.UIElements.Button close = new UnityEngine.UIElements.Button(delegate { if (notepad.CanClose()) ComputerApps.Close(storage == null ? "os.toolkit-prototype" : "os.toolkit-os"); });
         close.text = "Close";
@@ -127,6 +146,21 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         close.style.width = 120;
         close.style.height = 40;
         root.Add(close);
+    }
+
+    private void Update()
+    {
+        if (clock == null || money == null || Time.unscaledTime < nextStatusUpdate) return;
+        nextStatusUpdate = Time.unscaledTime + 1f;
+        if (WorldClock.IsAvailable)
+        {
+            WorldTime now = WorldClock.Now;
+            clock.text = string.Format("{0:00}:{1:00}\n{2}.1.1843", now.Hour, now.Minute, now.CalendarDay);
+        }
+        else clock.text = "";
+        if (Cash.IsAvailable)
+            money.text = string.Format("{0:N0} OC\n{1:N2} RM", (int)Cash.Balance(MoneyCurrency.OC), Cash.Balance(MoneyCurrency.RM));
+        else money.text = "";
     }
 
     private Texture2D Texture(string name)
