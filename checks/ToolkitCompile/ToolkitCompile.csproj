@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="$(UnityManaged)/UnityEngine*.dll" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <Compile Include="..\..\src\Toolkit*.cs" />
+    <Compile Include="..\..\src\TerminalSession.cs" />
+    <Compile Include="..\..\src\ExplorerStorage.cs" />
+    <Compile Include="..\..\src\RecycleStorage.cs" />
+    <Compile Include="..\..\src\SolitaireGame.cs" />
+    <Compile Include="..\..\src\Ugui\MinesweeperGame.cs" />
+    <Compile Include="..\..\src\Ugui\MinesweeperInput.cs" />
+    <Compile Include="..\..\src\Ugui\NotepadStorage.cs" />
+    <Compile Include="$(FrameworkSource)/src/Ui/ToolkitUi.cs" />
+    <Compile Include="$(FrameworkSource)/src/Ui/ToolkitWindowBounds.cs" />
+  </ItemGroup>
+</Project>

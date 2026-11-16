@@ -39,3 +39,27 @@ jobs:
             reference-desktop.png
             reference-notepad.png
           if-no-files-found: error
+  toolkit-compile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: NomadsReach/Obenseuer-Modding-Framework
+          ref: 8321631c6f56eca602f6dde405effe90eabb5bf8
+          path: framework-source
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Get Unity managed references
+        shell: bash
+        run: |
+          curl --fail --location --retry 3 --output "$RUNNER_TEMP/unity.tar.xz" 'https://download.unity3d.com/download_unity/88f89d0d8b31/LinuxEditorTargetInstaller/UnitySetup-Linux-Server-Support-for-Editor-6000.0.77f1.tar.xz'
+          printf '%s  %s\n' '5713c03d9a5abd7686f95a43360ace06' "$RUNNER_TEMP/unity.tar.xz" | md5sum --check
+          tar -xf "$RUNNER_TEMP/unity.tar.xz" -C "$RUNNER_TEMP" --wildcards './Editor/Data/PlaybackEngines/LinuxStandaloneSupport/Variations/mono/Managed/UnityEngine*.dll'
+      - name: Compile Toolkit windows against Unity
+        run: dotnet build checks/ToolkitCompile/ToolkitCompile.csproj -c Release -p:UnityManaged="$RUNNER_TEMP/Editor/Data/PlaybackEngines/LinuxStandaloneSupport/Variations/mono/Managed" -p:FrameworkSource="$GITHUB_WORKSPACE/framework-source"
