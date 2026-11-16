@@ -200,24 +200,42 @@ namespace ObenseuerOS
             }
             if (values.Count == 0) { content.Add(Text("No price history yet.")); return; }
             double[] prices = values.ToArray(); MarketChartPoint[] points = MarketChart.Points(prices);
+            double low = prices[0], high = prices[0];
+            foreach (double value in prices) { low = Math.Min(low, value); high = Math.Max(high, value); }
             VisualElement graph = new VisualElement(); graph.style.width = 600; graph.style.height = 240;
-            graph.style.backgroundColor = (Color)new Color32(243, 246, 250, 255);
+            graph.style.backgroundColor = Color.white;
+            for (int i = 0; i <= 4; i++)
+            {
+                Label axis = Text((high - (high - low) * i / 4).ToString("N2", CultureInfo.CurrentCulture));
+                axis.pickingMode = PickingMode.Ignore; axis.style.position = UnityEngine.UIElements.Position.Absolute;
+                axis.style.left = 0; axis.style.top = 2 + 51 * i; axis.style.width = 50; axis.style.unityTextAlign = TextAnchor.MiddleRight;
+                graph.Add(axis);
+            }
+            string[] timeLabels = { (prices.Length - 1) + " h ago", ((prices.Length - 1) / 2) + " h ago", "Now" };
+            for (int i = 0; i < timeLabels.Length; i++)
+            {
+                Label axis = Text(timeLabels[i]); axis.pickingMode = PickingMode.Ignore; axis.style.position = UnityEngine.UIElements.Position.Absolute;
+                axis.style.left = 56 + 214 * i; axis.style.top = 220; axis.style.width = 100;
+                axis.style.unityTextAlign = i == 0 ? TextAnchor.MiddleLeft : i == 1 ? TextAnchor.MiddleCenter : TextAnchor.MiddleRight; graph.Add(axis);
+            }
             graph.generateVisualContent += delegate(MeshGenerationContext context)
             {
-                float width = Math.Max(1f, graph.contentRect.width - 20f), height = Math.Max(1f, graph.contentRect.height - 20f);
-                Painter2D painter = context.painter2D; painter.strokeColor = prices[prices.Length - 1] >= prices[0] ? (Color)new Color32(31, 135, 82, 255) : (Color)new Color32(190, 45, 45, 255); painter.lineWidth = 2f;
-                painter.BeginPath(); painter.MoveTo(new Vector2(10f + points[0].X * width, 10f + points[0].Y * height));
-                for (int i = 1; i < points.Length; i++) painter.LineTo(new Vector2(10f + points[i].X * width, 10f + points[i].Y * height));
+                const float left = 56f, width = 528f, top = 12f, height = 204f;
+                Painter2D painter = context.painter2D; painter.strokeColor = (Color)new Color32(207, 207, 207, 255); painter.lineWidth = 1f;
+                for (int i = 0; i <= 4; i++) { float y = top + height * i / 4; painter.BeginPath(); painter.MoveTo(new Vector2(left, y)); painter.LineTo(new Vector2(left + width, y)); painter.Stroke(); }
+                painter.strokeColor = prices[prices.Length - 1] >= prices[0] ? (Color)new Color32(31, 135, 82, 255) : (Color)new Color32(190, 45, 45, 255);
+                painter.BeginPath(); painter.MoveTo(new Vector2(left + points[0].X * width, top + points[0].Y * height));
+                for (int i = 1; i < points.Length; i++) painter.LineTo(new Vector2(left + points[i].X * width, top + points[i].Y * height));
                 painter.Stroke();
             };
-            Label hover = Text((prices.Length - 1) + " h ago                                      Now");
+            Label hover = Text("");
             graph.RegisterCallback<PointerMoveEvent>(delegate(PointerMoveEvent e)
             {
-                float width = Math.Max(1f, graph.contentRect.width - 20f);
-                float ratio = Mathf.Clamp01((e.localPosition.x - 10f) / width);
+                float ratio = Mathf.Clamp01((e.localPosition.x - 56f) / 528f);
                 int at = Mathf.Clamp(Mathf.RoundToInt(ratio * (prices.Length - 1)), 0, prices.Length - 1);
                 hover.text = prices[at].ToString("N2", CultureInfo.CurrentCulture) + " " + Currency + ", " + (at == prices.Length - 1 ? "now" : (prices.Length - 1 - at) + " h ago");
             });
+            graph.RegisterCallback<PointerLeaveEvent>(delegate { hover.text = ""; });
             content.Add(graph); content.Add(hover);
         }
 
