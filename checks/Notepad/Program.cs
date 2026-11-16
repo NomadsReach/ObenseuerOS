@@ -18,7 +18,8 @@ internal static class Program
 
     private static void Main()
     {
-        var storage = OsNotepadStorage.Instance;
+        OsNotepadStorage.Attach();
+        var storage = new OsNotepadStorage();
         Check(storage.Valid("/docs/notes.txt") && !storage.Valid("/other/notes.txt") && !storage.Valid("/docs/no extension"), "document names");
         storage.Write("/docs/notes.txt", "kept");
         Check(storage.Read("/docs/notes.txt") == "kept" && storage.List().Length == 1, "save and list");
@@ -33,6 +34,41 @@ internal static class Program
         OsFiles.Full = true;
         Refused(() => storage.Write("/docs/notes.txt", "lost"), "full disk");
         Check(storage.Read("/docs/notes.txt") == "kept", "failed saves preserve content");
+        OsFiles.Full = false;
+        ObenseuerCore.SaveData.Busy = true;
+        Refused(() => storage.Read("/docs/notes.txt"), "read during load");
+        Refused(() => storage.Write("/docs/notes.txt", "lost"), "write during load");
+        ObenseuerCore.SaveData.Busy = false;
+        ObenseuerCore.Events.RaiseLoad();
+        Refused(() => storage.List(), "stale list");
+        Refused(() => storage.Read("/docs/notes.txt"), "stale read");
+        Refused(() => storage.Write("/docs/notes.txt", "lost"), "stale write");
+        Refused(() => storage.Opened("/docs/notes.txt"), "stale open event");
+        storage = new OsNotepadStorage();
+        Check(storage.Read("/docs/notes.txt") == "kept", "new session keeps disk intact");
+        ObenseuerCore.Events.RaiseNewGame();
+        Refused(() => storage.Write("/docs/notes.txt", "lost"), "stale after new game");
+        storage = new OsNotepadStorage();
+        ObenseuerCore.Events.RaiseScene("Main Menu");
+        Refused(() => storage.Read("/docs/notes.txt"), "stale after main menu");
+    }
+}
+
+namespace ObenseuerCore
+{
+    internal static class SaveData
+    {
+        internal static bool Busy;
+    }
+
+    internal static class Events
+    {
+        internal static event Action<string> AfterLoad;
+        internal static event Action NewGameStarted;
+        internal static event Action<string> SceneLoaded;
+        internal static void RaiseLoad() { if (AfterLoad != null) AfterLoad("save"); }
+        internal static void RaiseNewGame() { if (NewGameStarted != null) NewGameStarted(); }
+        internal static void RaiseScene(string scene) { if (SceneLoaded != null) SceneLoaded(scene); }
     }
 }
 
