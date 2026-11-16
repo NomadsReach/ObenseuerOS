@@ -53,8 +53,8 @@ namespace ObenseuerOS
             {
                 if (e.keyCode == KeyCode.Escape) { e.StopPropagation(); return; }
                 if (e.keyCode != KeyCode.Return && e.keyCode != KeyCode.KeypadEnter) return;
-                Send(); e.StopPropagation(); e.PreventDefault();
-            });
+                Send(); e.StopPropagation();
+            }, TrickleDown.TrickleDown);
             composer.Add(input);
             UnityEngine.UIElements.Button send = new UnityEngine.UIElements.Button(Send); send.text = "Send"; composer.Add(send);
             main.Add(composer); body.Add(main); Window.Add(body);
@@ -100,7 +100,7 @@ namespace ObenseuerOS
                     Label row = new Label((string)line["from"] + ": " + (string)line["text"]);
                     row.style.color = (bool)line["own"] ? (Color)new Color32(33, 84, 151, 255) : Color.black;
                     row.style.whiteSpace = WhiteSpace.Normal; messages.Add(row);
-                    messages.schedule.Execute(delegate { messages.ScrollTo(row); });
+                    messages.schedule.Execute(delegate() { messages.ScrollTo(row); });
                 }
                 next = (int)result["next"];
                 status.text = "";

@@ -37,7 +37,7 @@ namespace ObenseuerOS
             VisualElement line = new VisualElement(); line.style.flexDirection = FlexDirection.Row;
             prompt = new Label(); prompt.style.color = Color.white; line.Add(prompt);
             input = new TextField(); input.style.flexGrow = 1; input.style.color = Color.white; input.style.backgroundColor = Color.black;
-            input.RegisterCallback<KeyDownEvent>(KeyDown);
+            input.RegisterCallback<KeyDownEvent>(KeyDown, TrickleDown.TrickleDown);
             line.Add(input); body.Add(line); Window.Add(body);
             Add(TerminalSession.Banner);
         }
@@ -55,7 +55,7 @@ namespace ObenseuerOS
             if (e.keyCode == KeyCode.UpArrow || e.keyCode == KeyCode.DownArrow)
             {
                 input.value = session.Recall(e.keyCode == KeyCode.UpArrow ? -1 : 1);
-                e.StopPropagation(); e.PreventDefault(); return;
+                e.StopPropagation(); return;
             }
             if (e.keyCode != KeyCode.Return && e.keyCode != KeyCode.KeypadEnter) return;
             string raw = input.value ?? "";
@@ -69,13 +69,13 @@ namespace ObenseuerOS
             }
             catch (Exception ex) { Add(ex.Message); }
             input.value = "";
-            e.StopPropagation(); e.PreventDefault();
+            e.StopPropagation();
         }
 
         private void Add(string text)
         {
             Label line = new Label(text); line.style.color = Color.white; line.style.whiteSpace = WhiteSpace.Normal;
-            output.Add(line); output.schedule.Execute(delegate { output.ScrollTo(line); });
+            output.Add(line); output.schedule.Execute(delegate() { output.ScrollTo(line); });
         }
     }
 }
