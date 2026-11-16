@@ -30,6 +30,7 @@ namespace ObenseuerOS
             int rows = Mathf.Max(1, Mathf.FloorToInt((host.rect.height / scale - 56f) / 104f));
             GameObject window = MakeWindow(desktop, font, scale, rows);
             window.SetActive(false);
+            MinesweeperWindow minesweeper = MinesweeperWindow.Create(desktop, font, scale, (Names.Length + rows - 1) / rows);
             for (int i = 0; i < Names.Length; i++)
             {
                 RectTransform tile = DesktopUi.Panel(desktop, Names[i], Color.clear);
@@ -38,7 +39,9 @@ namespace ObenseuerOS
                 DesktopUi.TopLeft((RectTransform)icon.transform, 20f, 4f, 48f, 48f, scale);
                 Text title = DesktopUi.Label(tile, font, Names[i], Mathf.RoundToInt(12 * scale), Color.white, TextAnchor.UpperCenter);
                 DesktopUi.TopLeft((RectTransform)title.transform, 4f, 56f, 80f, 42f, scale);
-                Action activate = i == 7 ? (Action)delegate { window.SetActive(true); window.transform.SetSiblingIndex(desktop.childCount - 2); } : null;
+                Action activate = null;
+                if (i == 7) activate = delegate { window.SetActive(true); window.transform.SetSiblingIndex(desktop.childCount - 2); };
+                else if (i == 12) activate = minesweeper.Open;
                 DesktopUi.MakeSelectable(tile, activate);
             }
             RectTransform taskbar = DesktopUi.Panel(desktop, "Taskbar", new Color32(38, 50, 64, 209));
@@ -70,7 +73,7 @@ namespace ObenseuerOS
             status.Money = money;
         }
 
-        private static Image Icon(Transform parent, string name, Color color)
+        internal static Image Icon(Transform parent, string name, Color color)
         {
             GameObject item = new GameObject(name + " icon", typeof(RectTransform), typeof(Image));
             item.transform.SetParent(parent, false);
