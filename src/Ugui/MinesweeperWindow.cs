@@ -52,8 +52,10 @@ namespace ObenseuerOS
 
         internal void Open()
         {
+            bool alreadyOpen = gameObject.activeSelf;
             gameObject.SetActive(true);
             transform.SetSiblingIndex(transform.parent.childCount - 2);
+            if (alreadyOpen) return;
             level = Mathf.Clamp(PlayerPrefs.GetInt(Preference, 0), 0, 2);
             NewGame();
         }
