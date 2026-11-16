@@ -85,7 +85,7 @@ namespace ObenseuerOS
             Cash.MoneyChanged += OsView.OnMoneyChanged;
             if (!ComputerApps.Register(Os.ModId, Os.AppId, DeskTitle, null, host => OsView.Show())) Log.Warn("OS not added to the computer");
             if (Config.Bind("Debug", "UguiPrototype", false, "Show the experimental uGUI desktop prototype in the computer app list.").Value &&
-                !ComputerApps.Register(Os.ModId, "os.ugui-prototype", "Viewports 8 uGUI prototype", null, OsUguiPrototype.Build))
+                !ComputerApps.Register(Os.ModId, "os.ugui-prototype", "Viewports 8 uGUI prototype", null, host => OsUguiPrototype.Build(host, OsNotepadStorage.Instance)))
                 Log.Warn("uGUI prototype not added to the computer");
         }
 

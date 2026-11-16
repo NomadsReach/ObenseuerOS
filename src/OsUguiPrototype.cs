@@ -19,6 +19,11 @@ namespace ObenseuerOS
 
         internal static void Build(RectTransform host)
         {
+            Build(host, null);
+        }
+
+        internal static void Build(RectTransform host, NotepadStorage storage)
+        {
             Canvas.ForceUpdateCanvases();
             float scale = Mathf.Min(host.rect.width / 1920f, host.rect.height / 1080f);
             if (scale <= 0f) scale = 1f;
@@ -28,7 +33,7 @@ namespace ObenseuerOS
             DesktopUi.Stretch(desktop);
             Canvas.ForceUpdateCanvases();
             int rows = Mathf.Max(1, Mathf.FloorToInt((host.rect.height / scale - 56f) / 104f));
-            GameObject window = MakeWindow(desktop, font, scale, rows);
+            GameObject window = MakeWindow(desktop, font, scale, rows, storage);
             window.SetActive(false);
             MinesweeperWindow minesweeper = MinesweeperWindow.Create(desktop, font, scale, (Names.Length + rows - 1) / rows);
             for (int i = 0; i < Names.Length; i++)
@@ -104,7 +109,7 @@ namespace ObenseuerOS
             return image;
         }
 
-        private static GameObject MakeWindow(RectTransform parent, Font font, float scale, int rows)
+        private static GameObject MakeWindow(RectTransform parent, Font font, float scale, int rows, NotepadStorage storage)
         {
             RectTransform frame = DesktopUi.Panel(parent, "Notepad window", new Color32(190, 205, 222, 217));
             int columns = (Names.Length + rows - 1) / rows;
@@ -124,14 +129,23 @@ namespace ObenseuerOS
             DesktopUi.TopLeft((RectTransform)closeIcon.transform, 16f, 3f, 14f, 14f, scale);
             UnityEngine.UI.Button closeButton = close.gameObject.AddComponent<UnityEngine.UI.Button>();
             closeButton.targetGraphic = close.GetComponent<Image>();
-            closeButton.onClick.AddListener(delegate { frame.gameObject.SetActive(false); });
             RectTransform content = DesktopUi.Panel(frame, "Content", Color.white);
             content.anchorMin = Vector2.zero;
             content.anchorMax = Vector2.one;
             content.offsetMin = new Vector2(6f * scale, 6f * scale);
             content.offsetMax = new Vector2(-6f * scale, -36f * scale);
-            Text menu = DesktopUi.Label(content, font, "File    Edit", Mathf.RoundToInt(14 * scale), Color.black, TextAnchor.MiddleLeft);
-            DesktopUi.TopLeft((RectTransform)menu.transform, 8f, 0f, 300f, 28f, scale);
+            RectTransform fileMenu = DesktopUi.Panel(content, "File", Color.clear);
+            DesktopUi.TopLeft(fileMenu, 8f, 0f, 36f, 28f, scale);
+            Text fileLabel = DesktopUi.Label(fileMenu, font, "File", Mathf.RoundToInt(14 * scale), Color.black, TextAnchor.MiddleLeft);
+            DesktopUi.Stretch((RectTransform)fileLabel.transform);
+            UnityEngine.UI.Button fileButton = fileMenu.gameObject.AddComponent<UnityEngine.UI.Button>();
+            fileButton.targetGraphic = fileMenu.GetComponent<Image>();
+            RectTransform editMenu = DesktopUi.Panel(content, "Edit", Color.clear);
+            DesktopUi.TopLeft(editMenu, 45f, 0f, 36f, 28f, scale);
+            Text editLabel = DesktopUi.Label(editMenu, font, "Edit", Mathf.RoundToInt(14 * scale), Color.black, TextAnchor.MiddleLeft);
+            DesktopUi.Stretch((RectTransform)editLabel.transform);
+            UnityEngine.UI.Button editButton = editMenu.gameObject.AddComponent<UnityEngine.UI.Button>();
+            editButton.targetGraphic = editMenu.GetComponent<Image>();
             RectTransform input = DesktopUi.Panel(content, "Notepad text", Color.white);
             input.anchorMin = Vector2.zero;
             input.anchorMax = Vector2.one;
@@ -151,13 +165,17 @@ namespace ObenseuerOS
             field.textViewport = input;
             field.lineType = TMP_InputField.LineType.MultiLineNewline;
             field.targetGraphic = input.GetComponent<Image>();
-            Text status = DesktopUi.Label(content, font, "Prototype: text is not saved", Mathf.RoundToInt(11 * scale), new Color32(100, 100, 100, 255), TextAnchor.MiddleLeft);
+            Text status = DesktopUi.Label(content, font, "", Mathf.RoundToInt(11 * scale), new Color32(100, 100, 100, 255), TextAnchor.MiddleLeft);
             RectTransform statusRect = (RectTransform)status.transform;
             statusRect.anchorMin = new Vector2(0f, 0f);
             statusRect.anchorMax = new Vector2(1f, 0f);
             statusRect.pivot = new Vector2(0f, 0f);
             statusRect.offsetMin = new Vector2(8f * scale, 0f);
             statusRect.offsetMax = new Vector2(-8f * scale, 24f * scale);
+            NotepadWindow notepad = new NotepadWindow(frame.gameObject, content, field, title, status, font, scale, storage);
+            closeButton.onClick.AddListener(notepad.Close);
+            fileButton.onClick.AddListener(notepad.FileMenu);
+            editButton.onClick.AddListener(notepad.EditMenu);
             return frame.gameObject;
         }
 

@@ -2,7 +2,7 @@
 
 ## `src/OsUguiPrototype.cs:OsUguiPrototype.Build`
 
-`src/OsUguiPrototype.cs:OsUguiPrototype.Build` draws the desktop and opens the native Notepad prototype and Minesweeper window through the modding framework's `DesktopUi` API. It is not a replacement for the OS: Notepad text is not saved and the remaining desktop apps are not yet ported. Font rendering, shadows, blur, input behavior, scaling, and final appearance need a real Unity comparison. This prototype requires the framework branch that introduces `DesktopUi`.
+`src/OsUguiPrototype.cs:OsUguiPrototype.Build` draws the desktop and opens the native Notepad prototype and Minesweeper window through the modding framework's `DesktopUi` API. It is not a replacement for the OS: the remaining desktop apps are not yet ported. Font rendering, shadows, blur, input behavior, scaling, and final appearance need a real Unity comparison. This prototype requires the framework branch that introduces `DesktopUi`.
 
 ## `src/OsPlugin.cs:OsPlugin.Awake`
 
@@ -20,3 +20,4 @@
 - `src/OsUguiPrototype.cs:OsUguiPrototype.MakeWindow` uses the original close icon and aligns the close button with the right edge of the window title bar.
 - `src/Ugui/MinesweeperGame.cs:MinesweeperGame` ports the existing Minesweeper board rules, including the safe first reveal, flags, question marks, flood reveal, chording, and win/loss state. Randomness is injected so CI can exercise deterministic boards.
 - `src/Ugui/MinesweeperWindow.cs:MinesweeperWindow` presents the native board, difficulty controls, timer, and pointer interactions. Difficulty is stored separately from game saves as a Unity preference.
+- `src/Ugui/NotepadWindow.cs:NotepadWindow` offers New, Open, Save, Save As, Select All, and word wrap, and asks for confirmation before discarding changes or overwriting a document. `src/OsNotepadStorage.cs:OsNotepadStorage` connects it to the OS's per-save disk and write guard. The standalone F9 prototype does not own that disk and reports that saving is unavailable. Closing the whole prototype or changing scenes can still discard unsaved text; those host-level close paths need integration before migration.
