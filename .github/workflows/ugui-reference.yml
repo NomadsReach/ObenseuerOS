@@ -1,4 +1,4 @@
-name: uGUI prototype reference
+name: OS checks and reference
 on:
   push:
     branches: [work/ugui-desktop-prototype]
@@ -7,6 +7,18 @@ on:
 permissions:
   contents: read
 jobs:
+  rules:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - run: dotnet run --project checks/Minesweeper/Minesweeper.csproj -c Release
+      - run: dotnet run --project checks/Notepad/Notepad.csproj -c Release
   reference:
     runs-on: ubuntu-latest
     timeout-minutes: 10
