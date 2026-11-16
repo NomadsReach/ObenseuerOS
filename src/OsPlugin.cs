@@ -87,6 +87,9 @@ namespace ObenseuerOS
             if (Config.Bind("Debug", "UguiPrototype", false, "Show the experimental uGUI desktop prototype in the computer app list.").Value &&
                 !ComputerApps.Register(Os.ModId, "os.ugui-prototype", "Viewports 8 uGUI prototype", null, host => OsUguiPrototype.Build(host, OsNotepadStorage.Instance)))
                 Log.Warn("uGUI prototype not added to the computer");
+            if (Config.Bind("Debug", "ToolkitPrototype", false, "Show the experimental UI Toolkit desktop prototype in the computer app list.").Value &&
+                !ComputerApps.Register(Os.ModId, "os.toolkit-os", "Viewports 8 UI Toolkit prototype", null, host => ToolkitPrototype.Open(host, OsNotepadStorage.Instance)))
+                Log.Warn("UI Toolkit prototype not added to the computer");
         }
 
         public static bool OpenLaptop()
