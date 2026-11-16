@@ -12,7 +12,7 @@ namespace ObenseuerOS
     internal sealed class ToolkitBank
     {
         internal readonly VisualElement Window;
-        private readonly BankClient client;
+        private readonly TransactionClient client;
         private readonly Label notice;
         private readonly Label warning;
         private readonly UnityEngine.UIElements.Button acknowledge;
@@ -24,7 +24,7 @@ namespace ObenseuerOS
         private long acknowledgedVersion = -1;
         private long observedVersion = -1;
 
-        internal ToolkitBank(BankClient client)
+        internal ToolkitBank(TransactionClient client)
         {
             this.client = client;
             Window = new VisualElement(); Window.style.position = UnityEngine.UIElements.Position.Absolute;

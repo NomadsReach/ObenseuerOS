@@ -67,7 +67,8 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         settings = new ToolkitSettings(wallpaper, osStorage != null);
         ToolkitChat chat = new ToolkitChat(osStorage != null, osStorage == null ? (Action)null : osStorage.CheckSession);
         ToolkitMail mail = new ToolkitMail(new MailClient(osStorage == null ? (Func<Newtonsoft.Json.Linq.JObject, Newtonsoft.Json.Linq.JObject>)null : OsBridge.Reply, osStorage == null ? (Action)null : osStorage.CheckSession), osStorage == null ? new MailDraft() : MailDrafts.ForSession(osStorage.SessionId));
-        ToolkitBank bank = new ToolkitBank(osStorage == null ? new BankClient(null, null) : BankClients.ForSession(osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession));
+        ToolkitBank bank = new ToolkitBank(osStorage == null ? new TransactionClient("bank", null, null) : TransactionClients.ForSession("bank", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession));
+        ToolkitExchange exchange = new ToolkitExchange(osStorage == null ? new TransactionClient("exchange", null, null) : TransactionClients.ForSession("exchange", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession));
         news = new ToolkitNews(new NewsClient(osStorage == null ? (Func<Newtonsoft.Json.Linq.JObject, Newtonsoft.Json.Linq.JObject>)null : OsBridge.Reply, osStorage == null ? (Action)null : osStorage.CheckSession));
         ToolkitTerminal terminal = null;
         Func<int, bool> launch = delegate(int index)
@@ -78,6 +79,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
                 case 2: explorer.Open(); return true;
                 case 3: recycle.Open(); return true;
                 case 4: settings.Open(); return true;
+                case 5: exchange.Open(); return true;
                 case 6: terminal.Open(); return true;
                 case 7: notepad.Window.style.display = DisplayStyle.Flex; notepad.Window.BringToFront(); return true;
                 case 8: bank.Open(); return true;
@@ -153,6 +155,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         windows.Add(settings.Window);
         windows.Add(mail.Window);
         windows.Add(bank.Window);
+        windows.Add(exchange.Window);
         windows.Add(news.Window);
         ToolkitStart start = new ToolkitStart(Names, Icons, Texture, launch, delegate { if (canClose()) ComputerApps.Close(storage == null ? "os.toolkit-prototype" : "os.toolkit-os"); });
         VisualElement taskbar = new VisualElement();

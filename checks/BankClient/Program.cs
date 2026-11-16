@@ -9,7 +9,7 @@ internal static class Program
     {
         string first = null, second = null, third = null;
         int calls = 0; bool busy = false;
-        BankClient client = new BankClient(request =>
+        TransactionClient client = new TransactionClient("bank", request =>
         {
             calls++; string cid = (string)request["args"]["cid"];
             if (calls == 1) { first = cid; return null; }
@@ -28,9 +28,10 @@ internal static class Program
         client.Write("bank.payInvoice", args); Check(third != first);
         busy = true;
         try { client.Write("bank.payInvoice", args); throw new Exception("guard ignored"); } catch (InvalidOperationException) { Check(calls == 3); }
-        BankClient shared = BankClients.ForSession(7, request => null, null);
-        Check(object.ReferenceEquals(shared, BankClients.ForSession(7, request => null, null)));
-        Check(!object.ReferenceEquals(shared, BankClients.ForSession(8, request => null, null)));
+        TransactionClient shared = TransactionClients.ForSession("bank", 7, request => null, null);
+        Check(object.ReferenceEquals(shared, TransactionClients.ForSession("bank", 7, request => null, null)));
+        Check(!object.ReferenceEquals(shared, TransactionClients.ForSession("exchange", 7, request => null, null)));
+        Check(!object.ReferenceEquals(shared, TransactionClients.ForSession("bank", 8, request => null, null)));
         try { shared.Write("bank.payInvoice", args); } catch (InvalidOperationException) { }
         long acknowledgedVersion = shared.PendingVersion;
         try { shared.Write("bank.payInvoice", other); } catch (InvalidOperationException) { }
