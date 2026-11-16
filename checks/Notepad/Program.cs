@@ -73,10 +73,12 @@ internal static class Program
         storage.DeleteFile(created);
         Check(storage.Read("/docs/new-1.txt") == "existing" && storage.ListBin().Length == 1, "delete moves selected file to bin");
         ObenseuerCore.SaveData.Busy = true;
+        Refused(() => storage.CheckSession(), "chat session during load");
         Refused(() => storage.Read("/docs/notes.txt"), "read during load");
         Refused(() => storage.Write("/docs/notes.txt", "lost"), "write during load");
         ObenseuerCore.SaveData.Busy = false;
         ObenseuerCore.Events.RaiseLoad();
+        Refused(() => storage.CheckSession(), "stale chat session");
         Refused(() => storage.List(), "stale list");
         Refused(() => storage.Read("/docs/notes.txt"), "stale read");
         Refused(() => storage.Write("/docs/notes.txt", "lost"), "stale write");

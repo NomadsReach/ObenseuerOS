@@ -53,6 +53,8 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         ToolkitRecycle recycle = null;
         explorer = new ToolkitExplorer(storage as ExplorerStorage, notepad.OpenPath, delegate { if (recycle != null) recycle.RefreshIfOpen(); }, delegate { if (recycle != null) recycle.Open(); });
         recycle = new ToolkitRecycle(storage as RecycleStorage, delegate { explorer.RefreshIfOpen(); });
+        OsNotepadStorage osStorage = storage as OsNotepadStorage;
+        ToolkitChat chat = new ToolkitChat(osStorage != null, osStorage == null ? (Action)null : osStorage.CheckSession);
         ToolkitTerminal terminal = null;
         terminal = new ToolkitTerminal(storage, storage as ExplorerStorage, OsView.UserName,
             delegate { if (!WorldClock.IsAvailable) return "The game clock is not ready."; WorldTime now = WorldClock.Now; return string.Format("The current date is: {0}.1.1843, {1}", now.CalendarDay, now.Weekday); },
@@ -66,6 +68,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
                 if (string.Equals(app, "minesweeper", StringComparison.OrdinalIgnoreCase)) { minesweeper.Open(); return true; }
                 if (string.Equals(app, "solitaire", StringComparison.OrdinalIgnoreCase)) { solitaire.Open(); return true; }
                 if (string.Equals(app, "terminal", StringComparison.OrdinalIgnoreCase) || string.Equals(app, "Command Prompt", StringComparison.OrdinalIgnoreCase)) { terminal.Open(); return true; }
+                if (string.Equals(app, "chat", StringComparison.OrdinalIgnoreCase) || string.Equals(app, "TOR-Turnip Chat v0.3.9", StringComparison.OrdinalIgnoreCase)) { chat.Open(); return true; }
                 return false;
             },
             delegate(string path) { if (path == null) { notepad.Window.style.display = DisplayStyle.Flex; notepad.Window.BringToFront(); } else notepad.OpenPath(path); if (explorer != null) explorer.RefreshIfOpen(); });
@@ -104,6 +107,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
                 else if (index == 2 && e.clickCount >= 2) explorer.Open();
                 else if (index == 3 && e.clickCount >= 2) recycle.Open();
                 else if (index == 6 && e.clickCount >= 2) terminal.Open();
+                else if (index == 10 && e.clickCount >= 2) chat.Open();
                 else if (index == 12 && e.clickCount >= 2) minesweeper.Open();
                 else if (index == 13 && e.clickCount >= 2) solitaire.Open();
             });
@@ -123,6 +127,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         windows.Add(recycle.Window);
         windows.Add(explorer.Window);
         windows.Add(terminal.Window);
+        windows.Add(chat.Window);
         VisualElement taskbar = new VisualElement();
         taskbar.style.height = 40;
         taskbar.style.flexShrink = 0;

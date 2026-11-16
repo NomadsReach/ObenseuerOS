@@ -16,9 +16,9 @@ namespace ObenseuerOS
             Events.SceneLoaded += delegate(string scene) { if (scene == "Main Menu") generation++; };
         }
 
-        private void CheckSession()
+        internal void CheckSession()
         {
-            if (session != generation) throw new InvalidOperationException("the game session changed; reopen Notepad");
+            if (session != generation) throw new InvalidOperationException("the game session changed; reopen the OS");
             if (SaveData.Busy) throw new InvalidOperationException("the game is saving or loading");
         }
 

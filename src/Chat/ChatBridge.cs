@@ -17,7 +17,7 @@ namespace ObenseuerOS
             Os.Handle(AppId, "chat.send", Send);
         }
 
-        private static string Since(string args)
+        internal static string Since(string args)
         {
             JObject a = OsBridge.Args(args);
             ChatRoomDef def = RoomArg(a);
@@ -42,7 +42,7 @@ namespace ObenseuerOS
             return JsonConvert.SerializeObject(new { room = room.Id, next = room.Next, lines = lines, rooms = Rooms() });
         }
 
-        private static string Send(string args)
+        internal static string Send(string args)
         {
             JObject a = OsBridge.Args(args);
             ChatRoomDef def = RoomArg(a);
