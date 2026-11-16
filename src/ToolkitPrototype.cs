@@ -44,6 +44,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         desktop.style.paddingTop = 8;
         root.Add(desktop);
         ToolkitNotepad notepad = new ToolkitNotepad(storage);
+        ComputerApps.SetCloseGuard(transform.parent, notepad.CanClose);
         VisualElement window = notepad.Window;
         for (int i = 0; i < Names.Length; i++)
         {
