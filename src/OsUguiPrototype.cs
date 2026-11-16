@@ -19,12 +19,14 @@ namespace ObenseuerOS
 
         internal static void Build(RectTransform host)
         {
+            Canvas.ForceUpdateCanvases();
             float scale = Mathf.Min(host.rect.width / 1920f, host.rect.height / 1080f);
             if (scale <= 0f) scale = 1f;
             scale = Mathf.Clamp(scale, 0.75f, 2f);
             if (font == null) font = Font.CreateDynamicFontFromOSFont(new[] { "Segoe UI", "Tahoma", "Arial" }, 14);
             RectTransform desktop = DesktopUi.Panel(host, "Desktop", new Color32(45, 95, 139, 255));
             DesktopUi.Stretch(desktop);
+            Canvas.ForceUpdateCanvases();
             int rows = Mathf.Max(1, Mathf.FloorToInt((host.rect.height / scale - 56f) / 104f));
             GameObject window = MakeWindow(desktop, font, scale, rows);
             window.SetActive(false);

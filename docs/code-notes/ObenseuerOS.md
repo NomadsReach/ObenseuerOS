@@ -15,3 +15,4 @@
 - `src/OsUguiPrototype.cs:OsUguiPrototype.Icon` loads rasterized copies of the OS icon artwork embedded by CI. The sprites are cached for the session; a missing icon leaves its tile blank.
 - `src/OsUguiPrototype.cs:OsUguiPrototype.Build` uses the OS desktop icon sizes, ordering, colors, and dark taskbar as an initial visual match. It remains an incomplete prototype, not an implementation of the other apps.
 - `src/OsUguiPrototype.cs:PrototypeStatus.Update` reads the framework's game clock and wallet for the prototype taskbar while it is visible.
+- `src/OsUguiPrototype.cs:OsUguiPrototype.Build` resolves canvas layout before reading host and desktop sizes; the game trace showed an unsized host caused a one-pixel Notepad window and a single row of icons.
