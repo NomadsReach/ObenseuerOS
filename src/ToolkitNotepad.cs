@@ -8,6 +8,7 @@ namespace ObenseuerOS
     internal sealed class ToolkitNotepad
     {
         private readonly NotepadStorage storage;
+        private readonly Action filesChanged;
         private readonly TextField text;
         private readonly Label title;
         private readonly Label status;
@@ -19,9 +20,10 @@ namespace ObenseuerOS
 
         internal readonly VisualElement Window;
 
-        internal ToolkitNotepad(NotepadStorage storage)
+        internal ToolkitNotepad(NotepadStorage storage, Action filesChanged)
         {
             this.storage = storage;
+            this.filesChanged = filesChanged;
             Window = new VisualElement();
             Window.style.position = UnityEngine.UIElements.Position.Absolute;
             Window.style.left = 320;
@@ -82,6 +84,13 @@ namespace ObenseuerOS
         }
 
         internal bool CanClose() { return Discard("Close"); }
+
+        internal void OpenPath(string file)
+        {
+            Window.style.display = DisplayStyle.Flex;
+            Window.BringToFront();
+            if (Discard("Open")) Load(file);
+        }
 
         private void Close()
         {
@@ -275,7 +284,12 @@ namespace ObenseuerOS
                 status.text = "Saved to this computer";
                 SetTitle();
             }
-            catch (Exception e) { status.text = "Not saved: " + e.Message + ". Nothing was written."; }
+            catch (Exception e) { status.text = "Not saved: " + e.Message + ". Nothing was written."; return; }
+            if (filesChanged != null)
+            {
+                try { filesChanged(); }
+                catch (Exception) { }
+            }
         }
     }
 }

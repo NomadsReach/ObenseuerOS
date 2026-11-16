@@ -4,7 +4,7 @@ using ObenseuerCore;
 
 namespace ObenseuerOS
 {
-    internal sealed class OsNotepadStorage : NotepadStorage, RecycleStorage
+    internal sealed class OsNotepadStorage : NotepadStorage, RecycleStorage, ExplorerStorage
     {
         private static int generation;
         private readonly int session = generation;
@@ -83,6 +83,49 @@ namespace ObenseuerOS
             CheckSession();
             OsBridge.CheckWritable();
             OsFiles.EmptyBin();
+        }
+
+        public string[] Folders()
+        {
+            CheckSession();
+            return OsFiles.ModFolders();
+        }
+
+        public ExplorerEntry[] ListFiles(string folder)
+        {
+            CheckSession();
+            if (!OsFiles.ValidDir(folder) || folder == "/vault" || folder == "/recycle")
+                throw new InvalidOperationException("invalid folder");
+            string[] paths = OsFiles.List(folder);
+            ExplorerEntry[] result = new ExplorerEntry[paths.Length];
+            for (int i = 0; i < paths.Length; i++)
+                result[i] = new ExplorerEntry(paths[i], Encoding.UTF8.GetByteCount(OsFiles.Read(paths[i])));
+            return result;
+        }
+
+        public string CreateDocument()
+        {
+            CheckSession();
+            OsBridge.CheckWritable();
+            for (int i = 1; i <= OsFiles.MaxFiles + 1; i++)
+            {
+                string path = "/docs/new-" + i + ".txt";
+                if (OsFiles.Read(path) != null) continue;
+                if (!OsFiles.Write(path, "")) throw new InvalidOperationException("the disk is full or has too many files");
+                return path;
+            }
+            throw new InvalidOperationException("no free file name");
+        }
+
+        public void DeleteFile(string path)
+        {
+            CheckSession();
+            OsBridge.CheckWritable();
+            if (!OsFiles.ValidPath(path)) throw new InvalidOperationException("invalid file path");
+            string folder = path.Substring(0, path.LastIndexOf('/'));
+            if (folder != "/docs" && !folder.StartsWith("/mod-", StringComparison.Ordinal))
+                throw new InvalidOperationException("this folder is read only");
+            if (!OsFiles.Delete(path, OsBridge.Stamp())) throw new InvalidOperationException("no such file");
         }
     }
 }

@@ -417,7 +417,7 @@ namespace ObenseuerOS
             return "true";
         }
 
-        private static string Stamp()
+        internal static string Stamp()
         {
             if (!WorldClock.IsAvailable) return "";
             WorldTime now = WorldClock.Now;

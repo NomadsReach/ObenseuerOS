@@ -15,6 +15,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
     private readonly List<Texture2D> textures = new List<Texture2D>();
     private VisualElement selected;
     private NotepadStorage storage;
+    private ToolkitExplorer explorer;
 
     internal static void Open(RectTransform host)
     {
@@ -43,10 +44,12 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         desktop.style.paddingLeft = 8;
         desktop.style.paddingTop = 8;
         root.Add(desktop);
-        ToolkitNotepad notepad = new ToolkitNotepad(storage);
+        ToolkitNotepad notepad = new ToolkitNotepad(storage, delegate { if (explorer != null) explorer.RefreshIfOpen(); });
         ToolkitMinesweeper minesweeper = new ToolkitMinesweeper();
         ToolkitSolitaire solitaire = new ToolkitSolitaire();
-        ToolkitRecycle recycle = new ToolkitRecycle(storage as RecycleStorage);
+        ToolkitRecycle recycle = null;
+        explorer = new ToolkitExplorer(storage as ExplorerStorage, notepad.OpenPath, delegate { if (recycle != null) recycle.RefreshIfOpen(); }, delegate { if (recycle != null) recycle.Open(); });
+        recycle = new ToolkitRecycle(storage as RecycleStorage, delegate { explorer.RefreshIfOpen(); });
         ComputerApps.SetCloseGuard(transform.parent, notepad.CanClose);
         VisualElement window = notepad.Window;
         for (int i = 0; i < Names.Length; i++)
@@ -79,6 +82,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
                 selected = tile;
                 selected.style.backgroundColor = (Color)new Color32(120, 170, 230, 77);
                 if (index == 7 && e.clickCount >= 2) { window.style.display = DisplayStyle.Flex; window.BringToFront(); }
+                else if (index == 2 && e.clickCount >= 2) explorer.Open();
                 else if (index == 3 && e.clickCount >= 2) recycle.Open();
                 else if (index == 12 && e.clickCount >= 2) minesweeper.Open();
                 else if (index == 13 && e.clickCount >= 2) solitaire.Open();
@@ -97,6 +101,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         windows.Add(minesweeper.Window);
         windows.Add(solitaire.Window);
         windows.Add(recycle.Window);
+        windows.Add(explorer.Window);
         VisualElement taskbar = new VisualElement();
         taskbar.style.height = 40;
         taskbar.style.flexShrink = 0;
@@ -142,6 +147,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (explorer != null) explorer.Release();
         foreach (Texture2D texture in textures) if (texture != null) Destroy(texture);
     }
 }

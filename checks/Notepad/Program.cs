@@ -59,6 +59,19 @@ internal static class Program
         OsFiles.AddBin("/recycle/3.txt", "/docs/third.txt");
         storage.EmptyBin();
         Check(storage.ListBin().Length == 0, "empty bin");
+        storage.Write("/docs/new-1.txt", "existing");
+        string created = storage.CreateDocument();
+        Check(created == "/docs/new-2.txt" && storage.Read("/docs/new-1.txt") == "existing", "new name does not overwrite");
+        Check(storage.ListFiles("/docs").Length >= 2 && storage.Folders().Length == 0, "explorer listing");
+        Refused(() => storage.ListFiles("/vault"), "vault listing");
+        storage.Write("/downloads/locked.txt", "kept");
+        Refused(() => storage.DeleteFile("/downloads/locked.txt"), "downloads read only");
+        OsBridge.Busy = true;
+        Refused(() => storage.DeleteFile(created), "busy delete");
+        Refused(() => storage.CreateDocument(), "busy create");
+        OsBridge.Busy = false;
+        storage.DeleteFile(created);
+        Check(storage.Read("/docs/new-1.txt") == "existing" && storage.ListBin().Length == 1, "delete moves selected file to bin");
         ObenseuerCore.SaveData.Busy = true;
         Refused(() => storage.Read("/docs/notes.txt"), "read during load");
         Refused(() => storage.Write("/docs/notes.txt", "lost"), "write during load");
@@ -70,6 +83,8 @@ internal static class Program
         Refused(() => storage.Opened("/docs/notes.txt"), "stale open event");
         Refused(() => storage.ListBin(), "stale bin list");
         Refused(() => storage.EmptyBin(), "stale empty bin");
+        Refused(() => storage.CreateDocument(), "stale create");
+        Refused(() => storage.DeleteFile("/docs/new-1.txt"), "stale delete");
         storage = new OsNotepadStorage();
         Check(storage.Read("/docs/notes.txt") == "kept", "new session keeps disk intact");
         ObenseuerCore.Events.RaiseNewGame();
@@ -112,6 +127,7 @@ namespace ObenseuerOS
     {
         internal static bool Busy;
         internal static void CheckWritable() { if (Busy) throw new InvalidOperationException("busy"); }
+        internal static string Stamp() { return "time"; }
     }
 
     internal static class Os
@@ -123,16 +139,25 @@ namespace ObenseuerOS
     internal static class OsFiles
     {
         internal const int MaxFileBytes = 256 * 1024;
+        internal const int MaxFiles = 1024;
         internal static bool Full;
         internal static OsRestore RestoreResult = OsRestore.Done;
         private static readonly Dictionary<string, string> Files = new Dictionary<string, string>();
         private static readonly Dictionary<string, OsFile> Bin = new Dictionary<string, OsFile>();
         internal static bool ValidPath(string path) { return OsPaths.ValidPath(path); }
+        internal static bool ValidDir(string path) { return OsPaths.ValidDir(path); }
         internal static bool InVault(string path) { return path.StartsWith("/vault/"); }
         internal static bool InBin(string path) { return path.StartsWith("/recycle/"); }
         internal static string Read(string path) { string value; return Files.TryGetValue(path, out value) ? value : null; }
         internal static bool Write(string path, string value) { if (Full) return false; Files[path] = value; return true; }
         internal static string[] List(string dir) { return new List<string>(Files.Keys).FindAll(p => p.StartsWith(dir + "/")).ToArray(); }
+        internal static string[] ModFolders() { return new string[0]; }
+        internal static bool Delete(string path, string deleted)
+        {
+            if (!Files.Remove(path)) return false;
+            Bin["/recycle/test.txt"] = new OsFile { path = "/recycle/test.txt", origin = path, deleted = deleted };
+            return true;
+        }
         internal static void AddBin(string path, string origin) { Bin[path] = new OsFile { path = path, origin = origin }; }
         internal static OsFile[] Trashed() { return new List<OsFile>(Bin.Values).ToArray(); }
         internal static OsRestore Restore(string path, out string target)

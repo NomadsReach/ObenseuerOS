@@ -8,6 +8,7 @@ namespace ObenseuerOS
     internal sealed class ToolkitRecycle
     {
         private readonly RecycleStorage storage;
+        private readonly Action filesChanged;
         private readonly ScrollView list;
         private readonly Label status;
         private readonly VisualElement confirm;
@@ -22,9 +23,10 @@ namespace ObenseuerOS
 
         internal readonly VisualElement Window;
 
-        internal ToolkitRecycle(RecycleStorage storage)
+        internal ToolkitRecycle(RecycleStorage storage, Action filesChanged)
         {
             this.storage = storage;
+            this.filesChanged = filesChanged;
             Window = new VisualElement();
             Window.style.position = UnityEngine.UIElements.Position.Absolute;
             Window.style.left = 320;
@@ -108,6 +110,11 @@ namespace ObenseuerOS
             Window.style.display = DisplayStyle.Flex;
             Window.BringToFront();
             Load("");
+        }
+
+        internal void RefreshIfOpen()
+        {
+            if (Window.style.display != DisplayStyle.None) Load("");
         }
 
         private static VisualElement Row()
@@ -226,7 +233,12 @@ namespace ObenseuerOS
         {
             RecycleEntry entry = selected;
             if (entry == null) return;
-            try { string path = storage.Restore(entry.Path); Load("Restored to " + path); }
+            try
+            {
+                string path = storage.Restore(entry.Path);
+                Load("Restored to " + path);
+                if (filesChanged != null) filesChanged();
+            }
             catch (Exception e) { status.text = "Restore failed: " + e.Message; }
         }
 
