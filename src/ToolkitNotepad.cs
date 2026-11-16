@@ -22,7 +22,7 @@ namespace ObenseuerOS
         {
             this.storage = storage;
             Window = new VisualElement();
-            Window.style.position = Position.Absolute;
+            Window.style.position = UnityEngine.UIElements.Position.Absolute;
             Window.style.left = 320;
             Window.style.top = 32;
             Window.style.width = 600;
@@ -40,7 +40,7 @@ namespace ObenseuerOS
             title.style.unityTextAlign = TextAnchor.MiddleLeft;
             title.style.color = Color.black;
             bar.Add(title);
-            Button close = new Button(Close);
+            UnityEngine.UIElements.Button close = new UnityEngine.UIElements.Button(Close);
             close.text = "×";
             close.style.width = 46;
             close.style.height = 20;
@@ -94,9 +94,9 @@ namespace ObenseuerOS
             Window.style.display = DisplayStyle.None;
         }
 
-        private static Button Button(string label, Action action)
+        private static UnityEngine.UIElements.Button Button(string label, Action action)
         {
-            Button result = new Button(action);
+            UnityEngine.UIElements.Button result = new UnityEngine.UIElements.Button(action);
             result.text = label;
             return result;
         }
@@ -126,7 +126,7 @@ namespace ObenseuerOS
         {
             HidePopup();
             popup = new VisualElement();
-            popup.style.position = Position.Absolute;
+            popup.style.position = UnityEngine.UIElements.Position.Absolute;
             popup.style.left = x;
             popup.style.top = 64;
             popup.style.width = width;

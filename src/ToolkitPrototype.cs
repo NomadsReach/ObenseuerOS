@@ -96,9 +96,9 @@ internal sealed class ToolkitPrototype : MonoBehaviour
             taskbar.Add(icon);
         }
         root.Add(taskbar);
-        Button close = new Button(delegate { if (notepad.CanClose()) ComputerApps.Close(storage == null ? "os.toolkit-prototype" : "os.toolkit-os"); });
+        UnityEngine.UIElements.Button close = new UnityEngine.UIElements.Button(delegate { if (notepad.CanClose()) ComputerApps.Close(storage == null ? "os.toolkit-prototype" : "os.toolkit-os"); });
         close.text = "Close";
-        close.style.position = Position.Absolute;
+        close.style.position = UnityEngine.UIElements.Position.Absolute;
         close.style.right = 16;
         close.style.top = 16;
         close.style.width = 120;
