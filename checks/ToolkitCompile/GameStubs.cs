@@ -18,6 +18,7 @@ namespace ObenseuerCore
     }
     internal static class ComputerApps
     {
+        internal static RectTransform ActiveScreen { get { return null; } }
         internal static void SetCloseGuard(Transform host, Func<bool> close) { }
         internal static void Close(string id) { }
     }
@@ -25,6 +26,14 @@ namespace ObenseuerCore
 
 namespace ObenseuerOS
 {
+    internal static class OsWallpaper { internal static int Capture(RectTransform screen, string folder) { return -1; } }
+    internal static class OsGameArt
+    {
+        internal sealed class Entry { internal string Id, Name, FilePath; internal int Rev; }
+        internal static void Request(string folder) { }
+        internal static bool Step() { return false; }
+        internal static List<Entry> Ready() { return new List<Entry>(); }
+    }
     internal sealed class OsNotepadStorage : NotepadStorage
     {
         internal void CheckSession() { }

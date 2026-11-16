@@ -16,9 +16,11 @@ internal sealed class ToolkitPrototype : MonoBehaviour
     private VisualElement selected;
     private NotepadStorage storage;
     private ToolkitExplorer explorer;
+    private ToolkitSettings settings;
     private Label clock;
     private Label money;
     private float nextStatusUpdate;
+    private float nextWallpaperUpdate;
 
     internal static void Open(RectTransform host)
     {
@@ -39,6 +41,12 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         VisualElement root = ToolkitUi.CreateOverlay(transform);
         root.style.flexGrow = 1;
         root.style.backgroundColor = (Color)new Color32(45, 95, 139, 255);
+        Image wallpaper = new Image();
+        wallpaper.pickingMode = PickingMode.Ignore;
+        wallpaper.scaleMode = ScaleMode.ScaleAndCrop;
+        wallpaper.style.position = UnityEngine.UIElements.Position.Absolute;
+        wallpaper.style.left = 0; wallpaper.style.right = 0; wallpaper.style.top = 0; wallpaper.style.bottom = 40;
+        root.Add(wallpaper);
         VisualElement desktop = new VisualElement();
         desktop.style.flexGrow = 1;
         desktop.style.flexDirection = FlexDirection.Column;
@@ -54,6 +62,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         explorer = new ToolkitExplorer(storage as ExplorerStorage, notepad.OpenPath, delegate { if (recycle != null) recycle.RefreshIfOpen(); }, delegate { if (recycle != null) recycle.Open(); });
         recycle = new ToolkitRecycle(storage as RecycleStorage, delegate { explorer.RefreshIfOpen(); });
         OsNotepadStorage osStorage = storage as OsNotepadStorage;
+        settings = new ToolkitSettings(wallpaper, osStorage != null);
         ToolkitChat chat = new ToolkitChat(osStorage != null, osStorage == null ? (Action)null : osStorage.CheckSession);
         ToolkitTerminal terminal = null;
         terminal = new ToolkitTerminal(storage, storage as ExplorerStorage, OsView.UserName,
@@ -69,6 +78,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
                 if (string.Equals(app, "solitaire", StringComparison.OrdinalIgnoreCase)) { solitaire.Open(); return true; }
                 if (string.Equals(app, "terminal", StringComparison.OrdinalIgnoreCase) || string.Equals(app, "Command Prompt", StringComparison.OrdinalIgnoreCase)) { terminal.Open(); return true; }
                 if (string.Equals(app, "chat", StringComparison.OrdinalIgnoreCase) || string.Equals(app, "TOR-Turnip Chat v0.3.9", StringComparison.OrdinalIgnoreCase)) { chat.Open(); return true; }
+                if (string.Equals(app, "settings", StringComparison.OrdinalIgnoreCase) || string.Equals(app, "Control Panel", StringComparison.OrdinalIgnoreCase)) { settings.Open(); return true; }
                 return false;
             },
             delegate(string path) { if (path == null) { notepad.Window.style.display = DisplayStyle.Flex; notepad.Window.BringToFront(); } else notepad.OpenPath(path); if (explorer != null) explorer.RefreshIfOpen(); });
@@ -106,6 +116,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
                 if (index == 7 && e.clickCount >= 2) { window.style.display = DisplayStyle.Flex; window.BringToFront(); }
                 else if (index == 2 && e.clickCount >= 2) explorer.Open();
                 else if (index == 3 && e.clickCount >= 2) recycle.Open();
+                else if (index == 4 && e.clickCount >= 2) settings.Open();
                 else if (index == 6 && e.clickCount >= 2) terminal.Open();
                 else if (index == 10 && e.clickCount >= 2) chat.Open();
                 else if (index == 12 && e.clickCount >= 2) minesweeper.Open();
@@ -128,6 +139,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         windows.Add(explorer.Window);
         windows.Add(terminal.Window);
         windows.Add(chat.Window);
+        windows.Add(settings.Window);
         VisualElement taskbar = new VisualElement();
         taskbar.style.height = 40;
         taskbar.style.flexShrink = 0;
@@ -173,6 +185,11 @@ internal sealed class ToolkitPrototype : MonoBehaviour
 
     private void Update()
     {
+        if (settings != null && Time.unscaledTime >= nextWallpaperUpdate)
+        {
+            nextWallpaperUpdate = Time.unscaledTime + 2f;
+            settings.Refresh();
+        }
         if (clock == null || money == null || Time.unscaledTime < nextStatusUpdate) return;
         nextStatusUpdate = Time.unscaledTime + 1f;
         if (WorldClock.IsAvailable)
@@ -204,6 +221,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (settings != null) settings.Release();
         if (explorer != null) explorer.Release();
         foreach (Texture2D texture in textures) if (texture != null) Destroy(texture);
     }
