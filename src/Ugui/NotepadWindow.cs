@@ -242,13 +242,14 @@ namespace ObenseuerOS
         private void SelectAll()
         {
             text.ActivateInputField();
-            text.SelectAll();
+            text.selectionAnchorPosition = 0;
+            text.selectionFocusPosition = text.text.Length;
         }
 
         private void ToggleWrap()
         {
             wrap = !wrap;
-            text.textComponent.enableWordWrapping = wrap;
+            text.textComponent.textWrappingMode = wrap ? TextWrappingModes.Normal : TextWrappingModes.NoWrap;
         }
     }
 }
