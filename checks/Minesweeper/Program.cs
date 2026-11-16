@@ -10,6 +10,17 @@ internal static class Program
 
     private static void Main()
     {
+        MinesweeperGame clicks = new MinesweeperGame(9, 9, 10, new Random(11));
+        MinesweeperInput input = new MinesweeperInput(clicks);
+        Check(!input.Press(0, 0, 1) && !input.Release(1, 0, false) && !clicks.Placed, "release on another cell");
+        Check(input.Press(0, 1, 2) && clicks.Cells[0].Mark == 1, "right click flags");
+        Check(!input.Press(0, 0, 1) && !input.Release(0, 0, false) && !clicks.Placed, "flagged cell stays closed");
+        Check(input.Press(0, 1, 2) && clicks.Cells[0].Mark == 2, "right click questions");
+        Check(input.Press(0, 1, 2) && clicks.Cells[0].Mark == 0, "right click clears mark");
+        Check(!input.Press(0, 0, 1) && !input.Press(0, 2, 5) && !input.Release(0, 0, false) && !clicks.Placed, "middle click suppresses reveal");
+        Check(!input.Press(0, 0, 1) && !input.Press(0, 1, 3) && !input.Release(0, 0, true) && !input.Release(0, 1, false) && !clicks.Placed, "two-button chord suppresses reveal");
+        Check(!input.Press(0, 2, 4) && !input.Press(0, 0, 5) && !input.Release(0, 2, true) && !input.Release(0, 0, false) && !clicks.Placed, "middle held before left suppresses reveal");
+        Check(!input.Press(40, 0, 1) && input.Release(40, 0, false) && clicks.Placed && clicks.Cells[40].Open, "left click reveals");
         MinesweeperGame game = new MinesweeperGame(9, 9, 10, new Random(17));
         Check(game.Nearby(0).Count == 3 && game.Nearby(40).Count == 8, "neighbor bounds");
         Check(game.Toggle(0) && game.Cells[0].Mark == 1 && !game.Reveal(0), "flag prevents reveal");
