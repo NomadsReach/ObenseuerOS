@@ -84,6 +84,9 @@ namespace ObenseuerOS
             ComputerApps.ScreenChanged += OsView.OnScreenChanged;
             Cash.MoneyChanged += OsView.OnMoneyChanged;
             if (!ComputerApps.Register(Os.ModId, Os.AppId, DeskTitle, null, host => OsView.Show())) Log.Warn("OS not added to the computer");
+            if (Config.Bind("Debug", "UguiPrototype", false, "Show the experimental uGUI desktop prototype in the computer app list.").Value &&
+                !ComputerApps.Register(Os.ModId, "os.ugui-prototype", "Viewports 8 uGUI prototype", null, OsUguiPrototype.Build))
+                Log.Warn("uGUI prototype not added to the computer");
         }
 
         public static bool OpenLaptop()
