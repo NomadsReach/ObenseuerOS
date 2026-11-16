@@ -11,3 +11,4 @@
 ## `tools/ugui-reference.py:main`
 
 `tools/ugui-reference.py:main` captures the existing web desktop and Notepad at 1280 by 720 in GitHub CI. The screenshots are reference images only: CI has no Unity player or game assets, so it cannot render the prototype or establish visual equivalence.
+- `src/OsUguiPrototype.cs:OsUguiPrototype.Build` and `OsUguiPrototype.MakeWindow` explicitly select Unity UI buttons because the game's global button type has the same name; the desktop color expression uses the project's C# language version.

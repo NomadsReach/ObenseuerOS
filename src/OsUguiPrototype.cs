@@ -28,13 +28,13 @@ namespace ObenseuerOS
             {
                 RectTransform tile = DesktopUi.Panel(desktop, Names[i], Color.clear);
                 DesktopUi.TopLeft(tile, 8f + (i / rows) * 88f, 8f + (i % rows) * 104f, 88f, 104f, scale);
-                Text glyph = DesktopUi.Label(tile, font, Glyphs[i], Mathf.RoundToInt(33 * scale), i == 2 ? new Color32(242, 201, 76, 255) : Color.white, TextAnchor.MiddleCenter);
+                Text glyph = DesktopUi.Label(tile, font, Glyphs[i], Mathf.RoundToInt(33 * scale), i == 2 ? (Color)new Color32(242, 201, 76, 255) : Color.white, TextAnchor.MiddleCenter);
                 DesktopUi.TopLeft((RectTransform)glyph.transform, 20f, 4f, 48f, 48f, scale);
                 Text title = DesktopUi.Label(tile, font, Names[i], Mathf.RoundToInt(12 * scale), Color.white, TextAnchor.UpperCenter);
                 DesktopUi.TopLeft((RectTransform)title.transform, 4f, 56f, 80f, 42f, scale);
                 if (i == 7)
                 {
-                    Button open = tile.gameObject.AddComponent<Button>();
+                    UnityEngine.UI.Button open = tile.gameObject.AddComponent<UnityEngine.UI.Button>();
                     open.targetGraphic = tile.GetComponent<Image>();
                     open.onClick.AddListener(delegate { window.SetActive(true); window.transform.SetSiblingIndex(desktop.childCount - 2); });
                 }
@@ -73,7 +73,7 @@ namespace ObenseuerOS
             DesktopUi.TopLeft(close, Mathf.Max(0f, width - 64f), 5f, 46f, 20f, scale);
             Text closeText = DesktopUi.Label(close, font, "×", Mathf.RoundToInt(17 * scale), Color.white, TextAnchor.MiddleCenter);
             DesktopUi.Stretch((RectTransform)closeText.transform);
-            Button closeButton = close.gameObject.AddComponent<Button>();
+            UnityEngine.UI.Button closeButton = close.gameObject.AddComponent<UnityEngine.UI.Button>();
             closeButton.targetGraphic = close.GetComponent<Image>();
             closeButton.onClick.AddListener(delegate { frame.gameObject.SetActive(false); });
             RectTransform content = DesktopUi.Panel(frame, "Content", Color.white);
