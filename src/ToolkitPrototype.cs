@@ -53,6 +53,22 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         ToolkitRecycle recycle = null;
         explorer = new ToolkitExplorer(storage as ExplorerStorage, notepad.OpenPath, delegate { if (recycle != null) recycle.RefreshIfOpen(); }, delegate { if (recycle != null) recycle.Open(); });
         recycle = new ToolkitRecycle(storage as RecycleStorage, delegate { explorer.RefreshIfOpen(); });
+        ToolkitTerminal terminal = null;
+        terminal = new ToolkitTerminal(storage, storage as ExplorerStorage, OsView.UserName,
+            delegate { if (!WorldClock.IsAvailable) return "The game clock is not ready."; WorldTime now = WorldClock.Now; return string.Format("The current date is: {0}.1.1843, {1}", now.CalendarDay, now.Weekday); },
+            delegate { if (!WorldClock.IsAvailable) return "The game clock is not ready."; WorldTime now = WorldClock.Now; return string.Format("The current time is: {0:00}:{1:00}", now.Hour, now.Minute); },
+            delegate { if (!Cash.IsAvailable) return "The game clock is not ready."; return string.Format("{0:N0} OC   {1:N2} RM", (int)Cash.Balance(MoneyCurrency.OC), Cash.Balance(MoneyCurrency.RM)); },
+            delegate(string app)
+            {
+                if (string.Equals(app, "files", StringComparison.OrdinalIgnoreCase) || string.Equals(app, "Explorer", StringComparison.OrdinalIgnoreCase)) { explorer.Open(); return true; }
+                if (string.Equals(app, "recycle", StringComparison.OrdinalIgnoreCase) || string.Equals(app, "Recycle Bin", StringComparison.OrdinalIgnoreCase)) { recycle.Open(); return true; }
+                if (string.Equals(app, "notes", StringComparison.OrdinalIgnoreCase) || string.Equals(app, "Notepad", StringComparison.OrdinalIgnoreCase)) { notepad.Window.style.display = DisplayStyle.Flex; notepad.Window.BringToFront(); return true; }
+                if (string.Equals(app, "minesweeper", StringComparison.OrdinalIgnoreCase)) { minesweeper.Open(); return true; }
+                if (string.Equals(app, "solitaire", StringComparison.OrdinalIgnoreCase)) { solitaire.Open(); return true; }
+                if (string.Equals(app, "terminal", StringComparison.OrdinalIgnoreCase) || string.Equals(app, "Command Prompt", StringComparison.OrdinalIgnoreCase)) { terminal.Open(); return true; }
+                return false;
+            },
+            delegate(string path) { if (path == null) { notepad.Window.style.display = DisplayStyle.Flex; notepad.Window.BringToFront(); } else notepad.OpenPath(path); if (explorer != null) explorer.RefreshIfOpen(); });
         ComputerApps.SetCloseGuard(transform.parent, notepad.CanClose);
         VisualElement window = notepad.Window;
         for (int i = 0; i < Names.Length; i++)
@@ -87,6 +103,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
                 if (index == 7 && e.clickCount >= 2) { window.style.display = DisplayStyle.Flex; window.BringToFront(); }
                 else if (index == 2 && e.clickCount >= 2) explorer.Open();
                 else if (index == 3 && e.clickCount >= 2) recycle.Open();
+                else if (index == 6 && e.clickCount >= 2) terminal.Open();
                 else if (index == 12 && e.clickCount >= 2) minesweeper.Open();
                 else if (index == 13 && e.clickCount >= 2) solitaire.Open();
             });
@@ -105,6 +122,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         windows.Add(solitaire.Window);
         windows.Add(recycle.Window);
         windows.Add(explorer.Window);
+        windows.Add(terminal.Window);
         VisualElement taskbar = new VisualElement();
         taskbar.style.height = 40;
         taskbar.style.flexShrink = 0;
