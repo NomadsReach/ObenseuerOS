@@ -35,7 +35,12 @@ namespace ObenseuerOS
         public void Opened(string path) { }
     }
     internal static class OsView { internal static string UserName() { return ""; } }
-    internal sealed class ChatRoomDef { internal string Id; }
+    internal sealed class ChatRoomDef { internal string Id, Name; internal bool Contact; }
+    internal static class ChatGame
+    {
+        internal static ChatRoom Open(string id) { return null; }
+        internal static int Unread(string id) { return 0; }
+    }
     internal static class ChatData
     {
         internal const int MaxText = 200;
@@ -44,7 +49,6 @@ namespace ObenseuerOS
     }
     internal static class ChatBridge
     {
-        internal static string Since(string args) { return ""; }
         internal static string Send(string args) { return ""; }
     }
 }

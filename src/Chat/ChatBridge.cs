@@ -17,7 +17,7 @@ namespace ObenseuerOS
             Os.Handle(AppId, "chat.send", Send);
         }
 
-        internal static string Since(string args)
+        private static string Since(string args)
         {
             JObject a = OsBridge.Args(args);
             ChatRoomDef def = RoomArg(a);

@@ -9,6 +9,8 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <Compile Include="..\..\src\Toolkit*.cs" />
     <Compile Include="..\..\src\TerminalSession.cs" />
+    <Compile Include="..\..\src\Chat\ChatHistory.cs" />
+    <Compile Include="..\..\src\Chat\ChatSave.cs" />
     <Compile Include="..\..\src\ExplorerStorage.cs" />
     <Compile Include="..\..\src\RecycleStorage.cs" />
     <Compile Include="..\..\src\SolitaireGame.cs" />

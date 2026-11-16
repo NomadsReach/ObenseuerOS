@@ -76,45 +76,44 @@ namespace ObenseuerOS
             {
                 if (checkSession != null) checkSession();
                 if (ChatData.Find(room) == null && ChatData.Rooms.Count > 0) { room = ChatData.Rooms[0].Id; next = 0; messages.Clear(); }
-                JObject result = JObject.Parse(ChatBridge.Since(new JObject(new JProperty("room", room), new JProperty("from", next)).ToString()));
-                JArray list = (JArray)result["rooms"];
+                ChatRoom current = ChatGame.Open(room);
                 string layout = "";
-                foreach (JToken item in list) layout += ((string)item["id"]) + "\n" + ((string)item["name"]) + "\n" + ((bool)item["contact"] ? "1" : "0") + "\n";
+                foreach (ChatRoomDef item in ChatData.Rooms) layout += item.Id + "\n" + item.Name + "\n" + (item.Contact ? "1" : "0") + "\n";
                 if (layout != roomLayout)
                 {
                     roomLayout = layout; rooms.Clear(); roomButtons.Clear();
-                    AddRooms(list, true, "Private Chats"); AddRooms(list, false, "Channels");
+                    AddRooms(true, "Private Chats"); AddRooms(false, "Channels");
                 }
-                foreach (JToken item in list)
+                foreach (ChatRoomDef item in ChatData.Rooms)
                 {
-                    string id = (string)item["id"];
-                    string name = (string)item["name"];
-                    int unread = (int)item["unread"];
+                    string id = item.Id;
+                    string name = item.Name;
+                    int unread = ChatGame.Unread(id);
                     UnityEngine.UIElements.Button button = roomButtons[id];
                     button.text = name + (id != room && unread > 0 ? "  " + (unread > 99 ? "99+" : unread.ToString()) : "");
                     button.style.backgroundColor = id == room ? (Color)new Color32(180, 205, 230, 255) : Color.clear;
                     if (id == room) title.text = name;
                 }
-                foreach (JToken line in (JArray)result["lines"])
+                foreach (ChatLine line in ChatHistory.Since(current, next))
                 {
-                    Label row = new Label((string)line["from"] + ": " + (string)line["text"]);
-                    row.style.color = (bool)line["own"] ? (Color)new Color32(33, 84, 151, 255) : Color.black;
+                    Label row = new Label(line.From + ": " + line.Text);
+                    row.style.color = line.Own ? (Color)new Color32(33, 84, 151, 255) : Color.black;
                     row.style.whiteSpace = WhiteSpace.Normal; messages.Add(row);
                     messages.schedule.Execute(delegate() { messages.ScrollTo(row); });
                 }
-                next = (int)result["next"];
+                next = current.Next;
                 status.text = "";
             }
             catch (Exception e) { status.text = e.Message; }
         }
 
-        private void AddRooms(JArray list, bool contact, string heading)
+        private void AddRooms(bool contact, string heading)
         {
             Label label = new Label(heading); label.style.color = Color.black; rooms.Add(label);
-            foreach (JToken item in list)
+            foreach (ChatRoomDef item in ChatData.Rooms)
             {
-                if ((bool)item["contact"] != contact) continue;
-                string id = (string)item["id"];
+                if (item.Contact != contact) continue;
+                string id = item.Id;
                 UnityEngine.UIElements.Button button = new UnityEngine.UIElements.Button(delegate { Switch(id); });
                 roomButtons.Add(id, button); rooms.Add(button);
             }
