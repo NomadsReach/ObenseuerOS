@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <Compile Include="src\**\*.cs" />
+    <EmbeddedResource Include="prototype-icons\*.png" LogicalName="desktop-icons/%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>

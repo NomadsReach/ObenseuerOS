@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
+using ObenseuerCore;
 using ObenseuerCore.Ui;
 using TMPro;
 using UnityEngine;
@@ -9,8 +12,9 @@ namespace ObenseuerOS
 {
     internal static class OsUguiPrototype
     {
-        private static readonly string[] Names = { "Stalburg Mail", "Stalburg Web", "Explorer", "Recycle Bin", "Control Panel", "Stal-Ex", "Command Prompt", "Notepad", "Stalburg Bank", "Stalburg Times", "TOR-Turnip Chat", "Shop", "Minesweeper", "Solitaire" };
-        private static readonly string[] Glyphs = { "M", "W", "F", "R", "C", "S", ">_", "N", "B", "T", "C", "S", "M", "S" };
+        private static readonly string[] Names = { "Stalburg Mail", "Stalburg Web", "Explorer", "Recycle Bin", "Control Panel", "Stal-Ex", "Command Prompt", "Notepad", "Stalburg Bank", "Stalburg Times", "TOR-Turnip Chat v0.3.9", "Shop", "Minesweeper", "Solitaire" };
+        private static readonly string[] Icons = { "mail", "world", "folder-filled", "trash", "settings", "chart-line", "terminal-2", "notes", "building-bank", "news", "message-circle", "shopping-cart", "device-gamepad-2", "device-gamepad-2" };
+        private static readonly Dictionary<string, Sprite> sprites = new Dictionary<string, Sprite>();
         private static Font font;
 
         internal static void Build(RectTransform host)
@@ -28,8 +32,8 @@ namespace ObenseuerOS
             {
                 RectTransform tile = DesktopUi.Panel(desktop, Names[i], Color.clear);
                 DesktopUi.TopLeft(tile, 8f + (i / rows) * 88f, 8f + (i % rows) * 104f, 88f, 104f, scale);
-                Text glyph = DesktopUi.Label(tile, font, Glyphs[i], Mathf.RoundToInt(33 * scale), i == 2 ? (Color)new Color32(242, 201, 76, 255) : Color.white, TextAnchor.MiddleCenter);
-                DesktopUi.TopLeft((RectTransform)glyph.transform, 20f, 4f, 48f, 48f, scale);
+                Image icon = Icon(tile, Icons[i], i == 2 ? (Color)new Color32(242, 201, 76, 255) : Color.white);
+                DesktopUi.TopLeft((RectTransform)icon.transform, 20f, 4f, 48f, 48f, scale);
                 Text title = DesktopUi.Label(tile, font, Names[i], Mathf.RoundToInt(12 * scale), Color.white, TextAnchor.UpperCenter);
                 DesktopUi.TopLeft((RectTransform)title.transform, 4f, 56f, 80f, 42f, scale);
                 if (i == 7)
@@ -39,20 +43,64 @@ namespace ObenseuerOS
                     open.onClick.AddListener(delegate { window.SetActive(true); window.transform.SetSiblingIndex(desktop.childCount - 2); });
                 }
             }
-            RectTransform taskbar = DesktopUi.Panel(desktop, "Taskbar", new Color32(205, 218, 232, 209));
+            RectTransform taskbar = DesktopUi.Panel(desktop, "Taskbar", new Color32(38, 50, 64, 209));
             taskbar.anchorMin = new Vector2(0f, 0f);
             taskbar.anchorMax = new Vector2(1f, 0f);
             taskbar.pivot = new Vector2(0f, 0f);
             taskbar.offsetMin = Vector2.zero;
             taskbar.offsetMax = new Vector2(0f, 40f * scale);
-            Text start = DesktopUi.Label(taskbar, font, "⊞", Mathf.RoundToInt(26 * scale), new Color32(30, 30, 30, 255), TextAnchor.MiddleCenter);
-            DesktopUi.TopLeft((RectTransform)start.transform, 0f, 0f, 40f, 40f, scale);
-            Text clock = DesktopUi.Label(taskbar, font, DateTime.Now.ToString("HH:mm\ndd/MM/yyyy"), Mathf.RoundToInt(12 * scale), new Color32(30, 30, 30, 255), TextAnchor.MiddleCenter);
+            Image start = Icon(taskbar, "viewports", Color.white);
+            DesktopUi.TopLeft((RectTransform)start.transform, 7f, 7f, 26f, 26f, scale);
+            Image folder = Icon(taskbar, "folder-filled", Color.white);
+            DesktopUi.TopLeft((RectTransform)folder.transform, 52f, 8f, 24f, 24f, scale);
+            Image browser = Icon(taskbar, "world", Color.white);
+            DesktopUi.TopLeft((RectTransform)browser.transform, 104f, 8f, 24f, 24f, scale);
+            Text clock = DesktopUi.Label(taskbar, font, "", Mathf.RoundToInt(12 * scale), new Color32(236, 236, 236, 255), TextAnchor.MiddleCenter);
             RectTransform clockRect = (RectTransform)clock.transform;
             clockRect.anchorMin = new Vector2(1f, 0f);
             clockRect.anchorMax = new Vector2(1f, 1f);
             clockRect.offsetMin = new Vector2(-100f * scale, 0f);
             clockRect.offsetMax = Vector2.zero;
+            Text money = DesktopUi.Label(taskbar, font, "", Mathf.RoundToInt(11 * scale), new Color32(236, 236, 236, 255), TextAnchor.MiddleRight);
+            RectTransform moneyRect = (RectTransform)money.transform;
+            moneyRect.anchorMin = new Vector2(1f, 0f);
+            moneyRect.anchorMax = new Vector2(1f, 1f);
+            moneyRect.offsetMin = new Vector2(-220f * scale, 0f);
+            moneyRect.offsetMax = new Vector2(-110f * scale, 0f);
+            PrototypeStatus status = taskbar.gameObject.AddComponent<PrototypeStatus>();
+            status.Clock = clock;
+            status.Money = money;
+        }
+
+        private static Image Icon(Transform parent, string name, Color color)
+        {
+            GameObject item = new GameObject(name + " icon", typeof(RectTransform), typeof(Image));
+            item.transform.SetParent(parent, false);
+            Image image = item.GetComponent<Image>();
+            image.raycastTarget = false;
+            image.color = color;
+            Sprite sprite;
+            if (!sprites.TryGetValue(name, out sprite))
+            {
+                using (Stream stream = typeof(OsUguiPrototype).Assembly.GetManifestResourceStream("desktop-icons/" + name + ".png"))
+                {
+                    if (stream != null)
+                    {
+                        using (MemoryStream buffer = new MemoryStream())
+                        {
+                            stream.CopyTo(buffer);
+                            Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+                            if (ImageConversion.LoadImage(texture, buffer.ToArray()))
+                                sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+                        }
+                    }
+                }
+                sprites[name] = sprite;
+            }
+            image.sprite = sprite;
+            image.enabled = sprite != null;
+            image.preserveAspect = true;
+            return image;
         }
 
         private static GameObject MakeWindow(RectTransform parent, Font font, float scale, int rows)
@@ -112,5 +160,25 @@ namespace ObenseuerOS
             return frame.gameObject;
         }
 
+    }
+
+    internal sealed class PrototypeStatus : MonoBehaviour
+    {
+        internal Text Clock;
+        internal Text Money;
+        private float nextUpdate;
+
+        private void Update()
+        {
+            if (Time.unscaledTime < nextUpdate) return;
+            nextUpdate = Time.unscaledTime + 1f;
+            if (WorldClock.IsAvailable)
+            {
+                WorldTime now = WorldClock.Now;
+                Clock.text = string.Format("{0:00}:{1:00}\n{2}.1.1843", now.Hour, now.Minute, now.CalendarDay);
+            }
+            if (Cash.IsAvailable)
+                Money.text = string.Format("{0:N0} OC\n{1:N2} RM", (int)Cash.Balance(MoneyCurrency.OC), Cash.Balance(MoneyCurrency.RM));
+        }
     }
 }
