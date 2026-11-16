@@ -4,7 +4,7 @@ using ObenseuerCore;
 
 namespace ObenseuerOS
 {
-    internal sealed class OsNotepadStorage : NotepadStorage
+    internal sealed class OsNotepadStorage : NotepadStorage, RecycleStorage
     {
         private static int generation;
         private readonly int session = generation;
@@ -45,5 +45,44 @@ namespace ObenseuerOS
         public bool Valid(string path) { return OsFiles.ValidPath(path) && path.StartsWith("/docs/", StringComparison.Ordinal); }
 
         public void Opened(string path) { CheckSession(); Os.RaiseFileOpened(path); }
+
+        public RecycleEntry[] ListBin()
+        {
+            CheckSession();
+            OsFile[] files = OsFiles.Trashed();
+            RecycleEntry[] result = new RecycleEntry[files.Length];
+            for (int i = 0; i < files.Length; i++)
+                result[i] = new RecycleEntry(files[i].path, files[i].origin, files[i].deleted);
+            return result;
+        }
+
+        public string Restore(string path)
+        {
+            CheckSession();
+            OsBridge.CheckWritable();
+            string target;
+            switch (OsFiles.Restore(path, out target))
+            {
+                case OsRestore.Done: return target;
+                case OsRestore.NoName: throw new InvalidOperationException("no free name for the file");
+                case OsRestore.Full: throw new InvalidOperationException("the disk is full, so the file cannot be restored");
+                case OsRestore.OwnerFull: throw new InvalidOperationException("the mod folder is full, so the file stays in the Recycle Bin");
+                default: throw new InvalidOperationException("no such file in the Recycle Bin");
+            }
+        }
+
+        public void Purge(string path)
+        {
+            CheckSession();
+            OsBridge.CheckWritable();
+            if (!OsFiles.Purge(path)) throw new InvalidOperationException("no such file in the Recycle Bin");
+        }
+
+        public void EmptyBin()
+        {
+            CheckSession();
+            OsBridge.CheckWritable();
+            OsFiles.EmptyBin();
+        }
     }
 }

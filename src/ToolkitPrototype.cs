@@ -46,6 +46,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         ToolkitNotepad notepad = new ToolkitNotepad(storage);
         ToolkitMinesweeper minesweeper = new ToolkitMinesweeper();
         ToolkitSolitaire solitaire = new ToolkitSolitaire();
+        ToolkitRecycle recycle = new ToolkitRecycle(storage as RecycleStorage);
         ComputerApps.SetCloseGuard(transform.parent, notepad.CanClose);
         VisualElement window = notepad.Window;
         for (int i = 0; i < Names.Length; i++)
@@ -78,6 +79,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
                 selected = tile;
                 selected.style.backgroundColor = (Color)new Color32(120, 170, 230, 77);
                 if (index == 7 && e.clickCount >= 2) { window.style.display = DisplayStyle.Flex; window.BringToFront(); }
+                else if (index == 3 && e.clickCount >= 2) recycle.Open();
                 else if (index == 12 && e.clickCount >= 2) minesweeper.Open();
                 else if (index == 13 && e.clickCount >= 2) solitaire.Open();
             });
@@ -94,6 +96,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         windows.Add(window);
         windows.Add(minesweeper.Window);
         windows.Add(solitaire.Window);
+        windows.Add(recycle.Window);
         VisualElement taskbar = new VisualElement();
         taskbar.style.height = 40;
         taskbar.style.flexShrink = 0;
