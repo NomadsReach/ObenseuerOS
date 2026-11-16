@@ -11,6 +11,7 @@ namespace ObenseuerOS
 internal sealed class ToolkitPrototype : MonoBehaviour
 {
     private static readonly string[] Names = { "Stalburg Mail", "Stalburg Web", "Explorer", "Recycle Bin", "Control Panel", "Stal-Ex", "Command Prompt", "Notepad", "Stalburg Bank", "Stalburg Times", "TOR-Turnip Chat v0.3.9", "Shop", "Minesweeper", "Solitaire" };
+    private static readonly string[] Ids = { "mail", "browser", "files", "recycle", "settings", "exchange", "terminal", "notes", "bank", "news", "chat", "shop", "minesweeper", "solitaire" };
     private static readonly string[] Icons = { "mail", "world", "folder-filled", "trash", "settings", "chart-line", "terminal-2", "notes", "building-bank", "news", "message-circle", "shopping-cart", "device-gamepad-2", "device-gamepad-2" };
     private readonly List<Texture2D> textures = new List<Texture2D>();
     private VisualElement selected;
@@ -65,20 +66,29 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         settings = new ToolkitSettings(wallpaper, osStorage != null);
         ToolkitChat chat = new ToolkitChat(osStorage != null, osStorage == null ? (Action)null : osStorage.CheckSession);
         ToolkitTerminal terminal = null;
+        Func<int, bool> launch = delegate(int index)
+        {
+            switch (index)
+            {
+                case 2: explorer.Open(); return true;
+                case 3: recycle.Open(); return true;
+                case 4: settings.Open(); return true;
+                case 6: terminal.Open(); return true;
+                case 7: notepad.Window.style.display = DisplayStyle.Flex; notepad.Window.BringToFront(); return true;
+                case 10: chat.Open(); return true;
+                case 12: minesweeper.Open(); return true;
+                case 13: solitaire.Open(); return true;
+                default: return false;
+            }
+        };
         terminal = new ToolkitTerminal(storage, storage as ExplorerStorage, OsView.UserName,
             delegate { if (!WorldClock.IsAvailable) return "The game clock is not ready."; WorldTime now = WorldClock.Now; return string.Format("The current date is: {0}.1.1843, {1}", now.CalendarDay, now.Weekday); },
             delegate { if (!WorldClock.IsAvailable) return "The game clock is not ready."; WorldTime now = WorldClock.Now; return string.Format("The current time is: {0:00}:{1:00}", now.Hour, now.Minute); },
             delegate { if (!Cash.IsAvailable) return "The game clock is not ready."; return string.Format("{0:N0} OC   {1:N2} RM", (int)Cash.Balance(MoneyCurrency.OC), Cash.Balance(MoneyCurrency.RM)); },
             delegate(string app)
             {
-                if (string.Equals(app, "files", StringComparison.OrdinalIgnoreCase) || string.Equals(app, "Explorer", StringComparison.OrdinalIgnoreCase)) { explorer.Open(); return true; }
-                if (string.Equals(app, "recycle", StringComparison.OrdinalIgnoreCase) || string.Equals(app, "Recycle Bin", StringComparison.OrdinalIgnoreCase)) { recycle.Open(); return true; }
-                if (string.Equals(app, "notes", StringComparison.OrdinalIgnoreCase) || string.Equals(app, "Notepad", StringComparison.OrdinalIgnoreCase)) { notepad.Window.style.display = DisplayStyle.Flex; notepad.Window.BringToFront(); return true; }
-                if (string.Equals(app, "minesweeper", StringComparison.OrdinalIgnoreCase)) { minesweeper.Open(); return true; }
-                if (string.Equals(app, "solitaire", StringComparison.OrdinalIgnoreCase)) { solitaire.Open(); return true; }
-                if (string.Equals(app, "terminal", StringComparison.OrdinalIgnoreCase) || string.Equals(app, "Command Prompt", StringComparison.OrdinalIgnoreCase)) { terminal.Open(); return true; }
-                if (string.Equals(app, "chat", StringComparison.OrdinalIgnoreCase) || string.Equals(app, "TOR-Turnip Chat v0.3.9", StringComparison.OrdinalIgnoreCase)) { chat.Open(); return true; }
-                if (string.Equals(app, "settings", StringComparison.OrdinalIgnoreCase) || string.Equals(app, "Control Panel", StringComparison.OrdinalIgnoreCase)) { settings.Open(); return true; }
+                for (int i = 0; i < Ids.Length; i++)
+                    if (string.Equals(app, Ids[i], StringComparison.OrdinalIgnoreCase) || string.Equals(app, Names[i], StringComparison.OrdinalIgnoreCase)) return launch(i);
                 return false;
             },
             delegate(string path) { if (path == null) { notepad.Window.style.display = DisplayStyle.Flex; notepad.Window.BringToFront(); } else notepad.OpenPath(path); if (explorer != null) explorer.RefreshIfOpen(); });
@@ -113,14 +123,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
                 if (selected != null) selected.style.backgroundColor = Color.clear;
                 selected = tile;
                 selected.style.backgroundColor = (Color)new Color32(120, 170, 230, 77);
-                if (index == 7 && e.clickCount >= 2) { window.style.display = DisplayStyle.Flex; window.BringToFront(); }
-                else if (index == 2 && e.clickCount >= 2) explorer.Open();
-                else if (index == 3 && e.clickCount >= 2) recycle.Open();
-                else if (index == 4 && e.clickCount >= 2) settings.Open();
-                else if (index == 6 && e.clickCount >= 2) terminal.Open();
-                else if (index == 10 && e.clickCount >= 2) chat.Open();
-                else if (index == 12 && e.clickCount >= 2) minesweeper.Open();
-                else if (index == 13 && e.clickCount >= 2) solitaire.Open();
+                if (e.clickCount >= 2) launch(index);
             });
             desktop.Add(tile);
         }
@@ -140,11 +143,13 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         windows.Add(terminal.Window);
         windows.Add(chat.Window);
         windows.Add(settings.Window);
+        ToolkitStart start = new ToolkitStart(Names, Icons, Texture, launch, delegate { if (notepad.CanClose()) ComputerApps.Close(storage == null ? "os.toolkit-prototype" : "os.toolkit-os"); });
         VisualElement taskbar = new VisualElement();
         taskbar.style.height = 40;
         taskbar.style.flexShrink = 0;
         taskbar.style.backgroundColor = (Color)new Color32(38, 50, 64, 255);
         taskbar.style.flexDirection = FlexDirection.Row;
+        Image startIcon = null;
         foreach (string name in new[] { "viewports", "folder-filled", "world" })
         {
             Image icon = new Image();
@@ -154,6 +159,11 @@ internal sealed class ToolkitPrototype : MonoBehaviour
             icon.style.height = 26;
             icon.style.marginLeft = 14;
             icon.style.marginTop = 7;
+            if (name == "viewports")
+            {
+                startIcon = icon;
+                icon.RegisterCallback<ClickEvent>(delegate(ClickEvent e) { if (e.button == 0) start.Toggle(); });
+            }
             if (name == "folder-filled") icon.RegisterCallback<ClickEvent>(delegate(ClickEvent e) { if (e.button == 0) explorer.Open(); });
             taskbar.Add(icon);
         }
@@ -173,6 +183,13 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         clock.style.marginRight = 8;
         taskbar.Add(clock);
         root.Add(taskbar);
+        root.Add(start.Menu);
+        root.RegisterCallback<PointerDownEvent>(delegate(PointerDownEvent e)
+        {
+            VisualElement target = e.target as VisualElement;
+            if (target == null || target == start.Menu || start.Menu.Contains(target) || target == startIcon || (startIcon != null && startIcon.Contains(target))) return;
+            start.Hide();
+        }, TrickleDown.TrickleDown);
         UnityEngine.UIElements.Button close = new UnityEngine.UIElements.Button(delegate { if (notepad.CanClose()) ComputerApps.Close(storage == null ? "os.toolkit-prototype" : "os.toolkit-os"); });
         close.text = "Close";
         close.style.position = UnityEngine.UIElements.Position.Absolute;
