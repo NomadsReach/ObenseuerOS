@@ -66,6 +66,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         settings = new ToolkitSettings(wallpaper, osStorage != null);
         ToolkitChat chat = new ToolkitChat(osStorage != null, osStorage == null ? (Action)null : osStorage.CheckSession);
         ToolkitMail mail = new ToolkitMail(new MailClient(osStorage == null ? (Func<Newtonsoft.Json.Linq.JObject, Newtonsoft.Json.Linq.JObject>)null : OsBridge.Reply, osStorage == null ? (Action)null : osStorage.CheckSession), osStorage == null ? new MailDraft() : MailDrafts.ForSession(osStorage.SessionId));
+        ToolkitBank bank = new ToolkitBank(osStorage == null ? new BankClient(null, null) : BankClients.ForSession(osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession));
         ToolkitTerminal terminal = null;
         Func<int, bool> launch = delegate(int index)
         {
@@ -77,6 +78,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
                 case 4: settings.Open(); return true;
                 case 6: terminal.Open(); return true;
                 case 7: notepad.Window.style.display = DisplayStyle.Flex; notepad.Window.BringToFront(); return true;
+                case 8: bank.Open(); return true;
                 case 10: chat.Open(); return true;
                 case 12: minesweeper.Open(); return true;
                 case 13: solitaire.Open(); return true;
@@ -147,6 +149,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         windows.Add(chat.Window);
         windows.Add(settings.Window);
         windows.Add(mail.Window);
+        windows.Add(bank.Window);
         ToolkitStart start = new ToolkitStart(Names, Icons, Texture, launch, delegate { if (canClose()) ComputerApps.Close(storage == null ? "os.toolkit-prototype" : "os.toolkit-os"); });
         VisualElement taskbar = new VisualElement();
         taskbar.style.height = 40;
