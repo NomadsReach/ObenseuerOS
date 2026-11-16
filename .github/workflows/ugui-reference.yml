@@ -22,6 +22,7 @@ jobs:
       - run: dotnet run --project checks/Solitaire/Solitaire.csproj -c Release
       - run: dotnet run --project checks/Terminal/Terminal.csproj -c Release
       - run: dotnet run --project checks/ChatHistory/ChatHistory.csproj -c Release
+      - run: dotnet run --project checks/MailClient/MailClient.csproj -c Release
   reference:
     runs-on: ubuntu-latest
     timeout-minutes: 10

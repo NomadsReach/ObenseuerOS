@@ -65,11 +65,13 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         OsNotepadStorage osStorage = storage as OsNotepadStorage;
         settings = new ToolkitSettings(wallpaper, osStorage != null);
         ToolkitChat chat = new ToolkitChat(osStorage != null, osStorage == null ? (Action)null : osStorage.CheckSession);
+        ToolkitMail mail = new ToolkitMail(new MailClient(osStorage == null ? (Func<Newtonsoft.Json.Linq.JObject, Newtonsoft.Json.Linq.JObject>)null : OsBridge.Reply, osStorage == null ? (Action)null : osStorage.CheckSession), osStorage == null ? new MailDraft() : MailDrafts.ForSession(osStorage.SessionId));
         ToolkitTerminal terminal = null;
         Func<int, bool> launch = delegate(int index)
         {
             switch (index)
             {
+                case 0: mail.Open(); return true;
                 case 2: explorer.Open(); return true;
                 case 3: recycle.Open(); return true;
                 case 4: settings.Open(); return true;
@@ -92,7 +94,8 @@ internal sealed class ToolkitPrototype : MonoBehaviour
                 return false;
             },
             delegate(string path) { if (path == null) { notepad.Window.style.display = DisplayStyle.Flex; notepad.Window.BringToFront(); } else notepad.OpenPath(path); if (explorer != null) explorer.RefreshIfOpen(); });
-        ComputerApps.SetCloseGuard(transform.parent, notepad.CanClose);
+        Func<bool> canClose = delegate { return notepad.CanClose() && mail.CanClose(); };
+        ComputerApps.SetCloseGuard(transform.parent, canClose);
         VisualElement window = notepad.Window;
         for (int i = 0; i < Names.Length; i++)
         {
@@ -143,7 +146,8 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         windows.Add(terminal.Window);
         windows.Add(chat.Window);
         windows.Add(settings.Window);
-        ToolkitStart start = new ToolkitStart(Names, Icons, Texture, launch, delegate { if (notepad.CanClose()) ComputerApps.Close(storage == null ? "os.toolkit-prototype" : "os.toolkit-os"); });
+        windows.Add(mail.Window);
+        ToolkitStart start = new ToolkitStart(Names, Icons, Texture, launch, delegate { if (canClose()) ComputerApps.Close(storage == null ? "os.toolkit-prototype" : "os.toolkit-os"); });
         VisualElement taskbar = new VisualElement();
         taskbar.style.height = 40;
         taskbar.style.flexShrink = 0;
@@ -190,7 +194,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
             if (target == null || target == start.Menu || start.Menu.Contains(target) || target == startIcon || (startIcon != null && startIcon.Contains(target))) return;
             start.Hide();
         }, TrickleDown.TrickleDown);
-        UnityEngine.UIElements.Button close = new UnityEngine.UIElements.Button(delegate { if (notepad.CanClose()) ComputerApps.Close(storage == null ? "os.toolkit-prototype" : "os.toolkit-os"); });
+        UnityEngine.UIElements.Button close = new UnityEngine.UIElements.Button(delegate { if (canClose()) ComputerApps.Close(storage == null ? "os.toolkit-prototype" : "os.toolkit-os"); });
         close.text = "Close";
         close.style.position = UnityEngine.UIElements.Position.Absolute;
         close.style.right = 16;

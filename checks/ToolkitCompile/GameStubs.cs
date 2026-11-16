@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Newtonsoft.Json.Linq;
 
 namespace ObenseuerCore
 {
@@ -26,6 +27,7 @@ namespace ObenseuerCore
 
 namespace ObenseuerOS
 {
+    internal static class OsBridge { internal static JObject Reply(JObject request) { return null; } }
     internal static class OsWallpaper { internal static int Capture(RectTransform screen, string folder) { return -1; } }
     internal static class OsGameArt
     {
@@ -36,6 +38,7 @@ namespace ObenseuerOS
     }
     internal sealed class OsNotepadStorage : NotepadStorage
     {
+        internal int SessionId { get { return 0; } }
         internal void CheckSession() { }
         public string[] List() { return null; }
         public string Read(string path) { return null; }

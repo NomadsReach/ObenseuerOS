@@ -20,6 +20,8 @@ internal static class Program
     {
         OsNotepadStorage.Attach();
         var storage = new OsNotepadStorage();
+        int firstSession = storage.SessionId;
+        Check(new OsNotepadStorage().SessionId == firstSession, "reopened apps share session");
         Check(storage.Valid("/docs/notes.txt") && !storage.Valid("/other/notes.txt") && !storage.Valid("/docs/no extension"), "document names");
         storage.Write("/docs/notes.txt", "kept");
         Check(storage.Read("/docs/notes.txt") == "kept" && storage.List().Length == 1, "save and list");
@@ -78,6 +80,7 @@ internal static class Program
         Refused(() => storage.Write("/docs/notes.txt", "lost"), "write during load");
         ObenseuerCore.SaveData.Busy = false;
         ObenseuerCore.Events.RaiseLoad();
+        Check(new OsNotepadStorage().SessionId != firstSession, "loaded save gets a new session");
         Refused(() => storage.CheckSession(), "stale chat session");
         Refused(() => storage.List(), "stale list");
         Refused(() => storage.Read("/docs/notes.txt"), "stale read");

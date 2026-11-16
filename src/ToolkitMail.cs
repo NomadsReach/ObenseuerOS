@@ -1,0 +1,283 @@
+using System;
+using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
+using ObenseuerCore.Ui;
+using UnityEngine;
+using UnityEngine.UIElements;
+
+namespace ObenseuerOS
+{
+    internal sealed class ToolkitMail
+    {
+        internal readonly VisualElement Window;
+        private readonly MailClient client;
+        private readonly MailDraft draft;
+        private readonly VisualElement body;
+        private readonly Label status;
+        private readonly List<JObject> rows = new List<JObject>();
+        private readonly HashSet<int> picked = new HashSet<int>();
+        private readonly List<string> recipients = new List<string>();
+        private ScrollView list;
+        private VisualElement view;
+        private TextField search;
+        private JObject current;
+        private string folder = "inbox";
+        private string armedReplace = "";
+        private bool composing, armedClose, armedDelete;
+
+        internal ToolkitMail(MailClient client, MailDraft draft)
+        {
+            this.client = client;
+            this.draft = draft;
+            Window = new VisualElement(); Window.style.position = UnityEngine.UIElements.Position.Absolute;
+            Window.style.left = 250; Window.style.top = 32; Window.style.width = 980; Window.style.height = 620;
+            Window.style.paddingLeft = 6; Window.style.paddingRight = 6; Window.style.paddingBottom = 6;
+            Window.style.backgroundColor = (Color)new Color32(190, 205, 222, 217); Window.style.display = DisplayStyle.None;
+            VisualElement bar = Row(); bar.style.height = 36;
+            Label title = Text("Stalburg Mail"); title.style.flexGrow = 1; title.style.unityTextAlign = TextAnchor.MiddleLeft; bar.Add(title);
+            UnityEngine.UIElements.Button close = Button("×", Close); close.style.width = 46; close.style.height = 20; close.style.marginTop = 8;
+            close.style.backgroundColor = (Color)new Color32(199, 55, 47, 255); close.style.color = Color.white;
+            bar.Add(close); Window.Add(bar); ToolkitUi.MakeDraggable(Window, bar);
+            status = Text(""); status.style.color = (Color)new Color32(170, 25, 25, 255); status.style.backgroundColor = Color.white; Window.Add(status);
+            body = new VisualElement(); body.style.flexGrow = 1; body.style.backgroundColor = Color.white; Window.Add(body);
+        }
+
+        internal void Open()
+        {
+            Window.style.display = DisplayStyle.Flex; Window.BringToFront();
+            if (composing) return;
+            Refresh();
+        }
+
+        internal bool CanClose()
+        {
+            if (!Dirty()) { armedClose = false; return true; }
+            if (armedClose) { armedClose = false; return true; }
+            armedClose = true; Window.style.display = DisplayStyle.Flex; Window.BringToFront();
+            status.text = "Draft not sent. Close again to leave; it will remain for this session."; return false;
+        }
+
+        private bool Dirty() { return draft.Dirty; }
+        private void Close() { if (CanClose()) Window.style.display = DisplayStyle.None; }
+        private static VisualElement Row() { VisualElement row = new VisualElement(); row.style.flexDirection = FlexDirection.Row; return row; }
+        private static Label Text(string text) { Label label = new Label(text); label.enableRichText = false; label.style.color = Color.black; label.style.whiteSpace = WhiteSpace.Normal; return label; }
+        private static UnityEngine.UIElements.Button Button(string text, Action action) { UnityEngine.UIElements.Button b = new UnityEngine.UIElements.Button(action); b.enableRichText = false; b.text = text; return b; }
+        private static JObject Args(string key, object value) { return new JObject(new JProperty(key, value)); }
+
+        private JToken Call(string method, JObject args)
+        {
+            try { return client.Call(method, args); }
+            catch (Exception e) { status.text = e.Message; return null; }
+        }
+
+        private void Refresh()
+        {
+            armedDelete = false;
+            status.text = "";
+            JObject state = Call("mail.status", null) as JObject;
+            if (state == null) return;
+            recipients.Clear();
+            foreach (JToken item in (JArray)state["recipients"]) recipients.Add((string)item);
+            if (state["account"] == null || state["account"].Type == JTokenType.Null) { SignUp(); return; }
+            BuildMailbox((string)state["account"]["address"], (int)state["unread"]);
+            LoadRows();
+            if (composing) Compose("", "", "");
+            else if (current != null) ShowMessage(current); else Hint();
+            if (Dirty() && !composing) status.text = "Unsent draft kept for this session. Select Compose to continue.";
+        }
+
+        private void SignUp()
+        {
+            body.Clear();
+            Label heading = Text("Create your Stalburg Mail account"); heading.style.fontSize = 22; heading.style.marginTop = 16; body.Add(heading);
+            body.Add(Text("Pick a name and a domain. The account belongs to this save."));
+            TextField name = new TextField("Username"); name.maxLength = 20; body.Add(name);
+            DropdownField domain = new DropdownField("Domain", new List<string> { "stalburg.ts", "opensewer.ts" }, 0); body.Add(domain);
+            body.Add(Button("Create account", delegate
+            {
+                if (Call("mail.signup", new JObject(new JProperty("username", name.value), new JProperty("domain", domain.value))) != null) Refresh();
+            }));
+        }
+
+        private void BuildMailbox(string address, int unread)
+        {
+            body.Clear();
+            VisualElement columns = Row(); columns.style.flexGrow = 1; body.Add(columns);
+            VisualElement rail = new VisualElement(); rail.style.width = 160; rail.style.flexShrink = 0;
+            rail.Add(Text("Stalburg MAIL")); rail.Add(Text(address));
+            rail.Add(Button("Compose", delegate { Compose("", "", ""); }));
+            string[] ids = { "inbox", "important", "sent", "trash" };
+            string[] labels = { "Inbox", "Important", "Sent Mail", "Trash" };
+            for (int i = 0; i < ids.Length; i++)
+            {
+                string id = ids[i];
+                string text = labels[i] + (id == "inbox" && unread > 0 ? " (" + unread + ")" : "");
+                rail.Add(Button(text, delegate { folder = id; picked.Clear(); armedDelete = false; current = null; Refresh(); }));
+            }
+            columns.Add(rail);
+            VisualElement middle = new VisualElement(); middle.style.width = 270; middle.style.flexShrink = 0;
+            search = new TextField("Search"); search.RegisterValueChangedCallback(delegate { RenderRows(); }); middle.Add(search);
+            VisualElement tools = Row();
+            tools.Add(Button("All", delegate { Pick(true); })); tools.Add(Button("None", delegate { Pick(false); }));
+            tools.Add(Button("Read", delegate { PickRead(true); })); tools.Add(Button("Unread", delegate { PickRead(false); })); middle.Add(tools);
+            list = new ScrollView(); list.style.flexGrow = 1; middle.Add(list); columns.Add(middle);
+            VisualElement right = new VisualElement(); right.style.flexGrow = 1;
+            VisualElement actions = Row();
+            actions.Add(Button("Refresh", Refresh)); actions.Add(Button("Mark unread", MarkUnread)); actions.Add(Button("Delete", Delete));
+            actions.Add(Button("◀", delegate { Step(-1); })); actions.Add(Button("▶", delegate { Step(1); })); right.Add(actions);
+            view = new ScrollView(); view.style.flexGrow = 1; right.Add(view); columns.Add(right);
+        }
+
+        private void LoadRows()
+        {
+            rows.Clear();
+            for (int offset = 0; ; )
+            {
+                JObject page = Call("mail.list", new JObject(new JProperty("folder", folder), new JProperty("offset", offset), new JProperty("limit", 20))) as JObject;
+                if (page == null) break;
+                JArray items = (JArray)page["items"];
+                foreach (JToken item in items) rows.Add((JObject)item);
+                offset += items.Count;
+                if (items.Count == 0 || offset >= (int)page["total"]) break;
+            }
+            RenderRows();
+        }
+
+        private bool Matches(JObject row)
+        {
+            string q = search == null ? "" : (search.value ?? "").Trim();
+            return q.Length == 0 || (((string)row["from"] ?? "") + " " + ((string)row["to"] ?? "") + " " + ((string)row["subject"] ?? "")).IndexOf(q, StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
+        private void RenderRows()
+        {
+            if (list == null) return;
+            list.Clear();
+            int shown = 0;
+            foreach (JObject row in rows)
+            {
+                if (!Matches(row)) continue;
+                shown++;
+                int id = (int)row["id"];
+                VisualElement line = Row();
+                Toggle select = new Toggle(); select.SetValueWithoutNotify(picked.Contains(id));
+                select.RegisterValueChangedCallback(delegate(ChangeEvent<bool> e) { if (e.newValue) picked.Add(id); else picked.Remove(id); armedDelete = false; });
+                line.Add(select);
+                string from = folder == "sent" ? (string)row["to"] : (string)row["from"];
+                UnityEngine.UIElements.Button open = Button(((bool)row["read"] ? "" : "● ") + from + "\n" + (string)row["subject"], delegate { Read(id); });
+                open.style.flexGrow = 1; line.Add(open); list.Add(line);
+            }
+            if (shown == 0) list.Add(Text(rows.Count == 0 ? "No messages here." : "No matching messages."));
+        }
+
+        private void Pick(bool value) { picked.Clear(); if (value) foreach (JObject row in rows) if (Matches(row)) picked.Add((int)row["id"]); armedDelete = false; RenderRows(); }
+        private void PickRead(bool read) { picked.Clear(); foreach (JObject row in rows) if (Matches(row) && (bool)row["read"] == read) picked.Add((int)row["id"]); armedDelete = false; RenderRows(); }
+        private List<int> Targets() { List<int> ids = new List<int>(picked); if (ids.Count == 0 && current != null) ids.Add((int)current["id"]); return ids; }
+
+        private void MarkUnread()
+        {
+            if (folder != "inbox") { status.text = "Only Inbox messages can be marked unread."; return; }
+            foreach (int id in Targets()) if (Call("mail.unread", Args("id", id)) == null) return;
+            picked.Clear(); Refresh();
+        }
+
+        private void Delete()
+        {
+            List<int> ids = Targets(); if (ids.Count == 0) return;
+            if (folder == "trash" && !armedDelete) { armedDelete = true; status.text = "Delete again to permanently delete the selected messages."; return; }
+            armedDelete = false;
+            foreach (int id in ids) if (Call("mail.delete", Args("id", id)) == null) { picked.Clear(); current = null; LoadRows(); return; }
+            picked.Clear(); current = null; Refresh(); status.text = folder == "trash" ? "Deleted." : "Moved to Trash.";
+        }
+
+        private void Step(int direction)
+        {
+            List<JObject> visible = rows.FindAll(Matches);
+            int at = current == null ? -1 : visible.FindIndex(row => (int)row["id"] == (int)current["id"]);
+            int next = at + direction; if (at >= 0 && next >= 0 && next < visible.Count) Read((int)visible[next]["id"]);
+        }
+
+        private void Read(int id)
+        {
+            armedDelete = false; armedReplace = "";
+            JObject message = Call("mail.read", Args("id", id)) as JObject;
+            if (message == null) return;
+            current = message; composing = false; ShowMessage(message);
+            foreach (JObject row in rows) if ((int)row["id"] == id) row["read"] = true;
+            RenderRows();
+        }
+
+        private void Hint() { if (view != null) { view.Clear(); view.Add(Text("Choose a message to read it.")); } }
+
+        private void ShowMessage(JObject message)
+        {
+            view.Clear();
+            Label subject = Text((string)message["subject"]); subject.style.fontSize = 20; view.Add(subject);
+            view.Add(Text((string)message["from"] + "  to " + (string)message["to"] + "\n" + (string)message["when"]));
+            view.Add(Text((string)message["body"]));
+            int id = (int)message["id"];
+            bool starred = (bool)message["starred"];
+            view.Add(Button(starred ? "★ Important" : "☆ Important", delegate
+            {
+                JObject result = Call("mail.star", new JObject(new JProperty("id", id), new JProperty("on", !starred))) as JObject;
+                if (result != null) { message["starred"] = (bool)result["starred"]; ShowMessage(message); }
+            }));
+            JToken attachment = message["attachment"];
+            if (attachment != null && attachment.Type == JTokenType.Object)
+            {
+                bool opened = (bool)attachment["opened"];
+                UnityEngine.UIElements.Button open = Button((string)attachment["file"] + (opened ? " (Opened)" : " — Open"), delegate
+                {
+                    JObject result = Call("mail.attachment", Args("id", id)) as JObject;
+                    if (result == null) return;
+                    attachment["opened"] = true; ShowMessage(message);
+                    status.text = (string)result["outcome"] == "blocked" ? "Blocked by your security software." : "The attachment opened.";
+                });
+                open.SetEnabled(!opened); view.Add(open);
+            }
+            string from = (string)message["from"] ?? "";
+            int left = from.LastIndexOf('<'), right = from.LastIndexOf('>');
+            string address = left >= 0 && right > left ? from.Substring(left + 1, right - left - 1).Trim() : from.Trim();
+            if ((string)message["folder"] == "inbox" && recipients.Contains(address))
+                view.Add(Button("Reply", delegate { string s = (string)message["subject"] ?? ""; Compose(address, s.StartsWith("Re: ", StringComparison.OrdinalIgnoreCase) ? s : "Re: " + s, ""); }));
+            view.Add(Button("Forward", delegate
+            {
+                string s = (string)message["subject"] ?? "";
+                string quoted = "> " + ((string)message["body"] ?? "").Replace("\n", "\n> ");
+                Compose("", s.StartsWith("Fwd: ", StringComparison.OrdinalIgnoreCase) ? s : "Fwd: " + s, "\n\n" + quoted);
+            }));
+        }
+
+        private void Compose(string to, string subject, string text)
+        {
+            if ((to.Length > 0 || subject.Length > 0 || text.Length > 0) && Dirty())
+            {
+                string key = to + "\n" + subject + "\n" + text;
+                if (armedReplace != key) { armedReplace = key; status.text = "Draft not sent. Choose the same action again to replace it."; return; }
+            }
+            armedReplace = "";
+            composing = true; armedClose = false;
+            if (to.Length > 0 || subject.Length > 0 || text.Length > 0) { draft.To = to; draft.Subject = subject; draft.Body = text; }
+            view.Clear();
+            view.Add(Text("New message"));
+            if (recipients.Count == 0) { view.Add(Text("No recipients are available.")); return; }
+            int index = recipients.IndexOf(draft.To); if (index < 0) index = 0;
+            DropdownField toField = new DropdownField("To", new List<string>(recipients), index); draft.To = toField.value;
+            toField.RegisterValueChangedCallback(delegate(ChangeEvent<string> e) { draft.To = e.newValue; armedClose = false; }); view.Add(toField);
+            TextField subj = new TextField("Subject"); subj.maxLength = 100; subj.SetValueWithoutNotify(draft.Subject);
+            subj.RegisterValueChangedCallback(delegate(ChangeEvent<string> e) { draft.Subject = e.newValue ?? ""; armedClose = false; armedReplace = ""; }); view.Add(subj);
+            TextField message = new TextField("Message"); message.multiline = true; message.maxLength = 3000; message.style.height = 180; message.SetValueWithoutNotify(draft.Body);
+            message.RegisterValueChangedCallback(delegate(ChangeEvent<string> e) { draft.Body = e.newValue ?? ""; armedClose = false; armedReplace = ""; }); view.Add(message);
+            view.Add(Button("Send", delegate
+            {
+                JObject args = new JObject(new JProperty("to", draft.To), new JProperty("subject", draft.Subject), new JProperty("body", draft.Body));
+                if (Call("mail.send", args) == null) return;
+                composing = false; ClearDraft(); current = null; folder = "sent"; Refresh(); status.text = "Sent.";
+            }));
+            view.Add(Button("Discard", delegate { composing = false; ClearDraft(); Hint(); }));
+            subj.Focus();
+        }
+
+        private void ClearDraft() { draft.Clear(); armedClose = false; armedReplace = ""; }
+    }
+}

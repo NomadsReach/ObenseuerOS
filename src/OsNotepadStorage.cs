@@ -8,6 +8,7 @@ namespace ObenseuerOS
     {
         private static int generation;
         private readonly int session = generation;
+        internal int SessionId { get { return session; } }
 
         internal static void Attach()
         {
