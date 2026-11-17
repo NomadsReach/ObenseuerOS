@@ -107,3 +107,5 @@
 - `src/LauncherCatalog.cs:LauncherCatalog.Find` - Command Prompt prioritizes exact IDs and refuses ambiguous titles, so one mod cannot accidentally launch another mod with the same display name.
 
 - `src/ToolkitBrowser.cs:ToolkitBrowser.Render`, `src/ToolkitWiki.cs:ToolkitWiki.OpenPage`, `src/OfflineWiki.cs:OfflineWiki.FindPage` - Browser links to the offline wiki retain their article path and resolve only against locally loaded saved pages, using the existing validated title parser. Missing or unsupported links report that they cannot be opened offline; no request is sent to the network. Other site routes still open at their app root.
+
+- `src/ToolkitBrowser.cs:ToolkitBrowser.Render`, `src/ToolkitEye.cs:ToolkitEye.OpenRoute`, `src/EyeRoute.cs:EyeRoute.Resolve` - EYEbook browser links select their existing native views, including URL-decoded search queries. Session checks precede routing, unknown paths show the home view, and the route only affects local UI state.

@@ -73,6 +73,16 @@ internal static class Program
         byte[] png = { 0x89, 0x50, 0x4e, 0x47, 13, 10, 26, 10, 0, 0, 0, 13, 0x49, 0x48, 0x44, 0x52, 0, 0, 0, 4, 0, 0, 0, 5 };
         Check(WikiImage.Fits(png, 2048)); png[18] = 9; Check(!WikiImage.Fits(png, 2048));
         Check(OfflineWiki.Parse("OBXWIKI1\ntitle:Main_Page\nrev:no\nfetched:4\n\ntext") == null && OfflineWiki.Parse("bad") == null);
+        string eyeView, eyeQuery;
+        foreach (string route in new[] { "profile", "friends", "postal", "notifications", "saved", "photos", "pages" })
+        {
+            EyeRoute.Resolve("/" + route, out eyeView, out eyeQuery); Check(eyeView == route && eyeQuery == "");
+        }
+        EyeRoute.Resolve("/search?x=1&q=Jarmo+Pettinen%26Pera#section", out eyeView, out eyeQuery);
+        Check(eyeView == "home" && eyeQuery == "Jarmo Pettinen&Pera");
+        EyeRoute.Resolve("/search?q=first&q=second", out eyeView, out eyeQuery); Check(eyeQuery == "first");
+        EyeRoute.Resolve("/unknown?q=ignored", out eyeView, out eyeQuery); Check(eyeView == "home" && eyeQuery == "");
+        EyeRoute.Resolve("/search", out eyeView, out eyeQuery); Check(eyeView == "home" && eyeQuery == "");
         bool wikiLimited; Check(OfflineWiki.Load((string)null, out wikiLimited).Count == 0 && !wikiLimited);
         string wikiFolder = Path.Combine(Path.GetTempPath(), "offline-wiki-check-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(wikiFolder);

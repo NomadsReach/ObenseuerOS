@@ -70,6 +70,13 @@ namespace ObenseuerOS
             try { JObject front = news.Call("news.front", null); headlines = front["stories"] as JArray ?? new JArray(); } catch (Exception) { headlines = new JArray(); }
             Render();
         }
+        internal void OpenRoute(string path)
+        {
+            if (!Session()) return;
+            EyeRoute.Resolve(path, out view, out query);
+            thread = -1; commentPost = -1; notice.text = "";
+            Open();
+        }
         private bool Session()
         {
             try { if (checkSession != null) checkSession(); return true; }

@@ -27,6 +27,7 @@
     <Compile Include="..\..\src\VirusPopupRules.cs" />
     <Compile Include="..\..\src\VirusDesktopState.cs" />
     <Compile Include="..\..\src\EyeState.cs" />
+    <Compile Include="..\..\src\EyeRoute.cs" />
     <Compile Include="..\..\src\JobsList.cs" />
     <Compile Include="..\..\src\ScratchProgress.cs" />
     <Compile Include="..\..\src\ScratchReply.cs" />
