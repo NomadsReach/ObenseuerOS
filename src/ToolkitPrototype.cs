@@ -197,7 +197,9 @@ internal sealed class ToolkitPrototype : MonoBehaviour
     {
         RectTransform screen = ComputerApps.PinnedScreen;
         pinnedTarget = screen != null && transform.IsChildOf(screen) ? screen : null;
-        VisualElement root = pinnedTarget == null ? ToolkitUi.CreateOverlay(transform) : ToolkitUi.CreatePinnedOverlay(transform, pinnedTarget);
+        if (pinnedTarget == null) screen = ComputerApps.ActiveScreen;
+        if (screen != null && !transform.IsChildOf(screen)) screen = null;
+        VisualElement root = screen == null ? ToolkitUi.CreateOverlay(transform) : ToolkitUi.CreatePinnedOverlay(transform, screen);
         desktopRoot = root;
         root.style.flexGrow = 1;
         root.style.backgroundColor = (Color)new Color32(45, 95, 139, 255);

@@ -176,3 +176,5 @@
 - `examples/HelloOs/src/HelloSite.cs:HelloSite.Build` is compiled against Unity managed references by `checks/ToolkitCompile/ToolkitCompile.csproj` and exercised through the fake Toolkit site host by `checks/ModTaskbar/SiteChecks.cs:Run`. The full example plugin still needs a game-linked build.
 
 - `src/CloseConfirmation.cs:Allow`, `src/ToolkitNotepad.cs:CanClose`, `src/ToolkitMail.cs:CanClose` retain a close confirmation for unchanged unsaved content, so a second dirty app can request its own confirmation. `src/MailDraft.cs:Revision` invalidates that approval when shared compose or reply content changes. `checks/Notepad/Program.cs:Main` and `checks/MailClient/Program.cs:Main` cover approval, changes and revision tracking. Actual desktop close behavior remains unverified in-game.
+
+- `src/ToolkitPrototype.cs:Build` projects the Toolkit desktop onto its owning active computer screen, or its laptop pin when present. Only a laptop pin is treated as a pinned session for close requests; a standalone desktop stays an overlay. Desk projection and input require in-game verification.
