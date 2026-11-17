@@ -11,7 +11,9 @@ namespace ObenseuerOS
         {
             internal VisualElement Window;
             internal UnityEngine.UIElements.Button Button;
-            internal bool Minimized;
+            internal bool Minimized, Maximized;
+            internal StyleLength Left, Top, Right, Bottom, Width, Height;
+            internal UnityEngine.UIElements.Button Maximize;
         }
         internal readonly VisualElement Items;
         private readonly VisualElement windows;
@@ -47,6 +49,40 @@ namespace ObenseuerOS
             UnityEngine.UIElements.Button minimize = new UnityEngine.UIElements.Button(delegate { Minimize(entry); });
             minimize.text = "−"; minimize.tooltip = "Minimize"; minimize.style.width = 40; minimize.style.height = 20; minimize.style.marginTop = 8;
             bar.Insert(Math.Max(0, bar.childCount - 1), minimize);
+            UnityEngine.UIElements.Button maximize = new UnityEngine.UIElements.Button(delegate { ToggleMaximize(entry); });
+            maximize.text = "□"; maximize.tooltip = "Maximize"; maximize.style.width = 40; maximize.style.height = 20; maximize.style.marginTop = 8;
+            entry.Maximize = maximize; bar.Insert(Math.Max(0, bar.childCount - 1), maximize);
+            bar.RegisterCallback<PointerDownEvent>(delegate(PointerDownEvent e)
+            {
+                if (!entry.Maximized || e.button != 0) return;
+                VisualElement target = e.target as VisualElement;
+                while (target != null && target != bar)
+                {
+                    if (target.focusable || target is UnityEngine.UIElements.Button) return;
+                    target = target.parent;
+                }
+                if (target == bar) e.StopImmediatePropagation();
+            }, TrickleDown.TrickleDown);
+        }
+        private void ToggleMaximize(Entry entry)
+        {
+            if (entry.Maximized) { RestoreBounds(entry); return; }
+            VisualElement window = entry.Window;
+            entry.Left = window.style.left; entry.Top = window.style.top;
+            entry.Right = window.style.right; entry.Bottom = window.style.bottom;
+            entry.Width = window.style.width; entry.Height = window.style.height;
+            entry.Maximized = true;
+            window.style.left = 0; window.style.top = 0; window.style.right = 0; window.style.bottom = 0;
+            window.style.width = StyleKeyword.Auto; window.style.height = StyleKeyword.Auto;
+            entry.Maximize.text = "❐"; entry.Maximize.tooltip = "Restore"; window.BringToFront();
+            Refresh();
+        }
+        private void RestoreBounds(Entry entry)
+        {
+            VisualElement window = entry.Window;
+            window.style.left = entry.Left; window.style.top = entry.Top; window.style.right = entry.Right; window.style.bottom = entry.Bottom;
+            window.style.width = entry.Width; window.style.height = entry.Height;
+            entry.Maximized = false; entry.Maximize.text = "□"; entry.Maximize.tooltip = "Maximize";
         }
         internal void Unregister(VisualElement window)
         {
@@ -93,6 +129,7 @@ namespace ObenseuerOS
             {
                 bool visible = entry.Window.style.display != DisplayStyle.None;
                 if (visible && entry.Minimized) entry.Minimized = false;
+                if (!visible && !entry.Minimized && entry.Maximized) RestoreBounds(entry);
                 if (entry.Button == null) continue;
                 entry.Button.style.display = visible || entry.Minimized ? DisplayStyle.Flex : DisplayStyle.None;
                 entry.Button.style.backgroundColor = focused == entry.Window ? (Color)new Color32(80, 110, 140, 255) : Color.clear;

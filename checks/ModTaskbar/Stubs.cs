@@ -27,10 +27,27 @@ namespace UnityEngine.UIElements
     internal enum Align { Center }
     internal enum ScrollViewMode { Horizontal }
     internal enum ScrollerVisibility { Auto, Hidden }
+    internal enum StyleKeyword { Undefined, Auto }
+    internal enum TrickleDown { TrickleDown }
+    internal struct StyleLength
+    {
+        internal float number;
+        internal StyleKeyword keyword;
+        public static implicit operator StyleLength(int value) { return new StyleLength { number = value }; }
+        public static implicit operator StyleLength(StyleKeyword value) { return new StyleLength { keyword = value }; }
+    }
+    internal class PointerDownEvent
+    {
+        internal int button;
+        internal object target;
+        internal bool stopped;
+        internal void StopImmediatePropagation() { stopped = true; }
+    }
     internal sealed class Style
     {
         internal DisplayStyle display = DisplayStyle.Flex;
-        internal object position, left, top, width, height, paddingLeft, paddingRight, paddingBottom, backgroundColor;
+        internal StyleLength left, top, right, bottom, width, height;
+        internal object position, paddingLeft, paddingRight, paddingBottom, backgroundColor;
         internal object flexDirection, flexGrow, flexShrink, color, unityTextAlign, marginTop, minWidth, alignSelf;
     }
     internal sealed class Scheduled { internal Scheduled Every(long value) { return this; } }
@@ -38,11 +55,15 @@ namespace UnityEngine.UIElements
     internal class VisualElement
     {
         private readonly List<VisualElement> children = new List<VisualElement>();
-        private VisualElement parent;
+        internal VisualElement parent;
+        internal bool focusable;
+        private Action<PointerDownEvent> pointerDown;
         internal readonly Style style = new Style();
         internal readonly Scheduler schedule = new Scheduler();
         internal int childCount { get { return children.Count; } }
         internal VisualElement this[int index] { get { return children[index]; } }
+        internal void RegisterCallback<T>(Action<T> callback, TrickleDown phase) where T : PointerDownEvent { pointerDown = e => callback((T)e); }
+        internal void Dispatch(PointerDownEvent e) { if (pointerDown != null) pointerDown(e); }
         internal void Add(VisualElement child) { child.RemoveFromHierarchy(); children.Add(child); child.parent = this; }
         internal void Insert(int index, VisualElement child) { child.RemoveFromHierarchy(); children.Insert(index, child); child.parent = this; }
         internal void RemoveFromHierarchy() { if (parent != null) { parent.children.Remove(this); parent = null; } }
