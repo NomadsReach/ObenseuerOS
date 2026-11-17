@@ -27,6 +27,7 @@ jobs:
       - run: dotnet run --project checks/News/News.csproj -c Release
       - run: dotnet run --project checks/Market/Market.csproj -c Release
       - run: dotnet run --project checks/ShopResult/ShopResult.csproj -c Release
+      - run: dotnet run --project checks/Browser/Browser.csproj -c Release
   reference:
     runs-on: ubuntu-latest
     timeout-minutes: 10

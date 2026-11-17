@@ -72,11 +72,13 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         ToolkitShop shop = new ToolkitShop(osStorage == null ? new TransactionClient("shop", null, null) : TransactionClients.ForSession("shop", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession));
         news = new ToolkitNews(new NewsClient(osStorage == null ? (Func<Newtonsoft.Json.Linq.JObject, Newtonsoft.Json.Linq.JObject>)null : OsBridge.Reply, osStorage == null ? (Action)null : osStorage.CheckSession));
         ToolkitTerminal terminal = null;
+        ToolkitBrowser browser = null;
         Func<int, bool> launch = delegate(int index)
         {
             switch (index)
             {
                 case 0: mail.Open(); return true;
+                case 1: browser.Open(); return true;
                 case 2: explorer.Open(); return true;
                 case 3: recycle.Open(); return true;
                 case 4: settings.Open(); return true;
@@ -92,6 +94,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
                 default: return false;
             }
         };
+        browser = new ToolkitBrowser(storage, launch, osStorage == null ? (Action)null : osStorage.CheckSession);
         terminal = new ToolkitTerminal(storage, storage as ExplorerStorage, OsView.UserName,
             delegate { if (!WorldClock.IsAvailable) return "The game clock is not ready."; WorldTime now = WorldClock.Now; return string.Format("The current date is: {0}.1.1843, {1}", now.CalendarDay, now.Weekday); },
             delegate { if (!WorldClock.IsAvailable) return "The game clock is not ready."; WorldTime now = WorldClock.Now; return string.Format("The current time is: {0:00}:{1:00}", now.Hour, now.Minute); },
@@ -160,6 +163,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         windows.Add(exchange.Window);
         windows.Add(shop.Window);
         windows.Add(news.Window);
+        windows.Add(browser.Window);
         ToolkitStart start = new ToolkitStart(Names, Icons, Texture, launch, delegate { if (canClose()) ComputerApps.Close(storage == null ? "os.toolkit-prototype" : "os.toolkit-os"); });
         VisualElement taskbar = new VisualElement();
         taskbar.style.height = 40;
