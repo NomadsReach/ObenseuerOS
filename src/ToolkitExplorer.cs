@@ -290,10 +290,11 @@ namespace ObenseuerOS
                 });
                 row.RegisterCallback<KeyDownEvent>(delegate(KeyDownEvent e)
                 {
-                    if (e.keyCode == KeyCode.Return || e.keyCode == KeyCode.KeypadEnter)
+                    if (e.keyCode == KeyCode.Return || e.keyCode == KeyCode.KeypadEnter || e.keyCode == KeyCode.Space || e.keyCode == KeyCode.Delete)
                     {
                         Select(entry);
-                        if (openFile != null) openFile(entry.Path);
+                        if ((e.keyCode == KeyCode.Return || e.keyCode == KeyCode.KeypadEnter) && openFile != null) openFile(entry.Path);
+                        else if (e.keyCode == KeyCode.Delete) AskDelete();
                         e.StopPropagation();
                     }
                 });
