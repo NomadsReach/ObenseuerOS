@@ -62,7 +62,7 @@ namespace ObenseuerOS
             toolbar.Add(Button("☆", Bookmark)); toolbar.Add(Button("History", delegate { Visit(Home + "/history"); })); toolbar.Add(Button("Bookmarks", delegate { Visit(Home + "/bookmarks"); })); Window.Add(toolbar);
             notice = Text(""); notice.style.backgroundColor = Color.white; Window.Add(notice);
             content = new ScrollView(); content.style.flexGrow = 1; content.style.backgroundColor = Color.white; Window.Add(content);
-            site = new ToolkitSite(content);
+            site = new ToolkitSite(content, Navigate);
             Window.schedule.Execute(delegate() { if (Window.style.display != DisplayStyle.None && state != null) Session(); }).Every(1000);
         }
         internal void Open()

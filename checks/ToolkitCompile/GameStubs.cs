@@ -44,7 +44,6 @@ namespace ObenseuerCore
 
 namespace ObenseuerOS
 {
-    internal sealed class OsSitePage { internal Func<bool> CanClose; internal Action<bool> OnClosed; }
     internal enum OsResult { Ok, Queued, Unavailable }
     internal sealed class OsApp { internal string Id, ModId, Title, Icon, Host, Description; internal string[] Keywords; internal bool Site, Desktop, Pinned; internal int Width, Height, Badge; internal Action OnOpen; internal Action<VisualElement> BuildUi; internal Func<VisualElement, string, OsSitePage> BuildSite; internal Func<bool> CanClose; internal Action<bool> OnClosed; internal Action<string, string> OnEvent; }
     internal static class Os { internal const string ModId = "os"; internal static readonly List<OsApp> Apps = new List<OsApp>(); internal static void Opened(string id) { } internal static void Closed(string id) { } internal static void SyncWindow() { } internal static void Crash(string where, Exception error) { } }

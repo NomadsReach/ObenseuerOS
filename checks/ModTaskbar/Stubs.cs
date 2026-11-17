@@ -131,7 +131,6 @@ namespace ObenseuerCore.Ui
 namespace ObenseuerOS
 {
     using UnityEngine.UIElements;
-    internal sealed class OsSitePage { internal Func<bool> CanClose; internal Action<bool> OnClosed; }
     internal sealed class OsApp
     {
         internal string Id, Title, Icon;

@@ -9,6 +9,7 @@
     <EmbeddedResource Include="../../prototype-icons/*.png" LogicalName="desktop-icons/%(Filename)%(Extension)" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <Compile Include="..\..\src\Toolkit*.cs" />
+    <Compile Include="..\..\src\OsSitePage.cs" />
     <Compile Include="..\..\src\TerminalSession.cs" />
     <Compile Include="..\..\src\MailClient.cs" />
     <Compile Include="..\..\src\MailPages.cs" />

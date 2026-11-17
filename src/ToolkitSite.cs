@@ -6,13 +6,14 @@ namespace ObenseuerOS
     internal sealed class ToolkitSite
     {
         private readonly VisualElement content;
+        private readonly Func<string, bool> navigate;
         private OsApp current;
         private VisualElement page;
         private OsSitePage lifecycle;
         private string url;
         private bool changing, checking;
 
-        internal ToolkitSite(VisualElement content) { this.content = content; }
+        internal ToolkitSite(VisualElement content, Func<string, bool> navigate) { this.content = content; this.navigate = navigate; }
         internal bool IsCurrent(string value) { return current != null && url == value && Os.Apps.Contains(current); }
         internal bool IsSite(OsApp value) { return current == value; }
 
@@ -54,6 +55,7 @@ namespace ObenseuerOS
                     int start = nextUrl.IndexOfAny(new[] { '/', '?', '#' });
                     candidateLifecycle = next.BuildSite(candidate, start < 0 ? "" : nextUrl.Substring(start));
                     built = true;
+                    if (candidateLifecycle != null && !candidateLifecycle.TryClaim()) { built = false; return false; }
                     if (!valid() || !Os.Apps.Contains(next)) return false;
                 }
                 commit();
@@ -64,7 +66,18 @@ namespace ObenseuerOS
                 {
                     content.Add(candidate);
                     if (!valid() || !Os.Apps.Contains(next)) return false;
-                    current = next; page = candidate; lifecycle = candidateLifecycle; url = nextUrl; candidate = null;
+                    current = next; page = candidate; lifecycle = candidateLifecycle; url = nextUrl;
+                    if (lifecycle != null)
+                    {
+                        OsApp owner = next; VisualElement ownerPage = candidate; string ownerUrl = nextUrl;
+                        lifecycle.Bind(delegate(string address)
+                        {
+                            if (changing || current != owner || page != ownerPage || !Os.Apps.Contains(owner) || !valid() || navigate == null) return false;
+                            string target = OsSitePage.Resolve(ownerUrl, address);
+                            return target != null && target.Length <= 300 && navigate(target);
+                        });
+                    }
+                    candidate = null;
                 }
                 return true;
             }
@@ -92,6 +105,7 @@ namespace ObenseuerOS
         {
             OsApp old = current; VisualElement oldPage = page; OsSitePage oldLifecycle = lifecycle;
             current = null; page = null; lifecycle = null; url = null;
+            if (oldLifecycle != null) oldLifecycle.Bind(null);
             try { if (oldPage != null) oldPage.RemoveFromHierarchy(); }
             finally { if (old != null) Notify(old, oldLifecycle, forced); }
         }

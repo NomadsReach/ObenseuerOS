@@ -49,12 +49,6 @@ namespace ObenseuerOS
         public Func<VisualElement, string, OsSitePage> BuildUi;
     }
 
-    public sealed class OsSitePage
-    {
-        public Func<bool> CanClose;
-        public Action<bool> OnClosed;
-    }
-
     public static partial class Os
     {
         public static string ApiVersion

@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ObenseuerCore;
 using ObenseuerOS;
+using UnityEngine.UIElements;
 
 namespace Example.Hello
 {
@@ -62,9 +63,21 @@ namespace Example.Hello
             site.Keywords = new string[] { "hello", "example" };
             site.Folder = web;
             site.Page = "site.html";
+            site.BuildUi = BuildSite;
             Os.RegisterSite(ModId, SiteId, site);
             Os.AddNewsSource(ModId, "Local", Story);
             Events.HourPassed += OnHour;
+        }
+
+        private static OsSitePage BuildSite(VisualElement root, string path)
+        {
+            OsSitePage page = new OsSitePage();
+            bool about = path.StartsWith("/about", StringComparison.OrdinalIgnoreCase);
+            root.Add(new Label(about ? "About Hello OS" : "Hello from a mod site"));
+            Button link = new Button(delegate { page.Navigate(about ? "/" : "/about"); });
+            link.text = about ? "Home" : "About";
+            root.Add(link);
+            return page;
         }
 
         private static string Greet(string args)
