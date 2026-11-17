@@ -70,6 +70,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         ToolkitBank bank = new ToolkitBank(osStorage == null ? new TransactionClient("bank", null, null) : TransactionClients.ForSession("bank", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession));
         ToolkitExchange exchange = new ToolkitExchange(osStorage == null ? new TransactionClient("exchange", null, null) : TransactionClients.ForSession("exchange", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession));
         ToolkitShop shop = new ToolkitShop(osStorage == null ? new TransactionClient("shop", null, null) : TransactionClients.ForSession("shop", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession));
+        ToolkitJobs jobs = null;
         news = new ToolkitNews(new NewsClient(osStorage == null ? (Func<Newtonsoft.Json.Linq.JObject, Newtonsoft.Json.Linq.JObject>)null : OsBridge.Reply, osStorage == null ? (Action)null : osStorage.CheckSession));
         ToolkitTerminal terminal = null;
         ToolkitBrowser browser = null;
@@ -91,10 +92,12 @@ internal sealed class ToolkitPrototype : MonoBehaviour
                 case 11: shop.Open(); return true;
                 case 12: minesweeper.Open(); return true;
                 case 13: solitaire.Open(); return true;
+                case 14: jobs.Open(); return true;
                 default: return false;
             }
         };
         browser = new ToolkitBrowser(storage, launch, osStorage == null ? (Action)null : osStorage.CheckSession);
+        jobs = new ToolkitJobs(new TransactionClient("jobs", osStorage == null ? (Func<Newtonsoft.Json.Linq.JObject, Newtonsoft.Json.Linq.JObject>)null : OsBridge.Reply, osStorage == null ? (Action)null : osStorage.CheckSession), osStorage == null ? (Action)null : osStorage.CheckSession, launch);
         terminal = new ToolkitTerminal(storage, storage as ExplorerStorage, OsView.UserName,
             delegate { if (!WorldClock.IsAvailable) return "The game clock is not ready."; WorldTime now = WorldClock.Now; return string.Format("The current date is: {0}.1.1843, {1}", now.CalendarDay, now.Weekday); },
             delegate { if (!WorldClock.IsAvailable) return "The game clock is not ready."; WorldTime now = WorldClock.Now; return string.Format("The current time is: {0:00}:{1:00}", now.Hour, now.Minute); },
@@ -164,6 +167,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         windows.Add(shop.Window);
         windows.Add(news.Window);
         windows.Add(browser.Window);
+        windows.Add(jobs.Window);
         ToolkitStart start = new ToolkitStart(Names, Icons, Texture, launch, delegate { if (canClose()) ComputerApps.Close(storage == null ? "os.toolkit-prototype" : "os.toolkit-os"); });
         VisualElement taskbar = new VisualElement();
         taskbar.style.height = 40;

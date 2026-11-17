@@ -16,6 +16,7 @@
     <Compile Include="..\..\src\NewsClient.cs" />
     <Compile Include="..\..\src\NewsPhotos.cs" />
     <Compile Include="..\..\src\BrowserState.cs" />
+    <Compile Include="..\..\src\JobsList.cs" />
     <Compile Include="..\..\src\MarketChart.cs" />
     <Compile Include="..\..\src\Chat\ChatHistory.cs" />
     <Compile Include="..\..\src\Chat\ChatSave.cs" />

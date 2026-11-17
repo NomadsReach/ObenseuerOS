@@ -22,7 +22,7 @@ namespace ObenseuerOS
             { "www.stalburgbank.ts", "Stalburg Bank", "Banking, balances and loans.", "8" },
             { "www.stalburgtimes.com", "Stalburg Times", "News from the outside world.", "9" },
             { "www.stalex.ts", "Stal-Ex", "The Stalburg stock exchange.", "5" },
-            { "jobs.stalburg.ts", "Jobs", "Work stations and wages.", "" },
+            { "jobs.stalburg.ts", "Jobs", "Work stations and wages.", "14" },
             { "shop.stalburg.ts", "Shop", "Goods for sale.", "11" },
             { "bets.stalburg.ts", "NaSpoBet", "Football, ice hockey and volleyball odds.", "" },
             { "lottery.stalburg.ts", "LOTTO by NaSpoBet", "Scratch cards and a number draw.", "" },
