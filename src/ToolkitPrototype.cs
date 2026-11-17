@@ -13,6 +13,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
     private static readonly string[] Names = { "Stalburg Mail", "Stalburg Web", "Explorer", "Recycle Bin", "Control Panel", "Stal-Ex", "Command Prompt", "Notepad", "Stalburg Bank", "Stalburg Times", "TOR-Turnip Chat v0.3.9", "Shop", "Minesweeper", "Solitaire", "PC Master Guard", "TurvaPro 2000" };
     private static readonly string[] Ids = { "mail", "browser", "files", "recycle", "settings", "exchange", "terminal", "notes", "bank", "news", "chat", "shop", "minesweeper", "solitaire", "pcguard", "turvapro" };
     private static readonly string[] Icons = { "mail", "world", "folder-filled", "trash", "settings", "chart-line", "terminal-2", "notes", "building-bank", "news", "message-circle", "shopping-cart", "device-gamepad-2", "device-gamepad-2", "", "" };
+    private static readonly List<ToolkitPrototype> active = new List<ToolkitPrototype>();
     private readonly List<Texture2D> textures = new List<Texture2D>();
     private VisualElement selected;
     private NotepadStorage storage;
@@ -26,6 +27,22 @@ internal sealed class ToolkitPrototype : MonoBehaviour
     private float nextStatusUpdate;
     private float nextWallpaperUpdate;
 
+    internal static bool Visible
+    {
+        get
+        {
+            foreach (ToolkitPrototype prototype in active)
+            {
+                if (prototype == null || !prototype.isActiveAndEnabled || !prototype.gameObject.activeInHierarchy) continue;
+                OsNotepadStorage current = prototype.storage as OsNotepadStorage;
+                if (current == null) continue;
+                try { current.CheckSession(); return true; }
+                catch (Exception) { }
+            }
+            return false;
+        }
+    }
+
     internal static void Open(RectTransform host)
     {
         Open(host, null);
@@ -38,6 +55,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         ToolkitPrototype prototype = owner.AddComponent<ToolkitPrototype>();
         prototype.storage = storage;
         prototype.Build();
+        if (storage is OsNotepadStorage) active.Add(prototype);
     }
 
     private void Build()
@@ -304,6 +322,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
 
     private void OnDestroy()
     {
+        active.Remove(this);
         if (news != null) news.Release();
         if (lottery != null) lottery.Release();
         if (eye != null) eye.Release();

@@ -120,7 +120,7 @@ namespace ObenseuerOS
 
         private static void Tamper()
         {
-            if (!Enabled || !OsView.Visible || !OsBridge.Writable() || !OsBridge.WorldReady()) return;
+            if (!Enabled || (!OsView.Visible && !ToolkitPrototype.Visible) || !OsBridge.Writable() || !OsBridge.WorldReady()) return;
             VirusFiles.Hour(new Disk(), state, WorldClock.Now.Day, Rnd);
         }
 
