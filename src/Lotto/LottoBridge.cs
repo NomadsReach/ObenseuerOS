@@ -152,14 +152,16 @@ namespace ObenseuerOS
             return CardReply(rec);
         }
 
-        private static string ScratchResult(string args) { return ScratchResultFor(LottoGame.Current, args); }
+        private static string ScratchResult(string args) { return ScratchResultFor(LottoGame.Current, ShopGates.Current, args); }
 
-        internal static string ScratchResultFor(LottoSave state, string args)
+        internal static string ScratchResultFor(LottoSave state, ShopSave shop, string args)
         {
             JObject a = OsBridge.Args(args);
             string cid = Cid(a); ScratchKind kind = KindArg(a);
-            string print = kind.Key + (OsBridge.Flag(a, "ship") ? ":ship" : ":wallet");
-            return new JObject(new JProperty("found", LottoScratch.Saved(state, cid, print) != null)).ToString(Formatting.None);
+            bool ship = OsBridge.Flag(a, "ship"); string print = kind.Key + (ship ? ":ship" : ":wallet");
+            bool found = LottoScratch.Saved(state, cid, print) != null;
+            if (!found) found = ShopOrders.Saved(shop, cid, print) != null && ship;
+            return new JObject(new JProperty("found", found)).ToString(Formatting.None);
         }
 
         private static string ScratchReveal(string args)

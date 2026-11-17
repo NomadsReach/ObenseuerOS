@@ -254,7 +254,7 @@ namespace ObenseuerOS
             catch (Exception e) { notice.text = e.Message; return; }
             if (!found) { notice.text = "This purchase cannot be confirmed. Check your tickets and cards; it may still have completed."; return; }
             if (method == "lotto.buy" && JToken.DeepEquals(args["lines"], lines)) lines.Clear();
-            confirmation = ""; UpdateWarning(); Completed("The previous purchase completed. Check your tickets or cards.");
+            confirmation = ""; UpdateWarning(); Completed("The previous purchase completed. Check your tickets, cards, or Shop order history for delivery.");
         }
         private void Completed(string message)
         {

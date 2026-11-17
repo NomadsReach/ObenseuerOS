@@ -17,7 +17,7 @@ namespace ObenseuerOS
         internal int Price;
     }
 
-    internal static class LottoScratch
+    internal static partial class LottoScratch
     {
         internal const int MaxPerDay = 20;
         internal const int MaxOpen = 20;
@@ -87,10 +87,19 @@ namespace ObenseuerOS
 
         internal static ScratchRec Buy(LottoSave state, ScratchKind kind, bool ship, string cid, string print, int day)
         {
+            OrderRec existing = ShopOrders.Saved(ShopGates.Current, cid, print);
             if (state.ScratchDay != day)
             {
                 state.ScratchDay = day;
                 state.ScratchToday = 0;
+            }
+            if (existing != null)
+            {
+                if (!ship) throw new OsBridgeException("bad_args", ConflictText);
+                ScratchRec recovered = new ScratchRec { Id = state.NextCard + 1, ItemId = kind.ItemId, Day = existing.PlacedMin / LottoGame.MinutesPerDay, Shipped = true, Cid = cid, Print = print, Paid = existing.PaidOc };
+                Record(state, recovered, state.Cards.Add, null);
+                Prune(state);
+                return recovered;
             }
             if (state.ScratchToday >= MaxPerDay) throw new OsBridgeException("denied", "You have reached today's limit of " + MaxPerDay + " cards.");
             if (OpenCount(state) >= MaxOpen) throw new OsBridgeException("denied", "Scratch your open cards before you buy more.");
@@ -101,6 +110,8 @@ namespace ObenseuerOS
             rec.Shipped = ship;
             rec.Cid = cid;
             rec.Print = print;
+            Action<ScratchRec> append = state.Cards.Add;
+            Func<bool> refund = ship ? (Func<bool>)null : () => LottoGame.Refund(state, rec.Paid);
             if (ship)
             {
                 rec.Paid = Ship(kind, cid, print);
@@ -110,12 +121,10 @@ namespace ObenseuerOS
                 rec.Paid = kind.Price;
                 if (rec.Paid < 1) throw new OsBridgeException("failed", "The card price is not ready yet.");
                 if (!Cash.Has(MoneyCurrency.OC, rec.Paid)) throw new OsBridgeException("denied", "Not enough OC for this card.");
-                if (!Cash.TrySpend(MoneyCurrency.OC, rec.Paid)) throw new OsBridgeException("failed", "The payment was refused. Nothing was spent.");
                 rec.Prize = Prize(kind, Roller.NextDouble());
+                if (!Cash.TrySpend(MoneyCurrency.OC, rec.Paid)) throw new OsBridgeException("failed", "The payment was refused. Nothing was spent.");
             }
-            state.NextCard = rec.Id;
-            state.ScratchToday++;
-            state.Cards.Add(rec);
+            Record(state, rec, append, refund);
             Prune(state);
             return rec;
         }
@@ -148,6 +157,8 @@ namespace ObenseuerOS
 
         private static int Ship(ScratchKind kind, string cid, string print)
         {
+            OrderRec saved = ShopOrders.Saved(ShopGates.Current, cid, print);
+            if (saved != null) return saved.PaidOc;
             if (!Mail.IsAvailable) throw new OsBridgeException("denied", "Mail is not available right now. Nothing was charged.");
             ShopOrders.RetryRefunds();
             ShopDelivery tier = DeliveryTier();
