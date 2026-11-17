@@ -182,3 +182,5 @@
 - `src/OsPlugin.cs:Awake`, `src/Os.cs:Open`, `src/OsLaptop.cs:Open`, and `src/ToolkitPrototype.cs:DismissNative` route the main computer, standalone and laptop entries through the same Toolkit app ID. `src/OsView.cs:Dismiss` no longer closes that ID. Legacy web-only mod apps and sites still need native ports; game integration, appearance, lifecycle and input require in-game verification.
 
 - `src/ToolkitPrototype.cs:CloseDesktop` uses the shared close gate for non-pinned real OS sessions so its app ID is not force-closed until every active desktop close guard approves. A laptop pin continues through the framework pinned-host guard; preview close remains separate.
+
+- `src/OsLaptop.cs:ForcePinned` force-closes only its matching pinned host through `ComputerApps.ClosePinned`, leaving desk sessions using the same app ID untouched. Framework close guards are bypassed only for this forced laptop teardown.

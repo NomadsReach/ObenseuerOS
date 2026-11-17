@@ -171,7 +171,7 @@ namespace ObenseuerOS
 
         private static void ForcePinned(RectTransform target)
         {
-            try { if (target != null && ComputerApps.PinnedScreen == target) ComputerApps.Close(Os.AppId); }
+            try { ComputerApps.ClosePinned(Os.AppId, target); }
             catch (Exception e) { Log.Error("laptop screen: host cleanup failed: " + e); }
         }
 
