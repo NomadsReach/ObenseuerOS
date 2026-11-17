@@ -29,7 +29,7 @@ namespace ObenseuerOS
             { "lottery.stalburg.ts", "LOTTO by NaSpoBet", "Scratch cards and a number draw.", "15" },
             { "wiki.stalburg.ts", "Stalburg Wiki", "Articles on Stolland and Obenseuer.", "" },
             { "www.eyebook.com", "EYEbook", "International social network.", "17" },
-            { "www.pcmaster.ts", "PC Master", "Computers, parts and security software.", "" },
+            { "www.pcmaster.ts", "PC Master", "Computers, parts and security software.", "18" },
             { "www.turvapro.ts", "TurvaPro 2000", "Antivirus and security.", "" },
             { "www.free-rm.ts", "FREE RM GENERATOR", "Free RM generator.", "" },
             { "www.kolhola-warez.ts", "Kolhola Warez", "Games and tools.", "" },

@@ -37,6 +37,8 @@ internal static class Program
         try { shared.Write("bank.payInvoice", other); } catch (InvalidOperationException) { }
         JObject thirdRequest = new JObject(new JProperty("bank", "SBB"), new JProperty("id", 3));
         Check(acknowledgedVersion != shared.PendingVersion && !shared.MayStart("bank.payInvoice", thirdRequest, acknowledgedVersion == shared.PendingVersion));
+        Check(GuardPurchase.Accepted(JObject.Parse("{\"owned\":true}")));
+        Check(!GuardPurchase.Accepted(JObject.Parse("{\"owned\":false}")) && !GuardPurchase.Accepted(JObject.Parse("{\"owned\":\"true\"}")) && !GuardPurchase.Accepted(new JObject()) && !GuardPurchase.Accepted(null));
         decimal debit, fee, sent;
         Check(BankQuote.TryCreate("OC", 100m, 2m, out debit, out fee, out sent) && debit == 100m && fee == 2m && sent == 98m);
         Check(BankQuote.TryCreate("RM", 12.3m, 2m, out debit, out fee, out sent) && fee == 0.3m && sent == 12m);

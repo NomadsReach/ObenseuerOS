@@ -4,5 +4,6 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <Compile Include="..\..\src\TransactionClient.cs" />
     <Compile Include="..\..\src\BankQuote.cs" />
+    <Compile Include="..\..\src\GuardPurchase.cs" />
   </ItemGroup>
 </Project>

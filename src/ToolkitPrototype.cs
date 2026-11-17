@@ -78,6 +78,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         news = new ToolkitNews(new NewsClient(osStorage == null ? (Func<Newtonsoft.Json.Linq.JObject, Newtonsoft.Json.Linq.JObject>)null : OsBridge.Reply, osStorage == null ? (Action)null : osStorage.CheckSession));
         ToolkitTerminal terminal = null;
         ToolkitBrowser browser = null;
+        ToolkitSecurity security = null;
         Func<int, bool> launch = delegate(int index)
         {
             switch (index)
@@ -100,10 +101,12 @@ internal sealed class ToolkitPrototype : MonoBehaviour
                 case 15: lottery.Open(); return true;
                 case 16: bets.Open(); return true;
                 case 17: eye.Open(); return true;
+                case 18: security.OpenStore(); return true;
                 default: return false;
             }
         };
         browser = new ToolkitBrowser(storage, launch, osStorage == null ? (Action)null : osStorage.CheckSession, osStorage == null ? null : new TransactionClient("browser", OsBridge.Reply, osStorage.CheckSession));
+        security = new ToolkitSecurity(osStorage == null ? new TransactionClient("pcmaster", null, null) : TransactionClients.ForSession("pcmaster", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession), osStorage == null ? new TransactionClient("pcguard", null, null) : TransactionClients.ForSession("pcguard", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession), osStorage == null ? (Action)null : osStorage.CheckSession);
         eye = new ToolkitEye(osStorage == null ? (Func<EyeState>)(() => new EyeState(storage)) : () => EyeStates.ForSession(osStorage.SessionId, storage), osStorage == null ? (Action)null : osStorage.CheckSession, OsView.UserName, new NewsClient(osStorage == null ? (Func<Newtonsoft.Json.Linq.JObject, Newtonsoft.Json.Linq.JObject>)null : OsBridge.Reply, osStorage == null ? (Action)null : osStorage.CheckSession), launch);
         jobs = new ToolkitJobs(new TransactionClient("jobs", osStorage == null ? (Func<Newtonsoft.Json.Linq.JObject, Newtonsoft.Json.Linq.JObject>)null : OsBridge.Reply, osStorage == null ? (Action)null : osStorage.CheckSession), osStorage == null ? (Action)null : osStorage.CheckSession, launch);
         terminal = new ToolkitTerminal(storage, storage as ExplorerStorage, OsView.UserName,
@@ -175,6 +178,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         windows.Add(shop.Window);
         windows.Add(news.Window);
         windows.Add(browser.Window);
+        windows.Add(security.Window);
         windows.Add(jobs.Window);
         windows.Add(lottery.Window);
         windows.Add(eye.Window);
