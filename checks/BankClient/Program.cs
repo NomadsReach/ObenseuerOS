@@ -45,6 +45,17 @@ internal static class Program
         Check(!TurvaReceipt.ScanAccepted(JObject.Parse("{\"cookies\":3,\"found\":[{}]}")) && !TurvaReceipt.ScanAccepted(JObject.Parse("{\"cookies\":\"3\",\"found\":[]}")) && !TurvaReceipt.ScanAccepted(null));
         Check(ShadyReply.Valid(JObject.Parse("{\"outcome\":\"blocked\",\"file\":\"a.exe\"}"), "a.exe"));
         Check(ShadyReply.Valid(JObject.Parse("{\"outcome\":\"infected\"}"), null) && !ShadyReply.Valid(new JObject(), null) && !ShadyReply.Valid(JObject.Parse("{\"outcome\":\"blocked\"}"), "a.exe") && !ShadyReply.Valid(JObject.Parse("{\"outcome\":\"oops\"}"), null));
+        Check(VirusPopupRules.Room(3) && !VirusPopupRules.Room(4));
+        Check(VirusPopupRules.Dodge(1, 0.34) && !VirusPopupRules.Dodge(2, 0.0) && !VirusPopupRules.Dodge(0, 0.35));
+        Check(VirusPopupRules.Spawn(2, false, 0.14) && !VirusPopupRules.Spawn(3, false, 0.0) && !VirusPopupRules.Spawn(0, true, 0.0));
+        int claimCalls = 0;
+        TransactionClient claim = TransactionClients.ForSession("virusfx", 101, request => { claimCalls++; return null; }, null);
+        JObject claimArgs = new JObject(new JProperty("kind", "winner"));
+        try { claim.Write("virus.claim", claimArgs); } catch (InvalidOperationException) { }
+        Check(claim.HasPending && claim.PendingFor("virus.claim", claimArgs));
+        Check(object.ReferenceEquals(claim, TransactionClients.ForSession("virusfx", 101, request => null, null)) && claimCalls == 1);
+        Check(!claim.Forget("virus.claim", new JObject(new JProperty("kind", "moca"))) && claim.HasPending);
+        Check(claim.Forget("virus.claim", claimArgs) && !claim.HasPending);
         decimal debit, fee, sent;
         Check(BankQuote.TryCreate("OC", 100m, 2m, out debit, out fee, out sent) && debit == 100m && fee == 2m && sent == 98m);
         Check(BankQuote.TryCreate("RM", 12.3m, 2m, out debit, out fee, out sent) && fee == 0.3m && sent == 12m);

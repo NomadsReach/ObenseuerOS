@@ -7,5 +7,6 @@
     <Compile Include="..\..\src\GuardPurchase.cs" />
     <Compile Include="..\..\src\TurvaReceipt.cs" />
     <Compile Include="..\..\src\ShadyReply.cs" />
+    <Compile Include="..\..\src\VirusPopupRules.cs" />
   </ItemGroup>
 </Project>

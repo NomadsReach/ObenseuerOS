@@ -22,6 +22,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
     private ToolkitNews news;
     private ToolkitLottery lottery;
     private ToolkitEye eye;
+    private ToolkitVirusFx virusFx;
     private Label clock;
     private Label money;
     private float nextStatusUpdate;
@@ -268,6 +269,8 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         taskbar.Add(clock);
         root.Add(taskbar);
         root.Add(start.Menu);
+        VisualElement virusLayer = new VisualElement(); virusLayer.pickingMode = PickingMode.Ignore; virusLayer.style.position = UnityEngine.UIElements.Position.Absolute; virusLayer.style.left = 0; virusLayer.style.right = 0; virusLayer.style.top = 0; virusLayer.style.bottom = 40; root.Add(virusLayer);
+        virusFx = new ToolkitVirusFx(virusLayer, delegate { if (!isActiveAndEnabled || !gameObject.activeInHierarchy || osStorage == null) return false; try { osStorage.CheckSession(); return true; } catch (Exception) { return false; } }, browser.Navigate, delegate(int index) { launch(index); }, delegate { return installed("turvapro"); }, turva.OpenProgram, osStorage == null ? new TransactionClient("virusfx", null, null) : TransactionClients.ForSession("virusfx", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession));
         root.RegisterCallback<PointerDownEvent>(delegate(PointerDownEvent e)
         {
             VisualElement target = e.target as VisualElement;
@@ -323,6 +326,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
     private void OnDestroy()
     {
         active.Remove(this);
+        if (virusFx != null) virusFx.Release();
         if (news != null) news.Release();
         if (lottery != null) lottery.Release();
         if (eye != null) eye.Release();

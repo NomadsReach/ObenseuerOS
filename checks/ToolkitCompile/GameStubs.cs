@@ -27,6 +27,8 @@ namespace ObenseuerCore
 
 namespace ObenseuerOS
 {
+    internal sealed class VirusPulse { internal int Popups; internal bool Error, Nag; }
+    internal static class VirusFx { internal static event Action<VirusPulse> Pulsed { add { } remove { } } }
     internal static class VirusAv { internal static bool Shows(string appId) { return false; } }
     internal static class OsBridge { internal static JObject Reply(JObject request) { return null; } }
     internal static class OsWallpaper { internal static int Capture(RectTransform screen, string folder) { return -1; } }
