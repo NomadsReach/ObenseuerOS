@@ -61,12 +61,33 @@ internal static class Program
         Check(OfflineWiki.LinkTitle("https://example.com/x") == null && OfflineWiki.LinkTitle("//example.com/x") == null && OfflineWiki.LinkTitle("/index.php?title=Bad") == null && OfflineWiki.LinkTitle("#section") == null && OfflineWiki.LinkTitle("/Special:Random") == null && OfflineWiki.LinkTitle("/A/../B") == null && OfflineWiki.LinkTitle("/A//B") == null);
         OfflineWikiPage linked = OfflineWiki.Parse("OBXWIKI1\ntitle:Main_Page\nrev:3\nfetched:4\n\n<a href=\"/INFRA\">one</a><a href='/INFRA'>two</a><script><a href=\"/hidden\">bad</a></script>");
         Check(linked != null && linked.Links.Count == 1 && linked.Links[0] == "INFRA");
+        OfflineWikiPage pictured = OfflineWiki.Parse("OBXWIKI1\ntitle:Main_Page\nrev:3\nfetched:4\n\n<img src=\"/images/0/01/INFRA.png\"><img src=\"https://evil.test/x.png\"><script><img src=\"/images/0/01/hidden.png\"></script>");
+        Check(pictured != null && pictured.Images.Count == 1 && pictured.Images[0] == "/images/0/01/INFRA.png");
+        Check(OfflineWiki.ImageKey("/images/thumb/0/01/INFRA.png/200px-INFRA.png") != null && OfflineWiki.ImageKey("https://evil.test/images/0/01/INFRA.png") == null && OfflineWiki.ImageKey("/images/../secret.png") == null);
+        Check(WikiImage.Hash("/images/thumb/0/01/INFRA.png/200px-INFRA.png") == "dfadbea391660f2712e310f218e264f3331e4d38");
+        byte[] png = { 0x89, 0x50, 0x4e, 0x47, 13, 10, 26, 10, 0, 0, 0, 13, 0x49, 0x48, 0x44, 0x52, 0, 0, 0, 4, 0, 0, 0, 5 };
+        Check(WikiImage.Fits(png, 2048)); png[18] = 9; Check(!WikiImage.Fits(png, 2048));
         Check(OfflineWiki.Parse("OBXWIKI1\ntitle:Main_Page\nrev:no\nfetched:4\n\ntext") == null && OfflineWiki.Parse("bad") == null);
         bool wikiLimited; Check(OfflineWiki.Load(null, out wikiLimited).Count == 0 && !wikiLimited);
         string wikiFolder = Path.Combine(Path.GetTempPath(), "offline-wiki-check-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(wikiFolder);
         try
         {
+            string imageRoot = Path.Combine(wikiFolder, "legacy");
+            string imagePages = Path.Combine(imageRoot, "pages"), imageFiles = Path.Combine(imageRoot, "img");
+            Directory.CreateDirectory(imagePages); Directory.CreateDirectory(imageFiles);
+            string imageKey = "/images/thumb/0/01/INFRA.png/200px-INFRA.png";
+            string imageFile = Path.Combine(imageFiles, WikiImage.Hash(imageKey) + ".png");
+            png[18] = 0; File.WriteAllBytes(imageFile, png);
+            Check(OfflineWiki.ReadImage(imagePages, imageKey).Length == png.Length && OfflineWiki.ReadImage(imagePages, "/images/../secret.png") == null);
+            png[18] = 9; File.WriteAllBytes(imageFile, png); Check(OfflineWiki.ReadImage(imagePages, imageKey) == null);
+            File.WriteAllBytes(imageFile, new byte[2 * 1024 * 1024 + 1]); Check(OfflineWiki.ReadImage(imagePages, imageKey) == null);
+            File.Delete(imageFile);
+            string jpegFile = Path.Combine(imageFiles, WikiImage.Hash(imageKey) + ".jpg");
+            byte[] jpeg = new byte[41]; jpeg[0] = 0xff; jpeg[1] = 0xd8; jpeg[2] = 0xff; jpeg[3] = 0xe0; jpeg[5] = 16;
+            jpeg[20] = 0xff; jpeg[21] = 0xc0; jpeg[23] = 17; jpeg[24] = 8; jpeg[26] = 2; jpeg[28] = 3; jpeg[29] = 3; jpeg[30] = 1; jpeg[31] = 0x11; jpeg[33] = 2; jpeg[34] = 0x11; jpeg[36] = 3; jpeg[37] = 0x11; jpeg[39] = 0xff; jpeg[40] = 0xd9;
+            File.WriteAllBytes(jpegFile, jpeg); Check(OfflineWiki.ReadImage(imagePages, imageKey).Length == jpeg.Length);
+            png[18] = 0; File.WriteAllBytes(jpegFile, png); Check(OfflineWiki.ReadImage(imagePages, imageKey) == null);
             string wikiFile = Path.Combine(wikiFolder, "one.page");
             string cached = "OBXWIKI1\ntitle:Main_Page\nrev:3\nfetched:4\n\n<p>Saved &amp; safe</p>";
             File.WriteAllText(wikiFile, cached); File.WriteAllText(Path.Combine(wikiFolder, "bad.page"), "bad");

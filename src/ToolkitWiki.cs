@@ -13,6 +13,7 @@ namespace ObenseuerOS
         private readonly ScrollView body;
         private readonly TextField search;
         private bool limited;
+        private readonly List<Texture2D> textures = new List<Texture2D>();
         private readonly Stack<OfflineWikiPage> history = new Stack<OfflineWikiPage>();
         private OfflineWikiPage current;
         private List<OfflineWikiPage> pages = new List<OfflineWikiPage>();
@@ -25,7 +26,7 @@ namespace ObenseuerOS
             Window.style.backgroundColor = (Color)new Color32(190, 205, 222, 217); Window.style.display = DisplayStyle.None;
             VisualElement bar = new VisualElement(); bar.style.flexDirection = FlexDirection.Row; bar.style.height = 36;
             Label title = Text("Stalburg Wiki (offline)"); title.style.flexGrow = 1; title.style.unityTextAlign = TextAnchor.MiddleLeft; bar.Add(title);
-            UnityEngine.UIElements.Button close = Button("×", delegate { Window.style.display = DisplayStyle.None; }); close.style.width = 46; close.style.height = 20; close.style.marginTop = 8; close.style.backgroundColor = (Color)new Color32(199, 55, 47, 255); close.style.color = Color.white;
+            UnityEngine.UIElements.Button close = Button("×", delegate { Window.style.display = DisplayStyle.None; Release(); }); close.style.width = 46; close.style.height = 20; close.style.marginTop = 8; close.style.backgroundColor = (Color)new Color32(199, 55, 47, 255); close.style.color = Color.white;
             bar.Add(close); Window.Add(bar); ToolkitUi.MakeDraggable(Window, bar);
             VisualElement tools = new VisualElement(); tools.style.flexDirection = FlexDirection.Row;
             search = new TextField(); search.style.flexGrow = 1; search.RegisterCallback<KeyDownEvent>(delegate(KeyDownEvent e) { if (e.keyCode == KeyCode.Return || e.keyCode == KeyCode.KeypadEnter) { Index(); e.StopPropagation(); } });
@@ -40,7 +41,7 @@ namespace ObenseuerOS
         private static UnityEngine.UIElements.Button Button(string value, Action action) { UnityEngine.UIElements.Button button = new UnityEngine.UIElements.Button(action); button.enableRichText = false; button.text = value; return button; }
         private void Index()
         {
-            history.Clear(); current = null; body.Clear(); Label heading = Text("Stalburg Wiki"); heading.style.fontSize = 28; body.Add(heading);
+            history.Clear(); current = null; ClearBody(); Label heading = Text("Stalburg Wiki"); heading.style.fontSize = 28; body.Add(heading);
             body.Add(Text("Offline saved pages. No network connection is used."));
             if (limited) body.Add(Text("Some saved pages could not be loaded or exceed the reader limit."));
             string query = (search.value ?? "").Trim(); int shown = 0;
@@ -53,13 +54,31 @@ namespace ObenseuerOS
             if (pages.Count == 0) body.Add(Text(limited ? "No readable saved articles were found." : "No saved wiki articles are installed."));
             else if (shown == 0) body.Add(Text("No saved articles match your search."));
         }
+        internal void Release() { foreach (Texture2D texture in textures) if (texture != null) UnityEngine.Object.Destroy(texture); textures.Clear(); }
+        private void ClearBody() { body.Clear(); Release(); }
         private void Show(OfflineWikiPage page, bool record)
         {
             if (record && current != null && current != page && history.Count < 100) history.Push(current);
-            current = page; body.Clear(); body.Add(Button("← Articles", Index));
+            current = page; ClearBody(); body.Add(Button("← Articles", Index));
             if (history.Count > 0) body.Add(Button("← Previous article", delegate { Show(history.Pop(), false); }));
             Label title = Text(page.Title); title.style.fontSize = 28; body.Add(title);
             body.Add(Text(page.Text));
+            int count = 0;
+            foreach (string key in page.Images)
+            {
+                if (count >= 8) break;
+                byte[] bytes = OfflineWiki.ReadImage(folder, key); if (bytes == null) continue;
+                Texture2D texture = null;
+                try
+                {
+                    texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+                    if (!ImageConversion.LoadImage(texture, bytes)) { UnityEngine.Object.Destroy(texture); continue; }
+                }
+                catch (Exception) { if (texture != null) UnityEngine.Object.Destroy(texture); continue; }
+                textures.Add(texture); count++;
+                Image image = new Image(); image.image = texture; image.scaleMode = ScaleMode.ScaleToFit;
+                float width = Math.Min(480f, texture.width); image.style.width = width; image.style.height = width * texture.height / texture.width; body.Add(image);
+            }
             bool heading = false;
             foreach (string link in page.Links)
             {

@@ -12,6 +12,7 @@ namespace ObenseuerOS
         internal string Title;
         internal string Text;
         internal readonly List<string> Links = new List<string>();
+        internal readonly List<string> Images = new List<string>();
     }
 
     internal static class OfflineWiki
@@ -23,6 +24,7 @@ namespace ObenseuerOS
         private static readonly TimeSpan MatchTimeout = TimeSpan.FromSeconds(2);
         private static readonly Regex Hidden = new Regex(@"<!--.*?-->|<(script|style|template|noscript)\b[^>]*>.*?</\1\s*>", RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.CultureInvariant, MatchTimeout);
         private static readonly Regex Anchors = new Regex(@"<a\b[^>]*?\bhref\s*=\s*(?:""([^""]*)""|'([^']*)'|([^\s>]+))", RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.CultureInvariant, MatchTimeout);
+        private static readonly Regex Images = new Regex(@"<img\b[^>]*?\bsrc\s*=\s*(?:""([^""]*)""|'([^']*)'|([^\s>]+))", RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.CultureInvariant, MatchTimeout);
         private static readonly Regex Breaks = new Regex(@"</?(p|div|br|li|h[1-6]|tr|hr)\b[^>]*>", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant, MatchTimeout);
         private static readonly Regex Tags = new Regex(@"<[^>]*>", RegexOptions.Singleline | RegexOptions.CultureInvariant, MatchTimeout);
         private static readonly Regex Spaces = new Regex(@"[ \t\f\v]+", RegexOptions.CultureInvariant, MatchTimeout);
@@ -85,10 +87,50 @@ namespace ObenseuerOS
                 if (target != null && links.Add(target)) page.Links.Add(target);
                 if (page.Links.Count >= 500) break;
             }
+            HashSet<string> images = new HashSet<string>(StringComparer.Ordinal);
+            foreach (Match match in Images.Matches(visible))
+            {
+                string src = match.Groups[1].Success ? match.Groups[1].Value : match.Groups[2].Success ? match.Groups[2].Value : match.Groups[3].Value;
+                string key = ImageKey(src);
+                if (key != null && images.Add(key)) page.Images.Add(key);
+                if (page.Images.Count >= 64) break;
+            }
             string text = Breaks.Replace(visible, "\n"); text = Tags.Replace(text, " ");
             text = WebUtility.HtmlDecode(text).Replace("\r", ""); text = Spaces.Replace(text, " "); text = Newlines.Replace(text, "\n\n").Trim();
             page.Text = text;
             return page;
+        }
+        internal static string ImageKey(string src)
+        {
+            if (string.IsNullOrEmpty(src)) return null;
+            string path = WebUtility.HtmlDecode(src);
+            if (path.StartsWith(WikiTitle.Origin + "/", StringComparison.Ordinal)) path = path.Substring(WikiTitle.Origin.Length);
+            int query = path.IndexOf('?'); if (query >= 0) path = path.Substring(0, query);
+            return WikiTitle.IsImagePath(path) ? path : null;
+        }
+        internal static byte[] ReadImage(string pagesFolder, string key)
+        {
+            if (string.IsNullOrEmpty(pagesFolder) || ImageKey(key) != key) return null;
+            string root = Path.GetDirectoryName(pagesFolder); if (string.IsNullOrEmpty(root)) return null;
+            string name = WikiImage.Hash(key);
+            foreach (string ext in new[] { ".png", ".jpg" })
+            {
+                string path = Path.Combine(root, "img", name + ext);
+                try
+                {
+                    using (FileStream stream = File.OpenRead(path))
+                    {
+                        if (stream.Length < 1 || stream.Length > 2 * 1024 * 1024) continue;
+                        byte[] data = new byte[(int)stream.Length]; int offset = 0;
+                        while (offset < data.Length) { int n = stream.Read(data, offset, data.Length - offset); if (n == 0) return null; offset += n; }
+                        bool format = ext == ".png" ? WikiImage.At(data, 0, "\u0089PNG\r\n\u001a\n") : data.Length >= 3 && data[0] == 0xFF && data[1] == 0xD8 && data[2] == 0xFF;
+                        if (format && WikiImage.Fits(data, 2048)) return data;
+                    }
+                }
+                catch (IOException) { }
+                catch (UnauthorizedAccessException) { }
+            }
+            return null;
         }
         internal static string LinkTitle(string href)
         {

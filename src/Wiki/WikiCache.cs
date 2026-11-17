@@ -73,12 +73,7 @@ namespace ObenseuerOS
 
         internal static string Hash(string text)
         {
-            using (SHA1 sha = SHA1.Create())
-            {
-                StringBuilder sb = new StringBuilder();
-                foreach (byte b in sha.ComputeHash(Utf8.GetBytes(text))) sb.Append(b.ToString("x2"));
-                return sb.ToString();
-            }
+            return WikiImage.Hash(text);
         }
 
         internal static bool IsFresh(long fetched, long now)

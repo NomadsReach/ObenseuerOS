@@ -22,6 +22,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
     private ToolkitNews news;
     private ToolkitLottery lottery;
     private ToolkitEye eye;
+    private ToolkitWiki wiki;
     private ToolkitVirusFx virusFx;
     private Label clock;
     private Label money;
@@ -109,7 +110,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         ToolkitSecurity security = null;
         ToolkitTurva turva = null;
         ToolkitShady shady = null;
-        ToolkitWiki wiki = new ToolkitWiki(WikiBridge.LegacyPages);
+        wiki = new ToolkitWiki(WikiBridge.LegacyPages);
         Func<string, bool> installed = delegate(string id)
         {
             if (osStorage == null) return false;
@@ -339,6 +340,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
     {
         active.Remove(this);
         if (virusFx != null) virusFx.Release();
+        if (wiki != null) wiki.Release();
         if (news != null) news.Release();
         if (lottery != null) lottery.Release();
         if (eye != null) eye.Release();
