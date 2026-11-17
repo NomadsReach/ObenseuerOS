@@ -77,6 +77,8 @@ jobs:
         with:
           name: toolkit-desktop-icons
           path: prototype-icons
+      - name: Check OS project icon resources
+        run: python tools/check-os-icons.py
       - name: Get Unity managed references
         shell: bash
         run: |
