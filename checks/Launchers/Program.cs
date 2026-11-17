@@ -17,6 +17,14 @@ internal static class Program
         List<OsApp> apps = new List<OsApp> { launcher, hidden, native, new OsApp { Id = "built-in", ModId = "os", OnOpen = delegate { } }, new OsApp { Id = "site", ModId = "mod", Site = true, OnOpen = delegate { } }, new OsApp { Id = "html", ModId = "mod" } };
         List<OsApp> first = LauncherCatalog.Select(apps, "os", id => id != "hidden");
         Check(first.Count == 2 && object.ReferenceEquals(first[0], launcher) && object.ReferenceEquals(first[1], native));
+        Check(object.ReferenceEquals(LauncherCatalog.Find(first, "MOD-TOOL"), launcher));
+        Check(object.ReferenceEquals(LauncherCatalog.Find(first, "tool"), launcher));
+        Check(object.ReferenceEquals(LauncherCatalog.Find(first, "NATIVE"), native));
+        Check(LauncherCatalog.Find(first, "hidden") == null && LauncherCatalog.Find(first, "site") == null);
+        OsApp sameTitle = new OsApp { Id = "other", ModId = "mod2", Title = "Tool", OnOpen = delegate { } };
+        List<OsApp> ambiguous = new List<OsApp>(first) { sameTitle };
+        Check(LauncherCatalog.Find(ambiguous, "tool") == null);
+        Check(object.ReferenceEquals(LauncherCatalog.Find(ambiguous, "mod-tool"), launcher));
         Check(LauncherCatalog.Same(first, LauncherCatalog.Select(apps, "os", id => id != "hidden")));
         apps.Remove(launcher); Check(!LauncherCatalog.Same(first, LauncherCatalog.Select(apps, "os", id => true)));
         for (int mode = 0; mode < 8; mode++)

@@ -73,6 +73,15 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         return false;
     }
 
+    internal static bool LaunchRegistered(OsApp app)
+    {
+        if (!Visible || app == null || !Os.Apps.Contains(app) || app.ModId == Os.ModId || app.Site || !VirusAv.Shows(app.Id)) return false;
+        if (app.BuildUi != null) return OpenNative(app);
+        if (app.OnOpen == null) return false;
+        Os.Opened(app.Id);
+        return true;
+    }
+
     internal static bool EmitNative(OsApp app, string name, string json)
     {
         if (app == null || app.OnEvent == null || !Os.Apps.Contains(app)) return false;
@@ -210,7 +219,8 @@ internal sealed class ToolkitPrototype : MonoBehaviour
             {
                 for (int i = 0; i < Ids.Length; i++)
                     if (string.Equals(app, Ids[i], StringComparison.OrdinalIgnoreCase) || string.Equals(app, Names[i], StringComparison.OrdinalIgnoreCase)) return launch(i);
-                return false;
+                if (!HasSession()) return false;
+                return LaunchRegistered(LauncherCatalog.Find(LauncherCatalog.Select(Os.Apps, Os.ModId, VirusAv.Shows), app));
             },
             delegate(string path) { if (path == null) { notepad.Window.style.display = DisplayStyle.Flex; notepad.Window.BringToFront(); } else notepad.OpenPath(path); if (explorer != null) explorer.RefreshIfOpen(); });
         Func<bool> canClose = delegate { return notepad.CanClose() && mail.CanClose() && (modWindows == null || modWindows.CanCloseAll()); };
@@ -297,9 +307,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
             if (osStorage == null) return false;
             try { osStorage.CheckSession(); }
             catch (Exception) { return false; }
-            if (app == null || !Os.Apps.Contains(app) || app.ModId == Os.ModId || app.Site || (app.OnOpen == null && app.BuildUi == null) || !VirusAv.Shows(app.Id)) return false;
-            if (app.BuildUi != null) return OpenNative(app);
-            Os.Opened(app.Id); return true;
+            return LaunchRegistered(app);
         };
         Action updateLaunchers = delegate
         {

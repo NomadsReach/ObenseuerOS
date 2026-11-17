@@ -267,7 +267,8 @@ namespace ObenseuerOS
                 OsApp app = OwnedApp("OpenApp", modId, appId);
                 if (app == null) return OsResult.Invalid;
                 if (app.Site) return Refuse("OpenApp", modId, OsResult.Invalid, appId + " is a site, it opens in Stalburg Web");
-                if (app.BuildUi != null) return ToolkitPrototype.OpenNative(app) ? OsResult.Ok : OsResult.Unavailable;
+                if (app.BuildUi != null) return ToolkitPrototype.LaunchRegistered(app) ? OsResult.Ok : OsResult.Unavailable;
+                if (app.OnOpen != null && ToolkitPrototype.Visible) return ToolkitPrototype.LaunchRegistered(app) ? OsResult.Ok : OsResult.Unavailable;
                 if (!IsAvailable) return OsResult.Unavailable;
                 return OsView.OpenApp(appId);
             }
