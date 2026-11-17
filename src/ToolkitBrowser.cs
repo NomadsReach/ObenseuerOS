@@ -24,7 +24,7 @@ namespace ObenseuerOS
             { "www.stalex.ts", "Stal-Ex", "The Stalburg stock exchange.", "5" },
             { "jobs.stalburg.ts", "Jobs", "Work stations and wages.", "14" },
             { "shop.stalburg.ts", "Shop", "Goods for sale.", "11" },
-            { "bets.stalburg.ts", "NaSpoBet", "Football, ice hockey and volleyball odds.", "" },
+            { "bets.stalburg.ts", "NaSpoBet", "Football, ice hockey and volleyball odds.", "16" },
             { "lottery.stalburg.ts", "LOTTO by NaSpoBet", "Scratch cards and a number draw.", "15" },
             { "wiki.stalburg.ts", "Stalburg Wiki", "Articles on Stolland and Obenseuer.", "" },
             { "www.eyebook.com", "EYEbook", "International social network.", "" },

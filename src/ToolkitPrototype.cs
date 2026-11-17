@@ -73,6 +73,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         ToolkitShop shop = new ToolkitShop(osStorage == null ? new TransactionClient("shop", null, null) : TransactionClients.ForSession("shop", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession));
         ToolkitJobs jobs = null;
         lottery = new ToolkitLottery(osStorage == null ? new TransactionClient("lotto", null, null) : TransactionClients.ForSession("lotto", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession), osStorage == null ? (Action)null : osStorage.CheckSession);
+        ToolkitBets bets = new ToolkitBets(osStorage == null ? new TransactionClient("bets", null, null) : TransactionClients.ForSession("bets", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession), osStorage == null ? (Action)null : osStorage.CheckSession);
         news = new ToolkitNews(new NewsClient(osStorage == null ? (Func<Newtonsoft.Json.Linq.JObject, Newtonsoft.Json.Linq.JObject>)null : OsBridge.Reply, osStorage == null ? (Action)null : osStorage.CheckSession));
         ToolkitTerminal terminal = null;
         ToolkitBrowser browser = null;
@@ -96,6 +97,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
                 case 13: solitaire.Open(); return true;
                 case 14: jobs.Open(); return true;
                 case 15: lottery.Open(); return true;
+                case 16: bets.Open(); return true;
                 default: return false;
             }
         };
@@ -172,6 +174,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         windows.Add(browser.Window);
         windows.Add(jobs.Window);
         windows.Add(lottery.Window);
+        windows.Add(bets.Window);
         ToolkitStart start = new ToolkitStart(Names, Icons, Texture, launch, delegate { if (canClose()) ComputerApps.Close(storage == null ? "os.toolkit-prototype" : "os.toolkit-os"); });
         VisualElement taskbar = new VisualElement();
         taskbar.style.height = 40;

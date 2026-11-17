@@ -21,6 +21,7 @@ namespace ObenseuerOS
             Os.Handle(AppId, "bet.fixtures", Fixtures);
             Os.Handle(AppId, "bet.quote", Quote);
             Os.Handle(AppId, "bet.place", Place);
+            Os.Handle(AppId, "bet.result", Result);
             Os.Handle(AppId, "bet.mine", Mine);
             Os.Handle(AppId, "bet.results", Results);
             Os.Handle(AppId, "bet.table", Table);
@@ -79,7 +80,26 @@ namespace ObenseuerOS
             FixtureRec match = Match(fixture);
             string problem = BetBook.Problem(BetBook.Current, match, stake, BetBook.Now());
             if (problem != null) throw new OsBridgeException("denied", problem);
+            CheckExpectedOdds(a, BetBook.OddsOf(match, pick));
             return Receipt(BetBook.Place(BetBook.Current, match, pick, stake, cid, print, BetBook.Now()));
+        }
+
+        internal static void CheckExpectedOdds(JObject args, int current)
+        {
+            if (args["expectedOdds"] == null) return;
+            int expected = OsBridge.Span(args, "expectedOdds", int.MaxValue, 0);
+            if (expected < BetModel.MinOddsX100) throw new OsBridgeException("bad_args", "expectedOdds is invalid");
+            if (expected != current) throw new OsBridgeException("denied", "The odds changed. Review the new quote before placing this bet.");
+        }
+
+        private static string Result(string args) { return ResultFor(BetBook.Current, args); }
+
+        internal static string ResultFor(BetSave state, string args)
+        {
+            JObject a = OsBridge.Args(args);
+            string cid = CidArg(a); int sport; string fixture = FixtureArg(a, out sport);
+            string pick = PickArg(a, sport); int stake = StakeArg(a);
+            return new JObject(new JProperty("found", BetBook.Saved(state, cid, fixture + "|" + pick + "|" + stake) != null)).ToString(Formatting.None);
         }
 
         private static string Mine(string args)

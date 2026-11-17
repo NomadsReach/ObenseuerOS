@@ -20,6 +20,12 @@ internal static class Program
         Check(ScratchReply.Valid(reply, 3, "oc") && !ScratchReply.Valid(reply, 4, "oc") && !ScratchReply.Valid(reply, 3, "spade"));
         reply["card"]["currency"] = "RM"; Check(!ScratchReply.Valid(reply, 3, "oc")); reply["card"]["currency"] = "OC";
         reply["card"]["revealed"] = false; Check(!ScratchReply.Valid(reply, 3, "oc"));
+        JObject order = JObject.Parse("{\"fixture\":\"fb-1-1-1\",\"pick\":\"home\",\"stake\":10,\"expectedOdds\":211}");
+        JObject bet = JObject.Parse("{\"bet\":{\"n\":1,\"fixture\":\"fb-1-1-1\",\"pick\":\"home\",\"stake\":10,\"odds\":211,\"ret\":21}}");
+        Check(BetReceipt.Valid(bet, order)); bet["bet"]["stake"] = 11; Check(!BetReceipt.Valid(bet, order));
+        bet["bet"]["stake"] = 10; bet["bet"]["ret"] = 22; Check(!BetReceipt.Valid(bet, order));
+        JObject changed = (JObject)order.DeepClone(); changed["expectedOdds"] = 300; Check(BetReceipt.SameOrder(order, changed));
+        changed["stake"] = 20; Check(!BetReceipt.SameOrder(order, changed));
         Console.WriteLine("Jobs checks passed");
     }
 }

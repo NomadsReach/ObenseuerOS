@@ -19,6 +19,7 @@
     <Compile Include="..\..\src\JobsList.cs" />
     <Compile Include="..\..\src\ScratchProgress.cs" />
     <Compile Include="..\..\src\ScratchReply.cs" />
+    <Compile Include="..\..\src\BetReceipt.cs" />
     <Compile Include="..\..\src\MarketChart.cs" />
     <Compile Include="..\..\src\Chat\ChatHistory.cs" />
     <Compile Include="..\..\src\Chat\ChatSave.cs" />
