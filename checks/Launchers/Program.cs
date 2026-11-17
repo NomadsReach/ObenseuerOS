@@ -39,6 +39,18 @@ internal static class Program
         Check(windows.Update(true, false) && windows.Visible);
         Check(!windows.Update(true, true) && !windows.Update(false, true));
         Check(windows.Update(false, false) && !windows.Visible);
+        NativeDesktopClose<object> closeGate = new NativeDesktopClose<object>();
+        List<object> hosts = new List<object>();
+        Func<List<object>> snapshot = () => new List<object>(hosts);
+        int closes = 0;
+        Action close = () => closes++;
+        Check(!closeGate.Dismiss(snapshot, host => true, close) && closes == 0);
+        object firstHost = new object(), secondHost = new object();
+        hosts.Add(firstHost); hosts.Add(secondHost);
+        Check(closeGate.Dismiss(snapshot, host => host != secondHost, close) && closes == 0);
+        Check(closeGate.Dismiss(snapshot, host => true, close) && closes == 1);
+        Check(closeGate.Dismiss(snapshot, host => { closeGate.Dismiss(snapshot, item => true, close); return true; }, close) && closes == 2);
+        Check(closeGate.Dismiss(snapshot, host => { hosts.Add(new object()); return true; }, close) && closes == 2);
         Check(windows.Update(false, true) && windows.Visible);
         Check(windows.Update(false, false) && !windows.Visible);
         int delivered = 0;

@@ -142,3 +142,9 @@
 - `src/ToolkitNotepad.cs:SetTheme` applies the existing OS light and dark palette to the editor, menu, status and open dialogs without changing their content. Dynamic menus and dialogs use the active palette when created; editor and dialog rendering still need in-game verification.
 
 - `src/OsDesktopState.cs:OsDesktopState` owns the shared player name lookup and notification queue outside the legacy WebUi view. `src/OsView.cs:Notify` retains immediate web delivery and fallback queueing; `src/ToolkitPrototype.cs:Update` drains the same queue for an active Toolkit session. Main-menu resets clear the queue.
+
+- `src/Os.cs:IsAvailable` recognizes an active Toolkit desktop even when WebUi is unavailable. `src/OsModApi.cs:IsOpen` and `SyncWindow` check Toolkit first so an active native desktop does not require querying the legacy view to report its visibility.
+
+- `src/Os.cs:Open` recognizes an already-open Toolkit desktop, and `src/Os.cs:Close` uses `src/ToolkitPrototype.cs:DismissNative` to check all active native close guards before closing their registered computer app. The legacy web path remains the fallback.
+
+- `src/NativeDesktopClose.cs:NativeDesktopClose.Dismiss` blocks nested close requests and refuses to close if the active host set changes while guards run. `checks/Launchers/Program.cs:Program.Main` covers guard denial, multiple hosts, reentry and host changes.

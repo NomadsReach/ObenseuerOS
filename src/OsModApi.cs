@@ -117,7 +117,7 @@ namespace ObenseuerOS
         {
             get
             {
-                return OsView.Visible || ToolkitPrototype.Visible;
+                return ToolkitPrototype.Visible || OsView.Visible;
             }
         }
 
@@ -331,7 +331,8 @@ namespace ObenseuerOS
 
         internal static void SyncWindow()
         {
-            if (!WindowState.Update(OsView.Visible, ToolkitPrototype.Visible)) return;
+            bool toolkit = ToolkitPrototype.Visible;
+            if (!WindowState.Update(!toolkit && OsView.Visible, toolkit)) return;
             if (WindowState.Visible) Raise(windowOpened, "WindowOpened");
             else Raise(windowClosed, "WindowClosed");
         }

@@ -14,6 +14,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
     private static readonly string[] Ids = { "mail", "browser", "files", "recycle", "settings", "exchange", "terminal", "notes", "bank", "news", "chat", "shop", "minesweeper", "solitaire", "pcguard", "turvapro" };
     private static readonly string[] Icons = { "mail", "world", "folder-filled", "trash", "settings", "chart-line", "terminal-2", "notes", "building-bank", "news", "message-circle", "shopping-cart", "device-gamepad-2", "device-gamepad-2", "", "" };
     private static readonly List<ToolkitPrototype> active = new List<ToolkitPrototype>();
+    private static readonly NativeDesktopClose<ToolkitPrototype> closeGate = new NativeDesktopClose<ToolkitPrototype>();
     private readonly List<Texture2D> textures = new List<Texture2D>();
     private readonly Dictionary<string, Texture2D> iconTextures = new Dictionary<string, Texture2D>();
     private ToolkitModWindows modWindows;
@@ -25,6 +26,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
     private ToolkitExplorer explorer;
     private ToolkitSettings settings;
     private Action<string> appearanceChanged;
+    private Func<bool> canClose;
     private ToolkitNews news;
     private ToolkitLottery lottery;
     private ToolkitEye eye;
@@ -74,6 +76,19 @@ internal sealed class ToolkitPrototype : MonoBehaviour
             if (prototype != null && prototype.modWindows != null && prototype.HasSession()) return prototype.modWindows.Open(app);
         }
         return false;
+    }
+
+    internal static bool DismissNative()
+    {
+        return closeGate.Dismiss(ActiveSessions, delegate(ToolkitPrototype prototype) { return prototype.canClose == null || prototype.canClose(); }, delegate { ComputerApps.Close("os.toolkit-os"); });
+    }
+
+    private static List<ToolkitPrototype> ActiveSessions()
+    {
+        List<ToolkitPrototype> current = new List<ToolkitPrototype>();
+        foreach (ToolkitPrototype prototype in new List<ToolkitPrototype>(active))
+            if (prototype != null && prototype.HasSession()) current.Add(prototype);
+        return current;
     }
 
     internal static OsResult OpenFile(string path)
@@ -243,7 +258,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
                 return LaunchRegistered(LauncherCatalog.Find(LauncherCatalog.Select(Os.Apps, Os.ModId, VirusAv.Shows), app));
             },
             delegate(string path) { if (path == null) { notepad.Window.style.display = DisplayStyle.Flex; notepad.Window.BringToFront(); } else notepad.OpenPath(path); if (explorer != null) explorer.RefreshIfOpen(); });
-        Func<bool> canClose = delegate { return notepad.CanClose() && mail.CanClose() && (modWindows == null || modWindows.CanCloseAll()); };
+        canClose = delegate { return notepad.CanClose() && mail.CanClose() && (modWindows == null || modWindows.CanCloseAll()); };
         ComputerApps.SetCloseGuard(transform.parent, canClose);
         VisualElement window = notepad.Window;
         VisualElement guardTile = null, turvaTile = null;
