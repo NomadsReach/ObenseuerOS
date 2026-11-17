@@ -171,4 +171,6 @@
 
 - `src/OsSitePage.cs:Navigate`, `src/ToolkitSite.cs:Transition` bind navigation to the currently mounted page instance. Stale pages cannot navigate; links use in-game host names or root-relative paths and never load external network content. `checks/ModTaskbar/SiteChecks.cs:Run` covers active and stale page links.
 
-- `examples/HelloOs/src/HelloPlugin.cs:HelloOs.BuildSite` demonstrates native site registration and two root-relative links while retaining its legacy HTML site.
+- `examples/HelloOs/src/HelloSite.cs:HelloSite.Build` demonstrates native site registration and two root-relative links while retaining its legacy HTML site.
+
+- `examples/HelloOs/src/HelloSite.cs:HelloSite.Build` is compiled against Unity managed references by `checks/ToolkitCompile/ToolkitCompile.csproj` and exercised through the fake Toolkit site host by `checks/ModTaskbar/SiteChecks.cs:Run`. The full example plugin still needs a game-linked build.

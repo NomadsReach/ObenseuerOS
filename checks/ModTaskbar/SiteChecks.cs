@@ -63,6 +63,13 @@ internal static class SiteChecks
         Check(manager.Transition(first, "first.ts", () => valid, () => committed++));
         Check(!manager.Transition(destination, "dest.ts", () => valid, () => committed++));
         Check(firstClosed == 1 && destinationAborted == 1 && !manager.IsSite(first) && !manager.IsSite(destination) && content.childCount == 0);
+        OsApp example = new OsApp { Id = "example-site", BuildSite = Example.Hello.HelloSite.Build };
+        Os.Apps.Add(example);
+        Check(manager.Transition(example, "www.hello.ts/", () => valid, () => committed++));
+        VisualElement exampleRoot = content[0];
+        ((Button)exampleRoot[1]).Press();
+        Check(navigated == "www.hello.ts/about");
+        manager.ForceClose(null);
         OsApp reentrant = new OsApp { Id = "reentrant-site" }; Os.Apps.Add(reentrant);
         bool reopened = true;
         reentrant.BuildSite = (root, suffix) => new OsSitePage { OnClosed = forced => { reopened = manager.Transition(reentrant, "site.ts/reopen", () => valid, () => committed++); } };
