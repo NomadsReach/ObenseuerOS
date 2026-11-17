@@ -47,6 +47,7 @@
     <Compile Include="$(FrameworkSource)/src/Ui/ToolkitUi.cs" />
     <Compile Include="$(FrameworkSource)/src/Ui/ToolkitResizeHandle.cs" />
     <Compile Include="$(FrameworkSource)/src/Ui/ToolkitWindowBounds.cs" />
+    <Compile Include="$(FrameworkSource)/src/Ui/ToolkitPinnedBounds.cs" />
     <Compile Include="$(FrameworkSource)/src/Ui/UiAppearance.cs" />
     <Compile Include="$(FrameworkSource)/src/Ui/UiAppearanceRules.cs" />
     <Compile Include="$(FrameworkSource)/checks/UiAppearance/Stubs.cs" />

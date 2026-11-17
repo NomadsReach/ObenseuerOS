@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: NomadsReach/Obenseuer-Modding-Framework
-          ref: e36ab2593520af5f4c0cb399a6fb4a79e54f6cbf
+          ref: 1254e36e156ea48dc8c1dcd9c3de095da674761e
           path: framework-source
           persist-credentials: false
       - uses: actions/setup-dotnet@v4
@@ -79,7 +79,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: NomadsReach/Obenseuer-Modding-Framework
-          ref: e36ab2593520af5f4c0cb399a6fb4a79e54f6cbf
+          ref: 1254e36e156ea48dc8c1dcd9c3de095da674761e
           path: framework-source
           persist-credentials: false
       - uses: actions/setup-dotnet@v4
