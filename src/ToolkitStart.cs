@@ -11,11 +11,11 @@ namespace ObenseuerOS
         private readonly TextField search;
         private readonly List<UnityEngine.UIElements.Button> buttons = new List<UnityEngine.UIElements.Button>();
         private readonly string[] names;
-        private readonly Func<int, bool> open;
+        private readonly Func<int, bool> open, available;
 
-        internal ToolkitStart(string[] names, string[] icons, Func<string, Texture2D> texture, Func<int, bool> open, Action close)
+        internal ToolkitStart(string[] names, string[] icons, Func<string, Texture2D> texture, Func<int, bool> open, Action close, Func<int, bool> available)
         {
-            this.names = names; this.open = open;
+            this.names = names; this.open = open; this.available = available;
             Menu = new VisualElement(); Menu.style.position = UnityEngine.UIElements.Position.Absolute;
             Menu.style.left = 0; Menu.style.bottom = 40; Menu.style.width = 460; Menu.style.maxHeight = Length.Percent(90);
             Menu.style.paddingLeft = 12; Menu.style.paddingRight = 12; Menu.style.paddingTop = 12; Menu.style.paddingBottom = 12;
@@ -51,10 +51,14 @@ namespace ObenseuerOS
                 Image icon = new Image(); icon.image = texture(icons[i]); icon.scaleMode = ScaleMode.ScaleToFit;
                 icon.style.width = 32; icon.style.height = 32; icon.style.alignSelf = Align.Center; icon.style.marginTop = 8;
                 icon.tintColor = i == 2 ? (Color)new Color32(242, 201, 76, 255) : Color.white;
-                button.Add(icon);
+                if (icons[i].Length == 0)
+                {
+                    Label letter = new Label(names[i].Substring(0, 1)); letter.style.color = Color.white; letter.style.fontSize = 28; letter.style.unityTextAlign = TextAnchor.MiddleCenter; button.Add(letter);
+                }
+                else button.Add(icon);
                 Label label = new Label(names[i]); label.style.color = Color.white; label.style.fontSize = 12; label.style.whiteSpace = WhiteSpace.Normal;
                 button.Add(label);
-                button.SetEnabled(i >= 0 && i <= 13);
+                button.SetEnabled(true);
                 buttons.Add(button); scroll.Add(button);
             }
             UnityEngine.UIElements.Button power = new UnityEngine.UIElements.Button(delegate { Hide(); close(); }); power.text = "Close Viewports 8";
@@ -69,6 +73,7 @@ namespace ObenseuerOS
         }
 
         internal void Hide() { Menu.style.display = DisplayStyle.None; }
+        internal void Refresh() { Filter(search.value); }
 
         private void Launch(int index) { if (open(index)) Hide(); }
 
@@ -76,7 +81,7 @@ namespace ObenseuerOS
         {
             string text = (query ?? "").Trim();
             for (int i = 0; i < buttons.Count; i++)
-                buttons[i].style.display = names[i].IndexOf(text, StringComparison.OrdinalIgnoreCase) >= 0 ? DisplayStyle.Flex : DisplayStyle.None;
+                buttons[i].style.display = available(i) && names[i].IndexOf(text, StringComparison.OrdinalIgnoreCase) >= 0 ? DisplayStyle.Flex : DisplayStyle.None;
         }
 
         private void Navigate(KeyDownEvent e)

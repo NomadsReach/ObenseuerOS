@@ -34,7 +34,7 @@ namespace ObenseuerOS
             Window.schedule.Execute(delegate() { if (Window.style.display != DisplayStyle.None && state != null) Session(); }).Every(1000);
         }
         internal void OpenStore() { program = false; Open(); }
-        private void OpenGuard() { program = true; Open(); }
+        internal void OpenGuard() { program = true; Open(); }
         private void Open() { Window.style.display = DisplayStyle.Flex; Window.BringToFront(); Refresh(); }
         private static Label Text(string value) { Label label = new Label(value); label.enableRichText = false; label.style.color = Color.black; label.style.whiteSpace = WhiteSpace.Normal; return label; }
         private static UnityEngine.UIElements.Button Button(string value, Action action) { UnityEngine.UIElements.Button button = new UnityEngine.UIElements.Button(action); button.enableRichText = false; button.text = value; return button; }

@@ -27,6 +27,7 @@ namespace ObenseuerCore
 
 namespace ObenseuerOS
 {
+    internal static class VirusAv { internal static bool Shows(string appId) { return false; } }
     internal static class OsBridge { internal static JObject Reply(JObject request) { return null; } }
     internal static class OsWallpaper { internal static int Capture(RectTransform screen, string folder) { return -1; } }
     internal static class OsGameArt

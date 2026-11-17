@@ -10,9 +10,9 @@ namespace ObenseuerOS
 {
 internal sealed class ToolkitPrototype : MonoBehaviour
 {
-    private static readonly string[] Names = { "Stalburg Mail", "Stalburg Web", "Explorer", "Recycle Bin", "Control Panel", "Stal-Ex", "Command Prompt", "Notepad", "Stalburg Bank", "Stalburg Times", "TOR-Turnip Chat v0.3.9", "Shop", "Minesweeper", "Solitaire" };
-    private static readonly string[] Ids = { "mail", "browser", "files", "recycle", "settings", "exchange", "terminal", "notes", "bank", "news", "chat", "shop", "minesweeper", "solitaire" };
-    private static readonly string[] Icons = { "mail", "world", "folder-filled", "trash", "settings", "chart-line", "terminal-2", "notes", "building-bank", "news", "message-circle", "shopping-cart", "device-gamepad-2", "device-gamepad-2" };
+    private static readonly string[] Names = { "Stalburg Mail", "Stalburg Web", "Explorer", "Recycle Bin", "Control Panel", "Stal-Ex", "Command Prompt", "Notepad", "Stalburg Bank", "Stalburg Times", "TOR-Turnip Chat v0.3.9", "Shop", "Minesweeper", "Solitaire", "PC Master Guard" };
+    private static readonly string[] Ids = { "mail", "browser", "files", "recycle", "settings", "exchange", "terminal", "notes", "bank", "news", "chat", "shop", "minesweeper", "solitaire", "pcguard" };
+    private static readonly string[] Icons = { "mail", "world", "folder-filled", "trash", "settings", "chart-line", "terminal-2", "notes", "building-bank", "news", "message-circle", "shopping-cart", "device-gamepad-2", "device-gamepad-2", "" };
     private readonly List<Texture2D> textures = new List<Texture2D>();
     private VisualElement selected;
     private NotepadStorage storage;
@@ -79,6 +79,12 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         ToolkitTerminal terminal = null;
         ToolkitBrowser browser = null;
         ToolkitSecurity security = null;
+        Func<bool> guardInstalled = delegate
+        {
+            if (osStorage == null) return false;
+            try { osStorage.CheckSession(); return VirusAv.Shows("pcguard"); }
+            catch (Exception) { return false; }
+        };
         Func<int, bool> launch = delegate(int index)
         {
             switch (index)
@@ -97,11 +103,12 @@ internal sealed class ToolkitPrototype : MonoBehaviour
                 case 11: shop.Open(); return true;
                 case 12: minesweeper.Open(); return true;
                 case 13: solitaire.Open(); return true;
-                case 14: jobs.Open(); return true;
+                case 14: if (!guardInstalled()) return false; security.OpenGuard(); return true;
                 case 15: lottery.Open(); return true;
                 case 16: bets.Open(); return true;
                 case 17: eye.Open(); return true;
                 case 18: security.OpenStore(); return true;
+                case 19: jobs.Open(); return true;
                 default: return false;
             }
         };
@@ -123,6 +130,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         Func<bool> canClose = delegate { return notepad.CanClose() && mail.CanClose(); };
         ComputerApps.SetCloseGuard(transform.parent, canClose);
         VisualElement window = notepad.Window;
+        VisualElement guardTile = null;
         for (int i = 0; i < Names.Length; i++)
         {
             int index = i;
@@ -137,7 +145,12 @@ internal sealed class ToolkitPrototype : MonoBehaviour
             icon.style.width = 48;
             icon.style.height = 48;
             icon.style.marginTop = 4;
-            tile.Add(icon);
+            if (i == 14)
+            {
+                Label letter = new Label("P"); letter.style.color = Color.white; letter.style.fontSize = 36; letter.style.height = 52; letter.style.unityTextAlign = TextAnchor.MiddleCenter; tile.Add(letter);
+                guardTile = tile; tile.style.display = DisplayStyle.None;
+            }
+            else tile.Add(icon);
             Label label = new Label(Names[i]);
             label.style.color = Color.white;
             label.style.fontSize = 12;
@@ -183,7 +196,9 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         windows.Add(lottery.Window);
         windows.Add(eye.Window);
         windows.Add(bets.Window);
-        ToolkitStart start = new ToolkitStart(Names, Icons, Texture, launch, delegate { if (canClose()) ComputerApps.Close(storage == null ? "os.toolkit-prototype" : "os.toolkit-os"); });
+        ToolkitStart start = new ToolkitStart(Names, Icons, Texture, launch, delegate { if (canClose()) ComputerApps.Close(storage == null ? "os.toolkit-prototype" : "os.toolkit-os"); }, delegate(int index) { return index != 14 || guardInstalled(); });
+        Action updateGuard = delegate { guardTile.style.display = guardInstalled() ? DisplayStyle.Flex : DisplayStyle.None; start.Refresh(); };
+        updateGuard(); desktop.schedule.Execute(updateGuard).Every(1000);
         VisualElement taskbar = new VisualElement();
         taskbar.style.height = 40;
         taskbar.style.flexShrink = 0;
