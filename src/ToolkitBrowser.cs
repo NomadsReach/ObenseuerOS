@@ -27,7 +27,7 @@ namespace ObenseuerOS
             { "shop.stalburg.ts", "Shop", "Goods for sale.", "11" },
             { "bets.stalburg.ts", "NaSpoBet", "Football, ice hockey and volleyball odds.", "16" },
             { "lottery.stalburg.ts", "LOTTO by NaSpoBet", "Scratch cards and a number draw.", "20" },
-            { "wiki.stalburg.ts", "Stalburg Wiki", "Articles on Stolland and Obenseuer.", "" },
+            { "wiki.stalburg.ts", "Stalburg Wiki", "Articles on Stolland and Obenseuer.", "25" },
             { "www.eyebook.com", "EYEbook", "International social network.", "17" },
             { "www.pcmaster.ts", "PC Master", "Computers, parts and security software.", "18" },
             { "www.turvapro.ts", "TurvaPro 2000", "Antivirus and security.", "21" },

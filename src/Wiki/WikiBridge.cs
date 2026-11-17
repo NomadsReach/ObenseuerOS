@@ -18,6 +18,8 @@ namespace ObenseuerOS
         private static WikiCache cache;
         private static string folder;
 
+        internal static string LegacyPages { get { return Path.Combine(Paths.BepInExRootPath, "cache", "ObenseuerOS", "wiki", "pages"); } }
+
         internal static bool SavesCopies { get { return SavedCopy; } }
 
         internal static string Folder

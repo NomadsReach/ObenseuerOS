@@ -109,6 +109,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         ToolkitSecurity security = null;
         ToolkitTurva turva = null;
         ToolkitShady shady = null;
+        ToolkitWiki wiki = new ToolkitWiki(WikiBridge.LegacyPages);
         Func<string, bool> installed = delegate(string id)
         {
             if (osStorage == null) return false;
@@ -144,6 +145,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
                 case 22: shady.Open(0); return true;
                 case 23: shady.Open(1); return true;
                 case 24: shady.Open(2); return true;
+                case 25: wiki.Open(); return true;
                 default: return false;
             }
         };
@@ -231,6 +233,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         windows.Add(security.Window);
         windows.Add(turva.Window);
         windows.Add(shady.Window);
+        windows.Add(wiki.Window);
         windows.Add(jobs.Window);
         windows.Add(lottery.Window);
         windows.Add(eye.Window);

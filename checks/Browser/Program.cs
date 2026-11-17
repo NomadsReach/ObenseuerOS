@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Newtonsoft.Json.Linq;
 using ObenseuerOS;
 
@@ -54,6 +55,24 @@ internal static class Program
         Storage sharedDisk = new Storage(); EyeState first = EyeStates.ForSession(71, sharedDisk); EyeState second = EyeStates.ForSession(71, sharedDisk);
         Check(object.ReferenceEquals(first, second)); first.Login("Ricky"); second.Publish("Shared"); Check(first.Statuses.Count == 1);
         Check(!object.ReferenceEquals(first, EyeStates.ForSession(72, sharedDisk)));
+        OfflineWikiPage wiki = OfflineWiki.Parse("OBXWIKI1\ntitle:Main_Page\nrev:3\nfetched:4\n\n<h1>Welcome</h1><script>bad()</script><p>Tea &amp; turnips</p>");
+        Check(wiki != null && wiki.Title == "Main Page" && wiki.Text.Contains("Tea & turnips") && !wiki.Text.Contains("bad()"));
+        Check(OfflineWiki.Parse("OBXWIKI1\ntitle:Main_Page\nrev:no\nfetched:4\n\ntext") == null && OfflineWiki.Parse("bad") == null);
+        bool wikiLimited; Check(OfflineWiki.Load(null, out wikiLimited).Count == 0 && !wikiLimited);
+        string wikiFolder = Path.Combine(Path.GetTempPath(), "offline-wiki-check-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(wikiFolder);
+        try
+        {
+            string wikiFile = Path.Combine(wikiFolder, "one.page");
+            string cached = "OBXWIKI1\ntitle:Main_Page\nrev:3\nfetched:4\n\n<p>Saved &amp; safe</p>";
+            File.WriteAllText(wikiFile, cached); File.WriteAllText(Path.Combine(wikiFolder, "bad.page"), "bad");
+            var saved = OfflineWiki.Load(wikiFolder, out wikiLimited);
+            Check(!wikiLimited && saved.Count == 1 && saved[0].Title == "Main Page" && saved[0].Text == "Saved & safe" && File.ReadAllText(wikiFile) == cached);
+            for (int i = 0; i < 500; i++) File.WriteAllText(Path.Combine(wikiFolder, "page" + i + ".page"), "OBXWIKI1\ntitle:Page_" + i + "\nrev:1\nfetched:1\n\n<p>Text</p>");
+            saved = OfflineWiki.Load(wikiFolder, out wikiLimited);
+            Check(wikiLimited && saved.Count == 500 && File.ReadAllText(wikiFile) == cached);
+        }
+        finally { Directory.Delete(wikiFolder, true); }
         Console.WriteLine("Browser state checks passed");
     }
 }
