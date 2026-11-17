@@ -17,7 +17,8 @@
 
   <ItemGroup>
     <Compile Include="src\**\*.cs" />
-    <ToolkitIcon Include="mail;world;folder-filled;trash;settings;chart-line;terminal-2;notes;building-bank;news;message-circle;shopping-cart;device-gamepad-2;x;viewports" />
+    <ToolkitIconSource Include="web/icons/*.svg" />
+    <ToolkitIcon Include="@(ToolkitIconSource->'%(Filename)');viewports" />
     <EmbeddedResource Include="@(ToolkitIcon->'prototype-icons/%(Identity).png')" LogicalName="desktop-icons/%(Filename)%(Extension)" />
   </ItemGroup>
 
