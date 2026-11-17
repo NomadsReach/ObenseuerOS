@@ -20,6 +20,7 @@ namespace ObenseuerOS
         private string armed = "";
         private bool wrap = true;
         private bool dark;
+        private RecoveredNote retained;
 
         internal readonly VisualElement Window;
 
@@ -75,6 +76,7 @@ namespace ObenseuerOS
             status.style.fontSize = 11;
             status.style.height = 24;
             Window.Add(status);
+            if (storage is OsNotepadStorage && NotepadRecovery.List().Count > 0) status.text = "Unsaved notes are available under File > Recover.";
             Window.RegisterCallback<KeyDownEvent>(delegate(KeyDownEvent e)
             {
                 if (e.keyCode != KeyCode.Escape || popup == null) return;
@@ -86,6 +88,15 @@ namespace ObenseuerOS
         }
 
         internal bool CanClose() { return Discard("Close"); }
+
+        internal void RetainDraft()
+        {
+            NotepadRecovery.Remove(retained); retained = null;
+            OsNotepadStorage session = storage as OsNotepadStorage;
+            if (session != null) retained = NotepadRecovery.Retain(session.RecoveryKey, session.RecoveryOrigin, text.value, saved);
+        }
+
+        internal void ReattachDraft() { NotepadRecovery.Remove(retained); retained = null; }
 
         internal void SetTheme(bool value)
         {
@@ -166,6 +177,7 @@ namespace ObenseuerOS
         {
             UnityEngine.UIElements.Button result = new UnityEngine.UIElements.Button(action);
             result.text = label;
+            result.enableRichText = false;
             result.RegisterCallback<PointerEnterEvent>(delegate { result.style.backgroundColor = dark ? (Color)new Color32(120, 170, 230, 77) : (Color)new Color32(170, 200, 240, 89); });
             result.RegisterCallback<PointerLeaveEvent>(delegate { result.style.backgroundColor = Color.clear; });
             return result;
@@ -181,7 +193,7 @@ namespace ObenseuerOS
         {
             if (text.value == saved || armed == action) { armed = ""; return true; }
             armed = action;
-            status.text = "Unsaved changes. Choose " + action + " again to discard them.";
+            status.text = action == "Close" && storage is OsNotepadStorage ? "Unsaved changes. Choose Close again. Text may remain recoverable until the game exits." : "Unsaved changes. Choose " + action + " again to discard them.";
             return false;
         }
 
@@ -213,7 +225,34 @@ namespace ObenseuerOS
             menu.Add(Button("Open...", delegate { HidePopup(); Open(); }));
             menu.Add(Button("Save", delegate { HidePopup(); Save(); }));
             menu.Add(Button("Save as...", delegate { HidePopup(); SaveAs(); }));
+            OsNotepadStorage session = storage as OsNotepadStorage;
+            if (session != null && NotepadRecovery.List(session.RecoveryKey, false).Count > 0) menu.Add(Button("Recover...", delegate { HidePopup(); Recover(false); }));
+            if (session != null && NotepadRecovery.List(session.RecoveryKey, true).Count > 0) menu.Add(Button("Recover from another session...", delegate { HidePopup(); Recover(true); }));
             StylePopup(menu);
+        }
+
+        private void Recover(bool otherSessions)
+        {
+            if (!Discard("Recover")) return;
+            string original = text.value;
+            VisualElement panel = Popup(8, 400);
+            panel.Add(new Label("Choose an unsaved note to recover"));
+            ScrollView list = new ScrollView(); list.style.height = 160; panel.Add(list);
+            foreach (RecoveredNote entry in NotepadRecovery.List(((OsNotepadStorage)storage).RecoveryKey, otherSessions))
+            {
+                RecoveredNote candidate = entry;
+                string preview = (candidate.Text ?? "").Replace('\r', ' ').Replace('\n', ' ').Trim();
+                if (preview.Length == 0) preview = "(empty text)";
+                if (preview.Length > 48) preview = preview.Substring(0, 48) + "…";
+                list.Add(Button(candidate.Origin + ": " + preview, delegate
+                {
+                    if (text.value != original && !Discard("Recover")) return;
+                    if (!NotepadRecovery.Claim(candidate, ((OsNotepadStorage)storage).RecoveryKey, otherSessions)) { status.text = "That recovery is no longer available."; return; }
+                    saved = null; text.SetValueWithoutNotify(candidate.Text); path = null; armed = "";
+                    HidePopup(); SetTitle(); status.text = "Recovered unsaved text. Use Save as to keep it.";
+                }));
+            }
+            panel.Add(Button("Cancel", HidePopup)); StylePopup(panel);
         }
 
         private void EditMenu()

@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Text;
 using ObenseuerCore;
 
@@ -8,8 +9,20 @@ namespace ObenseuerOS
     {
         private static int generation;
         private readonly int session = generation;
+        private readonly string recoveryKey;
+        private readonly string recoveryOrigin;
         internal int SessionId { get { return session; } }
+        internal string RecoveryKey { get { return recoveryKey; } }
+        internal string RecoveryOrigin { get { return recoveryOrigin; } }
         internal bool SessionCurrent { get { return session == generation; } }
+
+        internal OsNotepadStorage()
+        {
+            string folder = SaveData.Folder;
+            recoveryKey = (folder == null ? "new" : "save:" + folder) + "|session:" + session;
+            string name = folder == null ? null : Path.GetFileName(folder.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
+            recoveryOrigin = folder == null ? "Unsaved game" : string.IsNullOrEmpty(name) ? "Saved game" : name;
+        }
 
         internal static void Attach()
         {

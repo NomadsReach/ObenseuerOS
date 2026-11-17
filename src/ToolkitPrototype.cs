@@ -570,6 +570,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
 
     private void OnEnable()
     {
+        if (notepad != null) notepad.ReattachDraft();
         if (!(storage is OsNotepadStorage) || modWindows == null) return;
         if (!active.Contains(this)) active.Add(this);
         Os.SyncWindow();
@@ -577,6 +578,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
 
     private void OnDisable()
     {
+        if (notepad != null) notepad.RetainDraft();
         active.Remove(this);
         if (modWindows != null) modWindows.CloseAll();
         if (notifications != null) notifications.Clear();

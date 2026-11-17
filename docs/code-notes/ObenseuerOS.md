@@ -152,3 +152,7 @@
 - `src/ToolkitPrototype.cs:SessionVisible` distinguishes an active save session from temporary save/load busy status; `src/OsNotepadStorage.cs:SessionCurrent` keeps an autosave from treating the Toolkit desktop as closed or reconciling away native mod windows. `checks/Notepad/Program.cs:Program.Main` covers busy and changed-session states. World placement, input, close guards, and camera restoration still need in-game verification.
 
 - `checks/ToolkitCompile/ToolkitCompile.csproj:Compile` compiles `src/OsLaptop.cs:OsLaptop` against Unity references and game stubs, but does not run the Unity camera, control lock, or host teardown. Those paths require an in-game check.
+
+- `src/ToolkitNotepad.cs:RetainDraft` and `src/ToolkitPrototype.cs:OnDisable` retain unsaved Notepad text in memory when a host is destroyed, including after an approved discard, so a later close-guard veto cannot erase a draft. `src/OsNotepadStorage.cs:RecoveryKey` captures the save folder and session when the host opens; `src/Ugui/NotepadRecovery.cs:List` separates matching drafts from other sessions, and `src/ToolkitNotepad.cs:Recover` requires an explicit choice for either list. Recovered text opens untitled and requires Save As. The buffer is lost on game exit and does not preserve third-party app state.
+
+- `src/ToolkitPrototype.cs:OnDisable` does not retain Mail or third-party app state during forced teardown.

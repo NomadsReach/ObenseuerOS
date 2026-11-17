@@ -23,7 +23,31 @@ internal static class Program
         Check(ToolkitNotepadOpen.Decide("/docs/one.txt", "/docs/two.txt", false) == ExternalOpenAction.Load, "clean file opens");
         Check(ToolkitNotepadOpen.Decide(null, "/docs/two.txt", true) == ExternalOpenAction.Confirm, "dirty untitled file needs confirmation");
         OsNotepadStorage.Attach();
+        ObenseuerCore.SaveData.Folder = null;
+        OsNotepadStorage newGame = new OsNotepadStorage();
+        RecoveredNote newGameDraft = NotepadRecovery.Retain(newGame.RecoveryKey, newGame.RecoveryOrigin, "new game draft", "");
+        ObenseuerCore.SaveData.Folder = "save-a";
+        ObenseuerCore.Events.RaiseLoad();
         var storage = new OsNotepadStorage();
+        string owner = storage.RecoveryKey;
+        Check(NotepadRecovery.List(owner, false).Count == 0 && NotepadRecovery.List(owner, true).Contains(newGameDraft), "new game draft requires explicit other-session recovery");
+        Check(!NotepadRecovery.Claim(newGameDraft, owner, false) && NotepadRecovery.Claim(newGameDraft, owner, true) && !NotepadRecovery.Claim(newGameDraft, owner, true), "explicit recovery claims once");
+        RecoveredNote oldGeneration = NotepadRecovery.Retain(owner, storage.RecoveryOrigin, "old generation", "");
+        ObenseuerCore.Events.RaiseLoad();
+        storage = new OsNotepadStorage(); owner = storage.RecoveryKey;
+        Check(NotepadRecovery.List(owner, false).Count == 0 && NotepadRecovery.Claim(oldGeneration, owner, true), "reused save folder requires explicit recovery");
+        ObenseuerCore.SaveData.Folder = "save-b";
+        Check(storage.RecoveryKey == owner && new OsNotepadStorage().RecoveryKey != owner, "recovery belongs to the original save");
+        Check(NotepadRecovery.Retain(owner, "save-a", "same", "same") == null, "clean text is not retained");
+        RecoveredNote firstDraft = NotepadRecovery.Retain(owner, "save-a", "changed", "original");
+        RecoveredNote deletedText = NotepadRecovery.Retain(owner, "save-a", "", "previous contents");
+        Check(NotepadRecovery.List(owner, false).Count == 2 && NotepadRecovery.List(owner, false)[0] == firstDraft, "drafts remain available in order");
+        Check(deletedText != null && deletedText.Text == "", "empty unsaved edit is recoverable");
+        Check(NotepadRecovery.Retain(owner, "save-a", "", null) != null && NotepadRecovery.Retain(owner, "save-a", "original", null) != null, "recovered untitled text remains dirty");
+        Check(!NotepadRecovery.Claim(firstDraft, new OsNotepadStorage().RecoveryKey, false), "another save cannot claim current-session recovery");
+        RecoveredNote resumed = NotepadRecovery.Retain(owner, "save-a", "pending", "");
+        NotepadRecovery.Remove(resumed);
+        Check(!NotepadRecovery.List(owner, false).Contains(resumed), "reattached host removes its pending recovery");
         int firstSession = storage.SessionId;
         Check(new OsNotepadStorage().SessionId == firstSession, "reopened apps share session");
         Check(storage.Valid("/docs/notes.txt") && !storage.Valid("/other/notes.txt") && !storage.Valid("/docs/no extension"), "document names");
@@ -111,6 +135,7 @@ namespace ObenseuerCore
     internal static class SaveData
     {
         internal static bool Busy;
+        internal static string Folder;
     }
 
     internal static class Events

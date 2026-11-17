@@ -60,6 +60,8 @@ namespace ObenseuerOS
     internal sealed class OsNotepadStorage : NotepadStorage
     {
         internal int SessionId { get { return 0; } }
+        internal string RecoveryKey { get { return "save:test"; } }
+        internal string RecoveryOrigin { get { return "test"; } }
         internal bool SessionCurrent { get { return true; } }
         internal void CheckSession() { }
         public string[] List() { return null; }
