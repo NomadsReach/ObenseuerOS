@@ -24,6 +24,7 @@ jobs:
       - run: dotnet run --project checks/ChatHistory/ChatHistory.csproj -c Release
       - run: dotnet run --project checks/MailClient/MailClient.csproj -c Release
       - run: dotnet run --project checks/BankClient/BankClient.csproj -c Release
+      - run: dotnet run --project checks/BankBridge/BankBridge.csproj -c Release
       - run: dotnet run --project checks/News/News.csproj -c Release
       - run: dotnet run --project checks/Market/Market.csproj -c Release
       - run: dotnet run --project checks/ShopResult/ShopResult.csproj -c Release

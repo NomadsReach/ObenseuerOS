@@ -115,3 +115,5 @@
 - `src/ToolkitBank.cs:ToolkitBank.PaymentsPage` - The invoice bridge can return fewer items than its total; the Payments view reports that limit so missing invoices are not mistaken for an empty or complete list.
 
 - `src/OsBank.cs:OsBank.InvoiceList`, `src/BankInvoicePage.cs:BankInvoicePage.Select`, `src/ToolkitBank.cs:ToolkitBank.PaymentsPage` - Toolkit requests ID-ordered invoice pages with an exclusive cursor. Legacy requests keep their original ordering and response shape. The list is live, so invoices added below the current cursor appear on earlier pages; payment still validates the invoice by ID in the bridge.
+
+- `src/OsBank.cs:OsBank.InvoiceList`, `checks/BankBridge/Program.cs:Program.Main` - Public CI compiles the actual bank bridge against test stubs and exercises legacy and paged responses, cursor bounds, invoice-list changes, and the locked-bank gate. Stub behavior does not prove game integration or in-game payment.
