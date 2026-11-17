@@ -80,6 +80,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         ToolkitBrowser browser = null;
         ToolkitSecurity security = null;
         ToolkitTurva turva = null;
+        ToolkitShady shady = null;
         Func<string, bool> installed = delegate(string id)
         {
             if (osStorage == null) return false;
@@ -112,12 +113,16 @@ internal sealed class ToolkitPrototype : MonoBehaviour
                 case 19: jobs.Open(); return true;
                 case 20: lottery.Open(); return true;
                 case 21: turva.OpenSite(); return true;
+                case 22: shady.Open(0); return true;
+                case 23: shady.Open(1); return true;
+                case 24: shady.Open(2); return true;
                 default: return false;
             }
         };
         browser = new ToolkitBrowser(storage, launch, osStorage == null ? (Action)null : osStorage.CheckSession, osStorage == null ? null : new TransactionClient("browser", OsBridge.Reply, osStorage.CheckSession));
         security = new ToolkitSecurity(osStorage == null ? new TransactionClient("pcmaster", null, null) : TransactionClients.ForSession("pcmaster", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession), osStorage == null ? new TransactionClient("pcguard", null, null) : TransactionClients.ForSession("pcguard", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession), osStorage == null ? (Action)null : osStorage.CheckSession);
         turva = new ToolkitTurva(osStorage == null ? new TransactionClient("turvasite", null, null) : TransactionClients.ForSession("turvasite", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession), osStorage == null ? new TransactionClient("turvapro", null, null) : TransactionClients.ForSession("turvapro", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession), osStorage == null ? (Action)null : osStorage.CheckSession);
+        shady = new ToolkitShady(osStorage == null ? new TransactionClient("freerm", null, null) : TransactionClients.ForSession("freerm", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession), osStorage == null ? new TransactionClient("warez", null, null) : TransactionClients.ForSession("warez", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession), osStorage == null ? new TransactionClient("voittaja", null, null) : TransactionClients.ForSession("voittaja", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession), osStorage == null ? (Action)null : osStorage.CheckSession, browser.Navigate);
         eye = new ToolkitEye(osStorage == null ? (Func<EyeState>)(() => new EyeState(storage)) : () => EyeStates.ForSession(osStorage.SessionId, storage), osStorage == null ? (Action)null : osStorage.CheckSession, OsView.UserName, new NewsClient(osStorage == null ? (Func<Newtonsoft.Json.Linq.JObject, Newtonsoft.Json.Linq.JObject>)null : OsBridge.Reply, osStorage == null ? (Action)null : osStorage.CheckSession), launch);
         jobs = new ToolkitJobs(new TransactionClient("jobs", osStorage == null ? (Func<Newtonsoft.Json.Linq.JObject, Newtonsoft.Json.Linq.JObject>)null : OsBridge.Reply, osStorage == null ? (Action)null : osStorage.CheckSession), osStorage == null ? (Action)null : osStorage.CheckSession, launch);
         terminal = new ToolkitTerminal(storage, storage as ExplorerStorage, OsView.UserName,
@@ -197,6 +202,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         windows.Add(browser.Window);
         windows.Add(security.Window);
         windows.Add(turva.Window);
+        windows.Add(shady.Window);
         windows.Add(jobs.Window);
         windows.Add(lottery.Window);
         windows.Add(eye.Window);

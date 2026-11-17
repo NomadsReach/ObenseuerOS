@@ -31,9 +31,9 @@ namespace ObenseuerOS
             { "www.eyebook.com", "EYEbook", "International social network.", "17" },
             { "www.pcmaster.ts", "PC Master", "Computers, parts and security software.", "18" },
             { "www.turvapro.ts", "TurvaPro 2000", "Antivirus and security.", "21" },
-            { "www.free-rm.ts", "FREE RM GENERATOR", "Free RM generator.", "" },
-            { "www.kolhola-warez.ts", "Kolhola Warez", "Games and tools.", "" },
-            { "www.voittaja.ts", "VOITTAJA!", "Claim your prize.", "" }
+            { "www.free-rm.ts", "FREE RM GENERATOR", "Free RM generator.", "22" },
+            { "www.kolhola-warez.ts", "Kolhola Warez", "Games and tools.", "23" },
+            { "www.voittaja.ts", "VOITTAJA!", "Claim your prize.", "24" }
         };
         private const string Home = "www.stalburg.ts";
 
@@ -104,6 +104,7 @@ namespace ObenseuerOS
             if (input.IndexOf(' ') >= 0 || input.IndexOf('.') < 0) Visit(Home + "/search?q=" + Uri.EscapeDataString(input));
             else Visit(input.Length > 300 ? input.Substring(0, 300) : input);
         }
+        internal bool Navigate(string url) { if (state == null) Open(); if (state == null || !Session()) return false; Window.style.display = DisplayStyle.Flex; Visit(url); if (state == null || state.Current != url) return false; Window.BringToFront(); return true; }
         private void Visit(string url)
         {
             if (state == null || !Session()) return;

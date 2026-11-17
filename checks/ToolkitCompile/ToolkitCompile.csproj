@@ -18,6 +18,7 @@
     <Compile Include="..\..\src\BrowserState.cs" />
     <Compile Include="..\..\src\GuardPurchase.cs" />
     <Compile Include="..\..\src\TurvaReceipt.cs" />
+    <Compile Include="..\..\src\ShadyReply.cs" />
     <Compile Include="..\..\src\EyeState.cs" />
     <Compile Include="..\..\src\JobsList.cs" />
     <Compile Include="..\..\src\ScratchProgress.cs" />

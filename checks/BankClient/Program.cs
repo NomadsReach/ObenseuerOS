@@ -43,6 +43,8 @@ internal static class Program
         Check(!TurvaReceipt.Accepted(JObject.Parse("{\"owned\":true,\"status\":\"lapsed\"}")) && !TurvaReceipt.Accepted(new JObject()) && !TurvaReceipt.Accepted(null));
         Check(TurvaReceipt.ScanAccepted(JObject.Parse("{\"cookies\":3,\"found\":[{\"name\":\"worm\",\"result\":\"missed\"}]}")));
         Check(!TurvaReceipt.ScanAccepted(JObject.Parse("{\"cookies\":3,\"found\":[{}]}")) && !TurvaReceipt.ScanAccepted(JObject.Parse("{\"cookies\":\"3\",\"found\":[]}")) && !TurvaReceipt.ScanAccepted(null));
+        Check(ShadyReply.Valid(JObject.Parse("{\"outcome\":\"blocked\",\"file\":\"a.exe\"}"), "a.exe"));
+        Check(ShadyReply.Valid(JObject.Parse("{\"outcome\":\"infected\"}"), null) && !ShadyReply.Valid(new JObject(), null) && !ShadyReply.Valid(JObject.Parse("{\"outcome\":\"blocked\"}"), "a.exe") && !ShadyReply.Valid(JObject.Parse("{\"outcome\":\"oops\"}"), null));
         decimal debit, fee, sent;
         Check(BankQuote.TryCreate("OC", 100m, 2m, out debit, out fee, out sent) && debit == 100m && fee == 2m && sent == 98m);
         Check(BankQuote.TryCreate("RM", 12.3m, 2m, out debit, out fee, out sent) && fee == 0.3m && sent == 12m);

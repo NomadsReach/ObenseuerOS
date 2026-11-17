@@ -6,5 +6,6 @@
     <Compile Include="..\..\src\BankQuote.cs" />
     <Compile Include="..\..\src\GuardPurchase.cs" />
     <Compile Include="..\..\src\TurvaReceipt.cs" />
+    <Compile Include="..\..\src\ShadyReply.cs" />
   </ItemGroup>
 </Project>
