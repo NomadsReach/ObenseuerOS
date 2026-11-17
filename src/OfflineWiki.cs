@@ -11,6 +11,7 @@ namespace ObenseuerOS
     {
         internal string Title;
         internal string Text;
+        internal string SourceFolder;
         internal readonly List<string> Links = new List<string>();
         internal readonly List<string> Images = new List<string>();
     }
@@ -32,21 +33,31 @@ namespace ObenseuerOS
 
         internal static List<OfflineWikiPage> Load(string folder, out bool limited)
         {
+            return Load(new[] { folder }, out limited);
+        }
+        internal static List<OfflineWikiPage> Load(string[] folders, out bool limited)
+        {
             limited = false; long total = 0;
             List<OfflineWikiPage> pages = new List<OfflineWikiPage>();
-            if (string.IsNullOrEmpty(folder) || !Directory.Exists(folder)) return pages;
             List<string> files = new List<string>();
-            try
+            if (folders == null) return pages;
+            foreach (string folder in folders)
             {
-                foreach (string file in Directory.EnumerateFiles(folder, "*.page", SearchOption.TopDirectoryOnly))
+                if (string.IsNullOrEmpty(folder) || !Directory.Exists(folder)) continue;
+                List<string> source = new List<string>();
+                try
                 {
-                    if (files.Count >= MaxFiles) { limited = true; break; }
-                    files.Add(file);
+                    foreach (string file in Directory.EnumerateFiles(folder, "*.page", SearchOption.TopDirectoryOnly))
+                    {
+                        if (files.Count + source.Count >= MaxFiles) { limited = true; break; }
+                        source.Add(file);
+                    }
                 }
+                catch (IOException) { limited = true; }
+                catch (UnauthorizedAccessException) { limited = true; }
+                source.Sort(StringComparer.Ordinal); files.AddRange(source);
+                if (files.Count >= MaxFiles) break;
             }
-            catch (IOException) { limited = true; return pages; }
-            catch (UnauthorizedAccessException) { limited = true; return pages; }
-            files.Sort(StringComparer.Ordinal);
             HashSet<string> seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach (string file in files)
             {
@@ -57,7 +68,7 @@ namespace ObenseuerOS
                     if (size > MaxBytes || size > MaxTotalBytes - total) { limited = true; continue; }
                     total += size;
                     OfflineWikiPage page = Parse(File.ReadAllText(file, Encoding.UTF8));
-                    if (page != null && seen.Add(page.Title)) pages.Add(page);
+                    if (page != null && seen.Add(page.Title)) { page.SourceFolder = Path.GetDirectoryName(file); pages.Add(page); }
                 }
                 catch (IOException) { limited = true; }
                 catch (UnauthorizedAccessException) { limited = true; }

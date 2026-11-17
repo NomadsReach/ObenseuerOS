@@ -41,9 +41,7 @@ The file is `BepInEx\config\nomad.obenseuer.os.cfg`.
 | `[Bank] WithdrawFeePercent` | `2` | Fee on a cash order by post, in percent (0 to 20). |
 | `[Viruses] Enabled` | `true` | Turns viruses and pop-ups on or off. Off stops new infections and cleans existing ones. |
 | `[Viruses] MoneyTheft` | `true` | Lets viruses take small amounts of money, within daily and weekly caps. |
-| `[Wiki] Enabled` | `true` | Lets the Stalburg Wiki contact stalburg.net. |
-| `[Wiki] CacheMaxMB` | `128` | Most space the saved wiki copy may use. |
-| `[Wiki] MinIntervalMs` | `1000` | Shortest time between two wiki requests (500 at least). |
+| Wiki | Offline | The Toolkit reader uses bundled pages and older locally saved pages; it does not contact the wiki. A complete article bundle is not yet included. |
 | `[Laptop] ExtraNames` | empty | Extra object names to treat as computers, comma separated. |
 | `[Debug] SelfCheck` | `false` | Runs a small self-check at start and logs the result. |
 | `[Debug] LogLookTarget` | `false` | Logs what the look ray hits, to find a computer's object name. |
@@ -79,3 +77,5 @@ The sample mod in `examples\HelloOs` builds against these outputs.
 - Stalburg and its people belong to Obenseuer and its creators. The desktop art is original.
 
 Toolkit desktop icons are generated from the existing SVG artwork. The public OS workflow publishes them as the `toolkit-desktop-icons` artifact; place those PNGs in `prototype-icons/` before building the OS. The source generator is `tools/desktop-icons.py` and requires Playwright with Chromium.
+
+An offline wiki bundle may be placed in `wiki-offline/pages/` before packaging. The package includes files under `wiki-offline/`, including attribution and license files. No complete wiki bundle is included yet.

@@ -162,11 +162,13 @@
     </PropertyGroup>
     <ItemGroup>
       <PackageWeb Include="$(MSBuildProjectDirectory)\web\**\*" Exclude="$(MSBuildProjectDirectory)\web\wallpapers\game.jpg;$(MSBuildProjectDirectory)\web\wallpapers\game\**" />
+      <PackageWiki Include="$(MSBuildProjectDirectory)\wiki-offline\**\*" />
     </ItemGroup>
     <RemoveDir Directories="$(MSBuildProjectDirectory)\obj\package" />
     <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).dll" DestinationFolder="$(PackageStage)" />
     <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\be5\$(AssemblyName).dll" DestinationFiles="$(PackageStage)$(AssemblyName).BepInEx5.dll" />
     <Copy SourceFiles="@(PackageWeb)" DestinationFolder="$(PackageStage)web\%(RecursiveDir)" />
+    <Copy SourceFiles="@(PackageWiki)" DestinationFolder="$(PackageStage)wiki-offline\%(RecursiveDir)" />
     <MakeDir Directories="$(MSBuildProjectDirectory)\dist" />
     <ZipDirectory SourceDirectory="$(MSBuildProjectDirectory)\obj\package" DestinationFile="$(MSBuildProjectDirectory)\dist\$(AssemblyName)-$(ZipVersion).zip" Overwrite="true" />
     <RemoveDir Directories="$(MSBuildProjectDirectory)\obj\package" />

@@ -18,6 +18,14 @@ namespace ObenseuerOS
         private static WikiCache cache;
         private static string folder;
 
+        internal static string BundledPages
+        {
+            get
+            {
+                string directory = Path.GetDirectoryName(typeof(WikiBridge).Assembly.Location);
+                return string.IsNullOrEmpty(directory) ? null : Path.Combine(directory, "wiki-offline", "pages");
+            }
+        }
         internal static string LegacyPages { get { return Path.Combine(Paths.BepInExRootPath, "cache", "ObenseuerOS", "wiki", "pages"); } }
 
         internal static bool SavesCopies { get { return SavedCopy; } }

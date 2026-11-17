@@ -110,7 +110,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         ToolkitSecurity security = null;
         ToolkitTurva turva = null;
         ToolkitShady shady = null;
-        wiki = new ToolkitWiki(WikiBridge.LegacyPages);
+        wiki = new ToolkitWiki(WikiBridge.BundledPages, WikiBridge.LegacyPages);
         Func<string, bool> installed = delegate(string id)
         {
             if (osStorage == null) return false;

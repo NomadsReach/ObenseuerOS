@@ -9,7 +9,7 @@ namespace ObenseuerOS
     internal sealed class ToolkitWiki
     {
         internal readonly VisualElement Window;
-        private readonly string folder;
+        private readonly string bundle, legacy;
         private readonly ScrollView body;
         private readonly TextField search;
         private bool limited;
@@ -17,9 +17,9 @@ namespace ObenseuerOS
         private readonly Stack<OfflineWikiPage> history = new Stack<OfflineWikiPage>();
         private OfflineWikiPage current;
         private List<OfflineWikiPage> pages = new List<OfflineWikiPage>();
-        internal ToolkitWiki(string folder)
+        internal ToolkitWiki(string bundle, string legacy)
         {
-            this.folder = folder;
+            this.bundle = bundle; this.legacy = legacy;
             Window = new VisualElement(); Window.style.position = Position.Absolute;
             Window.style.left = 120; Window.style.top = 28; Window.style.width = 1100; Window.style.height = 700;
             Window.style.paddingLeft = 6; Window.style.paddingRight = 6; Window.style.paddingBottom = 6;
@@ -35,7 +35,7 @@ namespace ObenseuerOS
         }
         internal void Open()
         {
-            Window.style.display = DisplayStyle.Flex; Window.BringToFront(); pages = OfflineWiki.Load(folder, out limited); history.Clear(); current = null; Index();
+            Window.style.display = DisplayStyle.Flex; Window.BringToFront(); pages = OfflineWiki.Load(new[] { bundle, legacy }, out limited); history.Clear(); current = null; Index();
         }
         private static Label Text(string value) { Label label = new Label(value); label.enableRichText = false; label.style.color = Color.black; label.style.whiteSpace = WhiteSpace.Normal; return label; }
         private static UnityEngine.UIElements.Button Button(string value, Action action) { UnityEngine.UIElements.Button button = new UnityEngine.UIElements.Button(action); button.enableRichText = false; button.text = value; return button; }
@@ -67,7 +67,8 @@ namespace ObenseuerOS
             foreach (string key in page.Images)
             {
                 if (count >= 8) break;
-                byte[] bytes = OfflineWiki.ReadImage(folder, key); if (bytes == null) continue;
+                byte[] bytes = OfflineWiki.ReadImage(page.SourceFolder, key);
+                if (bytes == null && page.SourceFolder != legacy) bytes = OfflineWiki.ReadImage(legacy, key); if (bytes == null) continue;
                 Texture2D texture = null;
                 try
                 {

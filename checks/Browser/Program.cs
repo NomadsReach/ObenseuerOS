@@ -68,7 +68,7 @@ internal static class Program
         byte[] png = { 0x89, 0x50, 0x4e, 0x47, 13, 10, 26, 10, 0, 0, 0, 13, 0x49, 0x48, 0x44, 0x52, 0, 0, 0, 4, 0, 0, 0, 5 };
         Check(WikiImage.Fits(png, 2048)); png[18] = 9; Check(!WikiImage.Fits(png, 2048));
         Check(OfflineWiki.Parse("OBXWIKI1\ntitle:Main_Page\nrev:no\nfetched:4\n\ntext") == null && OfflineWiki.Parse("bad") == null);
-        bool wikiLimited; Check(OfflineWiki.Load(null, out wikiLimited).Count == 0 && !wikiLimited);
+        bool wikiLimited; Check(OfflineWiki.Load((string)null, out wikiLimited).Count == 0 && !wikiLimited);
         string wikiFolder = Path.Combine(Path.GetTempPath(), "offline-wiki-check-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(wikiFolder);
         try
@@ -93,6 +93,11 @@ internal static class Program
             File.WriteAllText(wikiFile, cached); File.WriteAllText(Path.Combine(wikiFolder, "bad.page"), "bad");
             var saved = OfflineWiki.Load(wikiFolder, out wikiLimited);
             Check(!wikiLimited && saved.Count == 1 && saved[0].Title == "Main Page" && saved[0].Text == "Saved & safe" && File.ReadAllText(wikiFile) == cached);
+            string bundled = Path.Combine(wikiFolder, "bundled"); Directory.CreateDirectory(bundled);
+            File.WriteAllText(Path.Combine(bundled, "one.page"), "OBXWIKI1\ntitle:Main_Page\nrev:5\nfetched:6\n\n<p>Bundled copy</p>");
+            File.WriteAllText(Path.Combine(bundled, "two.page"), "OBXWIKI1\ntitle:Second_Page\nrev:1\nfetched:1\n\n<p>Second</p>");
+            var merged = OfflineWiki.Load(new[] { bundled, wikiFolder }, out wikiLimited);
+            Check(!wikiLimited && merged.Count == 2 && merged[0].Text == "Bundled copy" && merged[0].SourceFolder == bundled && File.ReadAllText(wikiFile) == cached);
             for (int i = 0; i < 500; i++) File.WriteAllText(Path.Combine(wikiFolder, "page" + i + ".page"), "OBXWIKI1\ntitle:Page_" + i + "\nrev:1\nfetched:1\n\n<p>Text</p>");
             saved = OfflineWiki.Load(wikiFolder, out wikiLimited);
             Check(wikiLimited && saved.Count == 500 && File.ReadAllText(wikiFile) == cached);
