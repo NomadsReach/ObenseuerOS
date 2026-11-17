@@ -16,6 +16,7 @@ namespace ObenseuerOS
         internal TransactionClient(string app, Func<JObject, JObject> reply, Action checkSession) { this.app = app; this.reply = reply; this.checkSession = checkSession; }
         internal bool HasPending { get { return pending.Count > 0; } }
         internal string PendingDetails { get { return string.Join("\n", new List<string>(pending.Keys).ToArray()); } }
+        internal string[] PendingKeys { get { return new List<string>(pending.Keys).ToArray(); } }
         internal long PendingVersion { get { return pendingVersion; } }
         internal bool PendingFor(string method, JObject args) { return pending.ContainsKey(Key(method, args)); }
         internal bool Forget(string method, JObject args) { if (!pending.Remove(Key(method, args))) return false; pendingVersion++; return true; }
@@ -23,7 +24,7 @@ namespace ObenseuerOS
 
         internal JToken Read(string method, JObject args) { return Call(method, args); }
 
-        internal JToken Write(string method, JObject args)
+        internal JToken Write(string method, JObject args, Func<JToken, bool> validate = null)
         {
             if (checkSession != null) checkSession();
             string key = Key(method, args);
@@ -35,7 +36,7 @@ namespace ObenseuerOS
             }
             JObject request = (JObject)args.DeepClone(); request["cid"] = cid;
             JToken result;
-            try { result = Call(method, request); }
+            try { result = Call(method, request); if (validate != null && !validate(result)) throw new InvalidOperationException("The game returned an invalid transaction receipt. Check recent transactions before trying again."); }
             catch { pendingVersion++; throw; }
             pending.Remove(key); pendingVersion++;
             return result;

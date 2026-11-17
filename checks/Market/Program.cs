@@ -37,6 +37,10 @@ internal static class Program
         try { uncertain.Write("exchange.buy", order); throw new Exception("expected uncertain result"); } catch (InvalidOperationException) { }
         Check(!uncertain.Forget("exchange.sell", order) && uncertain.HasPending);
         Check(uncertain.Forget("exchange.buy", order) && !uncertain.HasPending);
+        TransactionClient invalidReceipt = new TransactionClient("shop", request => JObject.Parse("{\"ok\":true,\"result\":{}}"), null);
+        try { invalidReceipt.Write("shop.buy", order, result => false); throw new Exception("expected invalid receipt"); } catch (InvalidOperationException) { }
+        Check(invalidReceipt.HasPending);
+        Check(invalidReceipt.PendingKeys.Length == 1 && invalidReceipt.PendingKeys[0].StartsWith("shop.buy "));
         Console.WriteLine("Market checks passed");
     }
 }

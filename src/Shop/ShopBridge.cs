@@ -30,6 +30,7 @@ namespace ObenseuerOS
             Os.Handle(AppId, "shop.list", ListItems);
             Os.Handle(AppId, "shop.quote", QuoteCart);
             Os.Handle(AppId, "shop.buy", BuyCart);
+            Os.Handle(AppId, "shop.result", Result);
             Os.Handle(AppId, "shop.orders", ListOrders);
             Os.Handle(AppId, "shop.dismiss", DismissOrder);
             Os.Handle(AppId, "shop.account", Account);
@@ -181,6 +182,19 @@ namespace ObenseuerOS
             if (quote.Tier == null) throw new OsBridgeException("bad_args", "No such delivery tier.");
             if (!quote.Ok) throw new OsBridgeException("denied", quote.Blocker);
             return Receipt(ShopOrders.Place(quote, cid, print));
+        }
+
+        private static string Result(string args)
+        {
+            return ResultFor(ShopGates.Current, args);
+        }
+
+        internal static string ResultFor(ShopSave state, string args)
+        {
+            JObject a = OsBridge.Args(args);
+            string cid = Cid(a);
+            string print = ShopOrders.Fingerprint(Lines(a), Required(a, "tier"), PayOf(a), DeliveryOf(a));
+            return new JObject(new JProperty("found", ShopOrders.Saved(state, cid, print) != null)).ToString(Formatting.None);
         }
 
         internal static void Notify()

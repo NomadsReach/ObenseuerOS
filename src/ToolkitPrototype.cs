@@ -69,6 +69,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         ToolkitMail mail = new ToolkitMail(new MailClient(osStorage == null ? (Func<Newtonsoft.Json.Linq.JObject, Newtonsoft.Json.Linq.JObject>)null : OsBridge.Reply, osStorage == null ? (Action)null : osStorage.CheckSession), osStorage == null ? new MailDraft() : MailDrafts.ForSession(osStorage.SessionId));
         ToolkitBank bank = new ToolkitBank(osStorage == null ? new TransactionClient("bank", null, null) : TransactionClients.ForSession("bank", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession));
         ToolkitExchange exchange = new ToolkitExchange(osStorage == null ? new TransactionClient("exchange", null, null) : TransactionClients.ForSession("exchange", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession));
+        ToolkitShop shop = new ToolkitShop(osStorage == null ? new TransactionClient("shop", null, null) : TransactionClients.ForSession("shop", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession));
         news = new ToolkitNews(new NewsClient(osStorage == null ? (Func<Newtonsoft.Json.Linq.JObject, Newtonsoft.Json.Linq.JObject>)null : OsBridge.Reply, osStorage == null ? (Action)null : osStorage.CheckSession));
         ToolkitTerminal terminal = null;
         Func<int, bool> launch = delegate(int index)
@@ -85,6 +86,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
                 case 8: bank.Open(); return true;
                 case 9: news.Open(); return true;
                 case 10: chat.Open(); return true;
+                case 11: shop.Open(); return true;
                 case 12: minesweeper.Open(); return true;
                 case 13: solitaire.Open(); return true;
                 default: return false;
@@ -156,6 +158,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         windows.Add(mail.Window);
         windows.Add(bank.Window);
         windows.Add(exchange.Window);
+        windows.Add(shop.Window);
         windows.Add(news.Window);
         ToolkitStart start = new ToolkitStart(Names, Icons, Texture, launch, delegate { if (canClose()) ComputerApps.Close(storage == null ? "os.toolkit-prototype" : "os.toolkit-os"); });
         VisualElement taskbar = new VisualElement();
