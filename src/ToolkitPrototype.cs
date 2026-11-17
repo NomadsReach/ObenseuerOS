@@ -24,6 +24,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
     private NotepadStorage storage;
     private ToolkitExplorer explorer;
     private ToolkitSettings settings;
+    private Action<string> appearanceChanged;
     private ToolkitNews news;
     private ToolkitLottery lottery;
     private ToolkitEye eye;
@@ -166,7 +167,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         explorer = new ToolkitExplorer(storage as ExplorerStorage, notepad.OpenPath, delegate { if (recycle != null) recycle.RefreshIfOpen(); }, delegate { if (recycle != null) recycle.Open(); });
         recycle = new ToolkitRecycle(storage as RecycleStorage, delegate { explorer.RefreshIfOpen(); });
         OsNotepadStorage osStorage = storage as OsNotepadStorage;
-        settings = new ToolkitSettings(wallpaper, osStorage != null);
+        settings = new ToolkitSettings(wallpaper, root, osStorage != null);
         ToolkitChat chat = new ToolkitChat(osStorage != null, osStorage == null ? (Action)null : osStorage.CheckSession);
         ToolkitMail mail = new ToolkitMail(new MailClient(osStorage == null ? (Func<Newtonsoft.Json.Linq.JObject, Newtonsoft.Json.Linq.JObject>)null : OsBridge.Reply, osStorage == null ? (Action)null : osStorage.CheckSession), osStorage == null ? new MailDraft() : MailDrafts.ForSession(osStorage.SessionId));
         ToolkitBank bank = new ToolkitBank(osStorage == null ? new TransactionClient("bank", null, null) : TransactionClients.ForSession("bank", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession));
@@ -471,6 +472,18 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         close.style.height = 40;
         root.Add(close);
         new ToolkitDesktopMenu(root, desktop, settings, delegate { launch(4); }, delegate { updateGuard(); settings.Refresh(); });
+        appearanceChanged = delegate(string theme)
+        {
+            bool dark = theme == "dark";
+            Color ink = dark ? (Color)new Color32(236, 236, 236, 255) : (Color)new Color32(30, 30, 30, 255);
+            taskbar.style.backgroundColor = dark ? (Color)new Color32(38, 50, 64, 209) : (Color)new Color32(205, 218, 232, 209);
+            money.style.color = ink; clock.style.color = ink; notifications.Tray.style.color = ink;
+            for (int i = 0; i < 3; i++) { Image icon = taskbar[i] as Image; if (icon != null && icon != startIcon) icon.tintColor = ink; }
+            start.Menu.style.backgroundColor = dark ? (Color)new Color32(21, 40, 63, 255) : (Color)new Color32(31, 63, 102, 255);
+            settings.SetTheme(dark); windowTaskbar.SetTheme(dark);
+        };
+        UiAppearance.Changed += appearanceChanged;
+        appearanceChanged(UiAppearance.Theme);
     }
 
     private void Update()
@@ -550,6 +563,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (appearanceChanged != null) UiAppearance.Changed -= appearanceChanged;
         active.Remove(this);
         if (storage is OsNotepadStorage) Os.SyncWindow();
         if (virusFx != null) virusFx.Release();

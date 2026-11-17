@@ -16,6 +16,9 @@ internal static class Program
         Os.Apps.Add(app);
         Check(mods.Open(app) && mods.Has(app) && Os.OpenedCount == 1 && taskbar.Items.childCount == 1);
         VisualElement frame = windows[0]; frame.layout = new Rect(160, 40, 600, 450);
+        taskbar.SetTheme(true); Check(((Color)frame.style.backgroundColor).r == 52f / 255f && ((Color)frame[0][0].style.color).r == 236f / 255f);
+        taskbar.SetTheme(false); Check(((Color)frame.style.backgroundColor).r == 190f / 255f);
+        taskbar.SetTheme(true);
         VisualElement grip = frame[2];
         grip.Dispatch(new PointerDownEvent { button = 0, pointerId = 3, position = new Vector3(100, 100) });
         Check(grip.HasPointerCapture(3));
@@ -50,7 +53,7 @@ internal static class Program
         OsApp broken = new OsApp { Id = "bad", Title = "Bad", BuildUi = content => { throw new InvalidOperationException("failed"); } };
         Os.Apps.Add(broken);
         Check(!mods.Open(broken) && Os.CrashCount == 1 && windows.childCount == 0 && taskbar.Items.childCount == 0);
-        allowClose = false; Check(mods.Open(app)); valid = false; mods.Reconcile();
+        allowClose = false; Check(mods.Open(app)); Check(((Color)windows[0].style.backgroundColor).r == 52f / 255f); valid = false; mods.Reconcile();
         Check(!mods.Has(app) && windows.childCount == 0 && taskbar.Items.childCount == 0 && Os.ClosedCount == 2);
         Console.WriteLine("Native taskbar lifecycle checks passed");
     }

@@ -5,14 +5,16 @@ namespace UnityEngine
 {
     internal struct Color
     {
-        public static Color black { get { return new Color(); } }
-        public static Color white { get { return new Color(); } }
+        internal float r, g, b, a;
+        public static Color black { get { return new Color { a = 1 }; } }
+        public static Color white { get { return new Color { r = 1, g = 1, b = 1, a = 1 }; } }
         public static Color clear { get { return new Color(); } }
     }
     internal struct Color32
     {
-        public Color32(byte r, byte g, byte b, byte a) { }
-        public static implicit operator Color(Color32 color) { return new Color(); }
+        private readonly byte r, g, b, a;
+        public Color32(byte r, byte g, byte b, byte a) { this.r = r; this.g = g; this.b = b; this.a = a; }
+        public static implicit operator Color(Color32 color) { return new Color { r = color.r / 255f, g = color.g / 255f, b = color.b / 255f, a = color.a / 255f }; }
     }
     internal struct Vector2
     {
@@ -105,7 +107,7 @@ namespace UnityEngine.UIElements
         internal string text;
         internal void Press() { if (action != null) action(); }
     }
-    internal sealed class Image : VisualElement { internal Texture2D image; internal ScaleMode scaleMode; }
+    internal sealed class Image : VisualElement { internal Texture2D image; internal ScaleMode scaleMode; internal Color tintColor; }
     internal sealed class Label : VisualElement
     {
         internal Label(string value) { text = value; }

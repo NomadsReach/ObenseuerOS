@@ -14,6 +14,8 @@ namespace ObenseuerOS
         private const string Preference = "obx.os.toolkit.wallpaper";
         internal readonly VisualElement Window;
         private readonly Image background;
+        private readonly VisualElement desktop, body;
+        private readonly Label themeLabel;
         private readonly DropdownField choice;
         private readonly bool available;
         private readonly string webFolder;
@@ -24,10 +26,12 @@ namespace ObenseuerOS
         private string catalog = "";
         private int revision = -1;
         private Texture2D texture;
+        private bool dark;
 
-        internal ToolkitSettings(Image background, bool available)
+        internal ToolkitSettings(Image background, VisualElement desktop, bool available)
         {
             this.background = background;
+            this.desktop = desktop;
             this.available = available;
             string location = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             webFolder = string.IsNullOrEmpty(location) ? null : Path.Combine(location, "web");
@@ -44,8 +48,8 @@ namespace ObenseuerOS
             close.text = "×"; close.style.width = 46; close.style.height = 20; close.style.marginTop = 8;
             close.style.backgroundColor = (Color)new Color32(199, 55, 47, 255); close.style.color = Color.white;
             bar.Add(close); Window.Add(bar); ToolkitUi.MakeDraggable(Window, bar);
-            VisualElement body = new VisualElement(); body.style.flexGrow = 1; body.style.backgroundColor = Color.white;
-            Label theme = new Label("Theme     Framework Appearance is not applied in this prototype"); theme.style.color = Color.black; theme.style.marginTop = 12; theme.style.marginLeft = 12; body.Add(theme);
+            body = new VisualElement(); body.style.flexGrow = 1; body.style.backgroundColor = Color.white;
+            themeLabel = new Label("Theme     Follows the framework's Appearance setting"); themeLabel.style.color = Color.black; themeLabel.style.marginTop = 12; themeLabel.style.marginLeft = 12; body.Add(themeLabel);
             choice = new DropdownField("Wallpaper"); choice.style.marginTop = 12; choice.style.marginLeft = 12; choice.style.marginRight = 12;
             choice.RegisterValueChangedCallback(delegate(ChangeEvent<string> e)
             {
@@ -58,6 +62,15 @@ namespace ObenseuerOS
         }
 
         internal void Open() { Refresh(); Window.style.display = DisplayStyle.Flex; Window.BringToFront(); }
+
+        internal void SetTheme(bool value)
+        {
+            dark = value;
+            body.style.backgroundColor = dark ? (Color)new Color32(30, 30, 30, 255) : Color.white;
+            themeLabel.style.color = dark ? (Color)new Color32(236, 236, 236, 255) : Color.black;
+            choice.style.color = dark ? (Color)new Color32(236, 236, 236, 255) : Color.black;
+            Apply();
+        }
 
         internal List<KeyValuePair<string, string>> Wallpapers()
         {
@@ -103,6 +116,7 @@ namespace ObenseuerOS
 
         private void Apply()
         {
+            desktop.style.backgroundColor = selected == "plain" || !dark ? (Color)new Color32(45, 95, 139, 255) : (Color)new Color32(30, 42, 54, 255);
             if (selected == "plain") { ClearTexture(); background.image = null; shown = selected; return; }
             if (selected == "sewer")
             {

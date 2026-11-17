@@ -16,7 +16,7 @@ It is a BepInEx plugin built on the Obenseuer Modding Framework, and other mods 
 
 - Obenseuer 0.5.08
 - BepInEx 6 (Unity.Mono, be.755 or newer, be.788 recommended) or BepInEx 5 (5.4.23 or newer)
-- Obenseuer Modding Framework 0.10.0 or newer, with its WebUi module
+- Obenseuer Modding Framework 0.12.2 or newer, with its WebUi module
 - The Microsoft WebView2 runtime
 
 ## Install
@@ -46,7 +46,7 @@ The file is `BepInEx\config\nomad.obenseuer.os.cfg`.
 | `[Debug] SelfCheck` | `false` | Runs a small self-check at start and logs the result. |
 | `[Debug] LogLookTarget` | `false` | Logs what the look ray hits, to find a computer's object name. |
 
-The light or dark theme comes from the WebUi module's `Appearance.WebTheme` setting.
+The light or dark theme comes from the framework's `Appearance.Theme` setting.
 
 ## For modders
 

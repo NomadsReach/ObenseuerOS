@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <NoWarn>$(NoWarn);0649</NoWarn>
+    <NoWarn>$(NoWarn);0649;CA1416</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="$(UnityManaged)/UnityEngine*.dll" />
@@ -46,5 +46,8 @@
     <Compile Include="$(FrameworkSource)/src/Ui/ToolkitUi.cs" />
     <Compile Include="$(FrameworkSource)/src/Ui/ToolkitResizeHandle.cs" />
     <Compile Include="$(FrameworkSource)/src/Ui/ToolkitWindowBounds.cs" />
+    <Compile Include="$(FrameworkSource)/src/Ui/UiAppearance.cs" />
+    <Compile Include="$(FrameworkSource)/src/Ui/UiAppearanceRules.cs" />
+    <Compile Include="$(FrameworkSource)/checks/UiAppearance/Stubs.cs" />
   </ItemGroup>
 </Project>

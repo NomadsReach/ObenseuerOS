@@ -13,10 +13,10 @@ namespace ObenseuerOS
 {
     [BepInPlugin(Os.ModId, "ObenseuerOS", "0.2.0")]
 #if BEPINEX5
-    [BepInDependency("obenseuer.moddingframework", "0.10.0")]
+    [BepInDependency("obenseuer.moddingframework", "0.12.2")]
     [BepInDependency("obenseuer.moddingframework.webui", "0.10.0")]
 #else
-    [BepInDependency("obenseuer.moddingframework", ">=0.10.0")]
+    [BepInDependency("obenseuer.moddingframework", ">=0.12.2")]
     [BepInDependency("obenseuer.moddingframework.webui", ">=0.10.0")]
 #endif
     public class OsPlugin : BaseUnityPlugin

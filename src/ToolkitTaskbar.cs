@@ -14,13 +14,14 @@ namespace ObenseuerOS
             internal UnityEngine.UIElements.Button Button;
             internal bool Minimized, Maximized;
             internal StyleLength Left, Top, Right, Bottom, Width, Height;
-            internal UnityEngine.UIElements.Button Maximize;
+            internal UnityEngine.UIElements.Button Minimize, Maximize;
             internal ToolkitResizeHandle Resize;
         }
         internal readonly VisualElement Items;
         private readonly VisualElement windows;
         private readonly Func<string, Texture2D> texture;
         private readonly Dictionary<VisualElement, Entry> entries = new Dictionary<VisualElement, Entry>();
+        private bool dark;
 
         internal ToolkitTaskbar(VisualElement windows, Func<string, Texture2D> texture)
         {
@@ -55,10 +56,12 @@ namespace ObenseuerOS
             VisualElement bar = window[0];
             UnityEngine.UIElements.Button minimize = new UnityEngine.UIElements.Button(delegate { Minimize(entry); });
             minimize.text = "−"; minimize.tooltip = "Minimize"; minimize.style.width = 40; minimize.style.height = 20; minimize.style.marginTop = 8;
+            entry.Minimize = minimize;
             bar.Insert(Math.Max(0, bar.childCount - 1), minimize);
             UnityEngine.UIElements.Button maximize = new UnityEngine.UIElements.Button(delegate { ToggleMaximize(entry); });
             maximize.text = "□"; maximize.tooltip = "Maximize"; maximize.style.width = 40; maximize.style.height = 20; maximize.style.marginTop = 8;
             entry.Maximize = maximize; bar.Insert(Math.Max(0, bar.childCount - 1), maximize);
+            ApplyFrame(entry);
             bar.RegisterCallback<PointerDownEvent>(delegate(PointerDownEvent e)
             {
                 if (!entry.Maximized || e.button != 0) return;
@@ -142,7 +145,31 @@ namespace ObenseuerOS
                 if (!visible && !entry.Minimized && entry.Maximized) RestoreBounds(entry);
                 if (entry.Button == null) continue;
                 entry.Button.style.display = visible || entry.Minimized ? DisplayStyle.Flex : DisplayStyle.None;
-                entry.Button.style.backgroundColor = focused == entry.Window ? (Color)new Color32(80, 110, 140, 255) : Color.clear;
+                entry.Button.style.backgroundColor = focused == entry.Window ? (dark ? (Color)new Color32(255, 255, 255, 56) : (Color)new Color32(255, 255, 255, 179)) : Color.clear;
+            }
+        }
+
+        internal void SetTheme(bool value)
+        {
+            dark = value;
+            foreach (Entry entry in entries.Values) ApplyFrame(entry);
+            Refresh();
+        }
+
+        private void ApplyFrame(Entry entry)
+        {
+            Color ink = dark ? (Color)new Color32(236, 236, 236, 255) : Color.black;
+            Color control = dark ? (Color)new Color32(58, 70, 86, 255) : (Color)new Color32(220, 228, 238, 255);
+            entry.Window.style.backgroundColor = dark ? (Color)new Color32(52, 66, 84, 230) : (Color)new Color32(190, 205, 222, 217);
+            VisualElement bar = entry.Window[0];
+            if (bar.childCount > 0) bar[0].style.color = ink;
+            entry.Minimize.style.color = ink; entry.Minimize.style.backgroundColor = control;
+            entry.Maximize.style.color = ink; entry.Maximize.style.backgroundColor = control;
+            if (entry.Button != null && entry.Button.childCount > 0)
+            {
+                entry.Button[0].style.color = ink;
+                Image icon = entry.Button[0] as Image;
+                if (icon != null) icon.tintColor = ink;
             }
         }
         internal void Reset()
