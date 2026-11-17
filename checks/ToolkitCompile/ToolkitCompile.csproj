@@ -52,6 +52,7 @@
     <Compile Include="..\..\src\Ugui\NotepadStorage.cs" />
     <Compile Include="..\..\src\Ugui\NotepadRecovery.cs" />
     <Compile Include="$(FrameworkSource)/src/Ui/ToolkitUi.cs" />
+    <Compile Include="$(FrameworkSource)/src/Ui/ToolkitTextFocus.cs" />
     <Compile Include="$(FrameworkSource)/src/Ui/ToolkitResizeHandle.cs" />
     <Compile Include="$(FrameworkSource)/src/Ui/ToolkitWindowBounds.cs" />
     <Compile Include="$(FrameworkSource)/src/Ui/ToolkitPinnedBounds.cs" />
