@@ -190,7 +190,9 @@ internal sealed class ToolkitPrototype : MonoBehaviour
     private void CloseDesktop()
     {
         if (pinnedTarget != null && pinnedTarget == ComputerApps.PinnedScreen) ComputerApps.RequestClose(Os.AppId);
-        else if (canClose()) ComputerApps.Close(storage == null ? "os.toolkit-prototype" : Os.AppId);
+        else if (storage is OsNotepadStorage)
+            closeGate.Dismiss(ActiveSessions, delegate(ToolkitPrototype prototype) { return prototype.canClose == null || prototype.canClose(); }, delegate { ComputerApps.Close(Os.AppId); });
+        else if (canClose()) ComputerApps.Close("os.toolkit-prototype");
     }
 
     private void Build()
