@@ -13,6 +13,7 @@ namespace ObenseuerOS
         private readonly NotepadStorage storage;
         private readonly Func<int, bool> launch;
         private readonly Action checkSession;
+        private readonly TransactionClient browser;
         private readonly ScrollView content;
         private readonly Label notice;
         private readonly TextField address;
@@ -36,9 +37,9 @@ namespace ObenseuerOS
         };
         private const string Home = "www.stalburg.ts";
 
-        internal ToolkitBrowser(NotepadStorage storage, Func<int, bool> launch, Action checkSession)
+        internal ToolkitBrowser(NotepadStorage storage, Func<int, bool> launch, Action checkSession, TransactionClient browser)
         {
-            this.storage = storage; this.launch = launch; this.checkSession = checkSession;
+            this.storage = storage; this.launch = launch; this.checkSession = checkSession; this.browser = browser;
             Window = new VisualElement(); Window.style.position = UnityEngine.UIElements.Position.Absolute;
             Window.style.left = 120; Window.style.top = 28; Window.style.width = 1100; Window.style.height = 700;
             Window.style.paddingLeft = 6; Window.style.paddingRight = 6; Window.style.paddingBottom = 6;
@@ -106,7 +107,12 @@ namespace ObenseuerOS
         private void Visit(string url)
         {
             if (state == null || !Session()) return;
-            try { state.Visit(url, Title(url)); notice.text = ""; }
+            try
+            {
+                bool changed = state.Visit(url, Title(url)); notice.text = "";
+                if (changed && browser != null)
+                    try { browser.Read("virus.browse", new JObject(new JProperty("host", Host(url)))); } catch (Exception) { }
+            }
             catch (Exception e) { notice.text = "History was not saved: " + e.Message; }
             Render();
         }

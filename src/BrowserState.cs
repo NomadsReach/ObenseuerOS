@@ -45,9 +45,9 @@ namespace ObenseuerOS
         internal JArray Marks { get { return (JArray)marks.DeepClone(); } }
         internal bool IsMarked { get { return FindMark(Current) >= 0; } }
 
-        internal void Visit(string url, string title)
+        internal bool Visit(string url, string title)
         {
-            if (string.IsNullOrEmpty(url) || url == Current) return;
+            if (string.IsNullOrEmpty(url) || url == Current) return false;
             Commit(delegate
             {
                 while (history.Count > index + 1) history.RemoveAt(history.Count - 1);
@@ -55,6 +55,7 @@ namespace ObenseuerOS
                 while (history.Count > 100) history.RemoveAt(0);
                 index = history.Count - 1;
             });
+            return true;
         }
         internal void Move(int delta)
         {

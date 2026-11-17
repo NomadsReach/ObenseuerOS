@@ -20,7 +20,7 @@ internal static class Program
         Storage storage = new Storage { Value = "{\"marks\":[{\"url\":\"mod.ts\",\"title\":\"Mod\"}],\"history\":[{\"url\":\"old.ts\",\"title\":\"Old\"}],\"extra\":42}" };
         BrowserState state = new BrowserState(storage);
         Check(state.Current == "old.ts" && state.Marks.Count == 1);
-        state.Visit("new.ts", "New"); state.ToggleMark("New");
+        Check(state.Visit("new.ts", "New")); Check(!state.Visit("new.ts", "New") && !state.Visit("", "Empty")); state.ToggleMark("New");
         Check(state.CanBack && state.IsMarked && (int)JObject.Parse(storage.Value)["extra"] == 42);
         state.Move(-1); Check(state.Current == "old.ts" && state.CanForward);
         state.Visit("third.ts", "Third"); Check(!state.CanForward && state.History.Count == 2);

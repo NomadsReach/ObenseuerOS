@@ -103,7 +103,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
                 default: return false;
             }
         };
-        browser = new ToolkitBrowser(storage, launch, osStorage == null ? (Action)null : osStorage.CheckSession);
+        browser = new ToolkitBrowser(storage, launch, osStorage == null ? (Action)null : osStorage.CheckSession, osStorage == null ? null : new TransactionClient("browser", OsBridge.Reply, osStorage.CheckSession));
         eye = new ToolkitEye(osStorage == null ? (Func<EyeState>)(() => new EyeState(storage)) : () => EyeStates.ForSession(osStorage.SessionId, storage), osStorage == null ? (Action)null : osStorage.CheckSession, OsView.UserName, new NewsClient(osStorage == null ? (Func<Newtonsoft.Json.Linq.JObject, Newtonsoft.Json.Linq.JObject>)null : OsBridge.Reply, osStorage == null ? (Action)null : osStorage.CheckSession), launch);
         jobs = new ToolkitJobs(new TransactionClient("jobs", osStorage == null ? (Func<Newtonsoft.Json.Linq.JObject, Newtonsoft.Json.Linq.JObject>)null : OsBridge.Reply, osStorage == null ? (Action)null : osStorage.CheckSession), osStorage == null ? (Action)null : osStorage.CheckSession, launch);
         terminal = new ToolkitTerminal(storage, storage as ExplorerStorage, OsView.UserName,
