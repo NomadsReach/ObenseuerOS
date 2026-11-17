@@ -92,7 +92,8 @@ namespace ObenseuerOS
             {
                 string selected = name; top.Add(Button(name, delegate { view = selected; query = ""; thread = -1; commentPost = -1; notice.text = ""; Render(); }));
             }
-            top.Add(state.Name.Length == 0 ? Button("Log in", delegate { Change(delegate { state.Login(accountName == null ? "" : accountName()); }); }) : Text("Signed in as " + state.Name)); content.Add(top);
+            if (state.Name.Length == 0) top.Add(Button("Log in", delegate { Change(delegate { state.Login(accountName == null ? "" : accountName()); }); }));
+            else top.Add(Text("Signed in as " + state.Name)); content.Add(top);
             VisualElement search = Row(); TextField searchText = new TextField("Search EYEbook"); searchText.SetValueWithoutNotify(query); searchText.style.flexGrow = 1; search.Add(searchText);
             search.Add(Button("Search", delegate { query = searchText.value ?? ""; Render(); })); search.Add(Button("Clear", delegate { query = ""; Render(); })); content.Add(search);
             if (query.Trim().Length > 0) { Search(); return; }
