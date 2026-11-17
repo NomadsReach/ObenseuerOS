@@ -1,4 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework></PropertyGroup>
-  <ItemGroup><Compile Include="..\..\src\LauncherCatalog.cs" /><Compile Include="..\..\src\NativeAppRegistration.cs" /><Compile Include="..\..\src\WindowVisibility.cs" /><Compile Include="..\..\src\ToolkitNativeEvents.cs" /></ItemGroup>
+  <ItemGroup><Compile Include="..\..\src\LauncherCatalog.cs" /><Compile Include="..\..\src\NativeAppRegistration.cs" /><Compile Include="..\..\src\WindowVisibility.cs" /><Compile Include="..\..\src\ToolkitNativeEvents.cs" /><Compile Include="..\..\src\ToolkitTaskbarState.cs" /></ItemGroup>
 </Project>

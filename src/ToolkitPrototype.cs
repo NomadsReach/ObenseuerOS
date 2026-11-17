@@ -19,6 +19,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
     private ToolkitModWindows modWindows;
     private ToolkitNotepad notepad;
     private ToolkitNotifications notifications;
+    private ToolkitTaskbar windowTaskbar;
     private VisualElement selected;
     private NotepadStorage storage;
     private ToolkitExplorer explorer;
@@ -180,8 +181,11 @@ internal sealed class ToolkitPrototype : MonoBehaviour
             try { osStorage.CheckSession(); return VirusAv.Shows(id); }
             catch (Exception) { return false; }
         };
+        Dictionary<int, VisualElement> launchWindows = new Dictionary<int, VisualElement>();
         Func<int, bool> launch = delegate(int index)
         {
+            VisualElement existing;
+            if (windowTaskbar != null && launchWindows.TryGetValue(index, out existing) && windowTaskbar.RestoreIfMinimized(existing)) return true;
             switch (index)
             {
                 case 0: mail.Open(); return true;
@@ -304,6 +308,35 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         windows.Add(lottery.Window);
         windows.Add(eye.Window);
         windows.Add(bets.Window);
+        launchWindows[0] = mail.Window; launchWindows[1] = browser.Window; launchWindows[2] = explorer.Window;
+        launchWindows[3] = recycle.Window; launchWindows[4] = settings.Window; launchWindows[5] = exchange.Window;
+        launchWindows[6] = terminal.Window; launchWindows[7] = notepad.Window; launchWindows[8] = bank.Window;
+        launchWindows[9] = news.Window; launchWindows[10] = chat.Window; launchWindows[11] = shop.Window;
+        launchWindows[12] = minesweeper.Window; launchWindows[13] = solitaire.Window; launchWindows[16] = bets.Window;
+        launchWindows[17] = eye.Window; launchWindows[19] = jobs.Window; launchWindows[20] = lottery.Window; launchWindows[25] = wiki.Window;
+        windowTaskbar = new ToolkitTaskbar(windows, Texture);
+        windowTaskbar.Register(notepad.Window, "Notepad", "notes", false);
+        windowTaskbar.Register(minesweeper.Window, "Minesweeper", "device-gamepad-2", false);
+        windowTaskbar.Register(solitaire.Window, "Solitaire", "device-gamepad-2", false);
+        windowTaskbar.Register(recycle.Window, "Recycle Bin", "trash", false);
+        windowTaskbar.Register(explorer.Window, "Explorer", "folder-filled", true);
+        windowTaskbar.Register(terminal.Window, "Command Prompt", "terminal-2", false);
+        windowTaskbar.Register(chat.Window, "TOR-Turnip Chat", "message-circle", false);
+        windowTaskbar.Register(settings.Window, "Control Panel", "settings", false);
+        windowTaskbar.Register(mail.Window, "Stalburg Mail", "mail", false);
+        windowTaskbar.Register(bank.Window, "Stalburg Bank", "building-bank", false);
+        windowTaskbar.Register(exchange.Window, "Stal-Ex", "chart-line", false);
+        windowTaskbar.Register(shop.Window, "Shop", "shopping-cart", false);
+        windowTaskbar.Register(news.Window, "Stalburg Times", "news", false);
+        windowTaskbar.Register(browser.Window, "Stalburg Web", "world", true);
+        windowTaskbar.Register(security.Window, "PC Master", "", false);
+        windowTaskbar.Register(turva.Window, "TurvaPro", "", false);
+        windowTaskbar.Register(shady.Window, "Stalburg Web", "world", false);
+        windowTaskbar.Register(wiki.Window, "Stalburg Wiki", "world", false);
+        windowTaskbar.Register(jobs.Window, "Jobs", "", false);
+        windowTaskbar.Register(lottery.Window, "Lottery", "", false);
+        windowTaskbar.Register(eye.Window, "EYEbook", "", false);
+        windowTaskbar.Register(bets.Window, "NaSpoBet", "", false);
         ToolkitStart start = new ToolkitStart(Names, Icons, Texture, launch, delegate { if (canClose()) ComputerApps.Close(storage == null ? "os.toolkit-prototype" : "os.toolkit-os"); }, delegate(int index) { return index < 14 || installed(Ids[index]); });
         VisualElement pinned = new VisualElement(); pinned.style.flexDirection = FlexDirection.Row;
         Dictionary<OsApp, Label> pinnedBadges = new Dictionary<OsApp, Label>();
@@ -378,11 +411,12 @@ internal sealed class ToolkitPrototype : MonoBehaviour
                 startIcon = icon;
                 icon.RegisterCallback<ClickEvent>(delegate(ClickEvent e) { if (e.button == 0) start.Toggle(); });
             }
-            if (name == "folder-filled") icon.RegisterCallback<ClickEvent>(delegate(ClickEvent e) { if (e.button == 0) explorer.Open(); });
-            if (name == "world") icon.RegisterCallback<ClickEvent>(delegate(ClickEvent e) { if (e.button == 0) browser.Open(); });
+            if (name == "folder-filled") icon.RegisterCallback<ClickEvent>(delegate(ClickEvent e) { if (e.button == 0) windowTaskbar.Click(explorer.Window, explorer.Open); });
+            if (name == "world") icon.RegisterCallback<ClickEvent>(delegate(ClickEvent e) { if (e.button == 0) windowTaskbar.Click(browser.Window, browser.Open); });
             taskbar.Add(icon);
         }
         taskbar.Add(pinned);
+        taskbar.Add(windowTaskbar.Items);
         VisualElement spacer = new VisualElement();
         spacer.style.flexGrow = 1;
         taskbar.Add(spacer);
@@ -491,6 +525,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         active.Remove(this);
         if (modWindows != null) modWindows.CloseAll();
         if (notifications != null) notifications.Clear();
+        if (windowTaskbar != null) windowTaskbar.Reset();
         if (storage is OsNotepadStorage) Os.SyncWindow();
     }
 
