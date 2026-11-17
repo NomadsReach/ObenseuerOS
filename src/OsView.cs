@@ -22,7 +22,6 @@ namespace ObenseuerOS
         private static string webFolder;
         private static string held;
         private static string heldApp;
-        private static readonly NoticeQueue notices = new NoticeQueue();
 
         internal static bool Available
         {
@@ -79,7 +78,7 @@ namespace ObenseuerOS
         {
             Dismiss();
             Os.SceneReset(mainMenu);
-            if (mainMenu) notices.Clear();
+            OsDesktopState.Reset(mainMenu);
             heldApp = null;
             held = null;
             if (view == null) return;
@@ -100,16 +99,9 @@ namespace ObenseuerOS
 
         internal static bool Notify(OsNotice notice)
         {
-            if (ToolkitPrototype.Visible) return notices.Add(notice);
+            if (ToolkitPrototype.Visible) return OsDesktopState.AddNotice(notice);
             if (Deliver(new JObject(new JProperty("v", 1), new JProperty("type", "toast"), new JProperty("title", notice.Title), new JProperty("body", notice.Body), new JProperty("from", notice.From)))) return true;
-            return notices.Add(notice);
-        }
-
-        internal static List<OsNotice> TakeNotices() { return notices.Take(); }
-
-        internal static void ClearNotices(string modId)
-        {
-            notices.RemoveMod(modId);
+            return OsDesktopState.AddNotice(notice);
         }
 
         internal static OsResult OpenApp(string appId)
@@ -254,11 +246,6 @@ namespace ObenseuerOS
             }
         }
 
-        internal static string UserName()
-        {
-            return (PlayerState.FirstName + " " + PlayerState.LastName).Trim();
-        }
-
         private static void SendReply(JObject request)
         {
             JObject reply = OsBridge.Reply(request);
@@ -281,10 +268,10 @@ namespace ObenseuerOS
                 else if (app.BuildUi == null && VirusAv.Shows(app.Id)) apps.Add(AppEntry(app));
             }
             JObject list = new JObject(new JProperty("v", 1), new JProperty("type", "apps"), new JProperty("apps", apps), new JProperty("sites", sites));
-            string user = UserName();
+            string user = OsDesktopState.UserName();
             if (user.Length > 0) list.Add(new JProperty("user", user));
             Send(list);
-            if (!ToolkitPrototype.Visible) foreach (OsNotice notice in notices.Take())
+            if (!ToolkitPrototype.Visible) foreach (OsNotice notice in OsDesktopState.TakeNotices())
             {
                 Send(new JObject(new JProperty("v", 1), new JProperty("type", "toast"), new JProperty("title", notice.Title), new JProperty("body", notice.Body), new JProperty("from", notice.From), new JProperty("quiet", true)));
             }

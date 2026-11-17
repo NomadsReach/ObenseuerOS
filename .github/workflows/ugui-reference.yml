@@ -36,6 +36,7 @@ jobs:
       - run: dotnet run --project checks/ShopResult/ShopResult.csproj -c Release
       - run: dotnet run --project checks/Browser/Browser.csproj -c Release
       - run: dotnet run --project checks/Launchers/Launchers.csproj -c Release
+      - run: dotnet run --project checks/DesktopState/DesktopState.csproj -c Release
       - run: dotnet run --project checks/ModTaskbar/ModTaskbar.csproj -c Release
         env:
           FrameworkSource: ${{ github.workspace }}/framework-source

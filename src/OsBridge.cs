@@ -280,7 +280,7 @@ namespace ObenseuerOS
 
         private static string AccountName(string args)
         {
-            return JsonConvert.SerializeObject(OsView.UserName());
+            return JsonConvert.SerializeObject(OsDesktopState.UserName());
         }
 
         private static string ModName(JObject a)

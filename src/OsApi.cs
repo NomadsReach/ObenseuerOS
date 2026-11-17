@@ -119,7 +119,7 @@ namespace ObenseuerOS
             {
                 if (!Accept("Clear", modId)) return OsResult.Invalid;
                 foreach (OsApp app in Apps.FindAll(x => x.ModId == modId)) Drop(app);
-                OsView.ClearNotices(modId);
+                OsDesktopState.ClearNotices(modId);
                 OsContent.ClearMod(modId);
                 OsView.Refresh();
                 return OsMail.ClearFrom(modId);

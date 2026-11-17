@@ -229,9 +229,9 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         security = new ToolkitSecurity(osStorage == null ? new TransactionClient("pcmaster", null, null) : TransactionClients.ForSession("pcmaster", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession), osStorage == null ? new TransactionClient("pcguard", null, null) : TransactionClients.ForSession("pcguard", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession), osStorage == null ? (Action)null : osStorage.CheckSession);
         turva = new ToolkitTurva(osStorage == null ? new TransactionClient("turvasite", null, null) : TransactionClients.ForSession("turvasite", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession), osStorage == null ? new TransactionClient("turvapro", null, null) : TransactionClients.ForSession("turvapro", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession), osStorage == null ? (Action)null : osStorage.CheckSession);
         shady = new ToolkitShady(osStorage == null ? new TransactionClient("freerm", null, null) : TransactionClients.ForSession("freerm", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession), osStorage == null ? new TransactionClient("warez", null, null) : TransactionClients.ForSession("warez", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession), osStorage == null ? new TransactionClient("voittaja", null, null) : TransactionClients.ForSession("voittaja", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession), osStorage == null ? (Action)null : osStorage.CheckSession, browser.Navigate);
-        eye = new ToolkitEye(osStorage == null ? (Func<EyeState>)(() => new EyeState(storage)) : () => EyeStates.ForSession(osStorage.SessionId, storage), osStorage == null ? (Action)null : osStorage.CheckSession, OsView.UserName, new NewsClient(osStorage == null ? (Func<Newtonsoft.Json.Linq.JObject, Newtonsoft.Json.Linq.JObject>)null : OsBridge.Reply, osStorage == null ? (Action)null : osStorage.CheckSession), launch);
+        eye = new ToolkitEye(osStorage == null ? (Func<EyeState>)(() => new EyeState(storage)) : () => EyeStates.ForSession(osStorage.SessionId, storage), osStorage == null ? (Action)null : osStorage.CheckSession, OsDesktopState.UserName, new NewsClient(osStorage == null ? (Func<Newtonsoft.Json.Linq.JObject, Newtonsoft.Json.Linq.JObject>)null : OsBridge.Reply, osStorage == null ? (Action)null : osStorage.CheckSession), launch);
         jobs = new ToolkitJobs(new TransactionClient("jobs", osStorage == null ? (Func<Newtonsoft.Json.Linq.JObject, Newtonsoft.Json.Linq.JObject>)null : OsBridge.Reply, osStorage == null ? (Action)null : osStorage.CheckSession), osStorage == null ? (Action)null : osStorage.CheckSession, launch);
-        terminal = new ToolkitTerminal(storage, storage as ExplorerStorage, OsView.UserName,
+        terminal = new ToolkitTerminal(storage, storage as ExplorerStorage, OsDesktopState.UserName,
             delegate { if (!WorldClock.IsAvailable) return "The game clock is not ready."; WorldTime now = WorldClock.Now; return string.Format("The current date is: {0}.1.1843, {1}", now.CalendarDay, now.Weekday); },
             delegate { if (!WorldClock.IsAvailable) return "The game clock is not ready."; WorldTime now = WorldClock.Now; return string.Format("The current time is: {0:00}:{1:00}", now.Hour, now.Minute); },
             delegate { if (!Cash.IsAvailable) return "The game clock is not ready."; return string.Format("{0:N0} OC   {1:N2} RM", (int)Cash.Balance(MoneyCurrency.OC), Cash.Balance(MoneyCurrency.RM)); },
@@ -499,7 +499,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         if (modWindows != null) modWindows.Reconcile();
         if (notifications != null)
         {
-            if (HasSession()) foreach (OsNotice notice in OsView.TakeNotices()) notifications.Add(notice);
+            if (HasSession()) foreach (OsNotice notice in OsDesktopState.TakeNotices()) notifications.Add(notice);
             else notifications.Clear();
         }
         if (WorldClock.IsAvailable)

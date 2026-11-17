@@ -140,3 +140,5 @@
 - `src/ToolkitSettings.cs:SetTheme` styles Control Panel and updates the wallpaper fallback; explicit plain wallpaper keeps its original blue in both themes. App-specific content remains separately styled.
 
 - `src/ToolkitNotepad.cs:SetTheme` applies the existing OS light and dark palette to the editor, menu, status and open dialogs without changing their content. Dynamic menus and dialogs use the active palette when created; editor and dialog rendering still need in-game verification.
+
+- `src/OsDesktopState.cs:OsDesktopState` owns the shared player name lookup and notification queue outside the legacy WebUi view. `src/OsView.cs:Notify` retains immediate web delivery and fallback queueing; `src/ToolkitPrototype.cs:Update` drains the same queue for an active Toolkit session. Main-menu resets clear the queue.

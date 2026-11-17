@@ -23,7 +23,7 @@ namespace ObenseuerOS
             Menu.style.left = 0; Menu.style.bottom = 40; Menu.style.width = 460; Menu.style.maxHeight = Length.Percent(90);
             Menu.style.paddingLeft = 12; Menu.style.paddingRight = 12; Menu.style.paddingTop = 12; Menu.style.paddingBottom = 12;
             Menu.style.backgroundColor = (Color)new Color32(21, 40, 63, 255); Menu.style.display = DisplayStyle.None;
-            string username = OsView.UserName();
+            string username = OsDesktopState.UserName();
             Label user = new Label(string.IsNullOrEmpty(username) ? "Stalburg resident" : username);
             user.style.color = Color.white; user.style.fontSize = 20; Menu.Add(user);
             search = new TextField(); search.style.marginTop = 8; search.style.marginBottom = 8;

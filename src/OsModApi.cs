@@ -128,7 +128,7 @@ namespace ObenseuerOS
                 try
                 {
                     if (!OsBridge.WorldReady()) return null;
-                    string name = OsView.UserName();
+                    string name = OsDesktopState.UserName();
                     return name.Length == 0 ? null : name;
                 }
                 catch (Exception e)
@@ -230,7 +230,8 @@ namespace ObenseuerOS
                 if (!Accept("Notify", modId)) return false;
                 if (!OsScope.PlainText(title, 1, 60) || !OsScope.PlainText(body ?? "", 0, 200)) return Refuse("Notify", modId, false, "title is 1 to 60 characters and body up to 200, with no control characters");
                 if (!OsScope.Allow(ModLimits, "notify " + modId, OsScope.NoticesPer10Seconds, 10000, OsScope.NowMs())) return Refuse("Notify", modId, false, "3 notices per 10 seconds");
-                if (OsView.Notify(new OsNotice(modId, FromOf(modId), title, body ?? ""))) return true;
+                OsNotice notice = new OsNotice(modId, FromOf(modId), title, body ?? "");
+                if (ToolkitPrototype.Visible ? OsDesktopState.AddNotice(notice) : OsView.Notify(notice)) return true;
                 return Refuse("Notify", modId, false, "the OS is closed and 20 notices are already queued");
             }
             catch (Exception e)
