@@ -3,5 +3,7 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <Compile Include="..\..\src\JobsList.cs" />
+    <Compile Include="..\..\src\ScratchProgress.cs" />
+    <Compile Include="..\..\src\ScratchReply.cs" />
   </ItemGroup>
 </Project>

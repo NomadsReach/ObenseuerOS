@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
+using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ObenseuerCore.Ui;
@@ -15,9 +17,11 @@ namespace ObenseuerOS
         private readonly TransactionClient client;
         private readonly Action checkSession;
         private readonly Label notice, warning;
+        private Label wallet;
         private readonly UnityEngine.UIElements.Button acknowledge;
         private readonly ScrollView content;
         private readonly List<int> picks = new List<int>();
+        private readonly Dictionary<string, Texture2D> cardTextures = new Dictionary<string, Texture2D>();
         private readonly JArray lines = new JArray();
         private JObject state, scratch, tickets, results;
         private string tab = "draw", scope = "open", confirmation = "", forgetConfirmation = "";
@@ -77,7 +81,7 @@ namespace ObenseuerOS
             UpdateWarning(); content.Clear();
             Label title = Text("LOTTO by NaSpoBet"); title.style.fontSize = 28; content.Add(title);
             content.Add(Text("18+ · Play within your means. Lottery games are entertainment, not a way to make money."));
-            content.Add(Text("Wallet: " + state["oc"] + " OC / " + ((decimal)scratch["rm"]).ToString("N2", CultureInfo.CurrentCulture) + " RM"));
+            wallet = Text(WalletText()); content.Add(wallet);
             VisualElement nav = Row();
             foreach (string name in new[] { "draw", "scratch", "tickets", "results" }) { string section = name; nav.Add(Button(name, delegate { tab = section; confirmation = ""; Render(); })); }
             nav.Add(Button("Refresh", Refresh)); content.Add(nav);
@@ -91,6 +95,7 @@ namespace ObenseuerOS
             }
             if (tab == "draw") Draw(); else if (tab == "scratch") Scratch(); else if (tab == "tickets") Tickets(); else Results();
         }
+        private string WalletText() { return "Wallet: " + state["oc"] + " OC / " + ((decimal)scratch["rm"]).ToString("N2", CultureInfo.CurrentCulture) + " RM"; }
         private void Draw()
         {
             JToken next = state["nextDraw"];
@@ -134,10 +139,76 @@ namespace ObenseuerOS
             foreach (JObject card in (JArray)scratch["cards"])
             {
                 int id = (int)card["id"]; bool shipped = (bool)card["shipped"], revealed = (bool)card["revealed"];
-                content.Add(Text("Card " + id + " · " + (string)card["kind"] + " · " + (shipped ? "shipped" : revealed ? "Prize " + card["prize"] + " " + card["currency"] : "not revealed")));
-                if (!shipped && !revealed) content.Add(Button("Reveal card " + id, delegate { Reveal(id); }));
+                Label status = Text("Card " + id + " · " + (string)card["kind"] + " · " + (shipped ? "shipped" : revealed ? CardResult(card) : "not revealed"));
+                content.Add(status);
+                if (!shipped) Card(card, status);
             }
         }
+        private void Card(JObject card, Label status)
+        {
+            string kind = (string)card["kind"]; int id = (int)card["id"]; bool revealed = (bool)card["revealed"];
+            Texture2D texture = CardTexture(kind);
+            if (texture == null) { if (!revealed) content.Add(Button("Reveal card " + id, delegate { Reveal(id, kind); })); return; }
+            VisualElement panel = new VisualElement(); panel.style.width = 240; panel.style.height = 360;
+            Image art = new Image(); art.image = texture; art.scaleMode = ScaleMode.StretchToFill; art.style.position = UnityEngine.UIElements.Position.Absolute;
+            art.style.left = 0; art.style.top = 0; art.style.width = 240; art.style.height = 360; art.pickingMode = PickingMode.Ignore; panel.Add(art);
+            float top = kind == "spade" ? 253f : 267f, height = kind == "spade" ? 68f : 54f;
+            Label result = Text(revealed ? CardResult(card) : "");
+            result.style.position = UnityEngine.UIElements.Position.Absolute; result.style.left = 15; result.style.top = top; result.style.width = 210; result.style.height = height;
+            result.style.backgroundColor = Color.white; result.style.unityTextAlign = TextAnchor.MiddleCenter; result.pickingMode = PickingMode.Ignore; panel.Add(result);
+            if (!revealed)
+            {
+                ScratchProgress progress = new ScratchProgress(); bool opened = false, opening = false;
+                for (int i = 0; i < 30; i++)
+                {
+                    int index = i; VisualElement cover = new VisualElement(); cover.style.position = UnityEngine.UIElements.Position.Absolute;
+                    cover.style.left = 15 + (i % 10) * 21; cover.style.top = top + (i / 10) * (height / 3); cover.style.width = 21; cover.style.height = height / 3;
+                    cover.style.backgroundColor = (Color)new Color32(145, 153, 158, 255);
+                    Action clear = delegate
+                    {
+                        if (!Session()) return;
+                        if (!opened)
+                        {
+                            if (opening) return;
+                            opening = true; JObject reply;
+                            try { reply = Read("scratch.reveal", new JObject(new JProperty("id", id))); }
+                            finally { opening = false; }
+                            JObject value = reply == null ? null : reply["card"] as JObject;
+                            if (!ScratchReply.Valid(reply, id, kind)) { notice.text = "Card result could not be confirmed. Check card history before trying again."; return; }
+                            card["revealed"] = true; card["prize"] = value["prize"].DeepClone(); card["currency"] = value["currency"].DeepClone(); opened = true;
+                            state["oc"] = reply["balance"].DeepClone(); scratch["rm"] = reply["rm"].DeepClone();
+                            result.text = CardResult(card); wallet.text = WalletText(); status.text = "Card " + id + " · " + kind + " · Scratching";
+                        }
+                        if (progress.Mark(index)) cover.style.visibility = Visibility.Hidden;
+                        if (progress.Finished) Completed("Card revealed. Check card history for the result.");
+                    };
+                    cover.RegisterCallback<PointerDownEvent>(delegate(PointerDownEvent e) { if (e.button == 0) clear(); });
+                    cover.RegisterCallback<PointerEnterEvent>(delegate(PointerEnterEvent e) { if ((e.pressedButtons & 1) != 0) clear(); });
+                    cover.RegisterCallback<PointerMoveEvent>(delegate(PointerMoveEvent e) { if ((e.pressedButtons & 1) != 0) clear(); });
+                    panel.Add(cover);
+                }
+                content.Add(panel); content.Add(Button("Reveal card " + id, delegate { Reveal(id, kind); }));
+            }
+            else content.Add(panel);
+        }
+        private static string CardResult(JObject card) { return (int)card["prize"] > 0 ? "Prize: " + card["prize"] + " " + card["currency"] : "No win. Try again."; }
+        private Texture2D CardTexture(string kind)
+        {
+            string file = kind == "spade" ? "spade.jpg" : "oc-pot.jpg"; Texture2D texture;
+            if (cardTextures.TryGetValue(file, out texture)) return texture;
+            string location = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            if (string.IsNullOrEmpty(location)) return null;
+            try
+            {
+                byte[] bytes = File.ReadAllBytes(Path.Combine(location, "web", "apps", "lottery", file));
+                texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+                if (!ImageConversion.LoadImage(texture, bytes)) { UnityEngine.Object.Destroy(texture); return null; }
+                cardTextures.Add(file, texture); return texture;
+            }
+            catch (IOException) { return null; }
+            catch (UnauthorizedAccessException) { return null; }
+        }
+        internal void Release() { foreach (Texture2D texture in cardTextures.Values) if (texture != null) UnityEngine.Object.Destroy(texture); cardTextures.Clear(); }
         private void Purchase(string method, JObject args)
         {
             if (!Session()) return;
@@ -199,11 +270,11 @@ namespace ObenseuerOS
             if (forgetConfirmation != key) { forgetConfirmation = key; notice.text = "Clearing this record allows a new purchase that could duplicate one already completed. Check your tickets and cards, then press clear again."; return; }
             client.Forget(method, args); forgetConfirmation = ""; confirmation = ""; UpdateWarning(); Render(); notice.text = "Uncertain purchase cleared. A new purchase could repeat it.";
         }
-        private void Reveal(int id)
+        private void Reveal(int id, string kind)
         {
             if (!Session()) return;
             JObject result = Read("scratch.reveal", new JObject(new JProperty("id", id)));
-            if (result == null) { notice.text += " Check card history before trying again."; return; }
+            if (!ScratchReply.Valid(result, id, kind)) { notice.text = "Card result could not be confirmed. Check card history before trying again."; return; }
             Completed("Card revealed. Check card history for the result.");
         }
         private void Tickets()

@@ -19,6 +19,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
     private ToolkitExplorer explorer;
     private ToolkitSettings settings;
     private ToolkitNews news;
+    private ToolkitLottery lottery;
     private Label clock;
     private Label money;
     private float nextStatusUpdate;
@@ -71,7 +72,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         ToolkitExchange exchange = new ToolkitExchange(osStorage == null ? new TransactionClient("exchange", null, null) : TransactionClients.ForSession("exchange", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession));
         ToolkitShop shop = new ToolkitShop(osStorage == null ? new TransactionClient("shop", null, null) : TransactionClients.ForSession("shop", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession));
         ToolkitJobs jobs = null;
-        ToolkitLottery lottery = new ToolkitLottery(osStorage == null ? new TransactionClient("lotto", null, null) : TransactionClients.ForSession("lotto", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession), osStorage == null ? (Action)null : osStorage.CheckSession);
+        lottery = new ToolkitLottery(osStorage == null ? new TransactionClient("lotto", null, null) : TransactionClients.ForSession("lotto", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession), osStorage == null ? (Action)null : osStorage.CheckSession);
         news = new ToolkitNews(new NewsClient(osStorage == null ? (Func<Newtonsoft.Json.Linq.JObject, Newtonsoft.Json.Linq.JObject>)null : OsBridge.Reply, osStorage == null ? (Action)null : osStorage.CheckSession));
         ToolkitTerminal terminal = null;
         ToolkitBrowser browser = null;
@@ -267,6 +268,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
     private void OnDestroy()
     {
         if (news != null) news.Release();
+        if (lottery != null) lottery.Release();
         if (settings != null) settings.Release();
         if (explorer != null) explorer.Release();
         foreach (Texture2D texture in textures) if (texture != null) Destroy(texture);
