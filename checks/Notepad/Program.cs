@@ -22,6 +22,12 @@ internal static class Program
         Check(ToolkitNotepadOpen.Decide("/docs/one.txt", "/docs/two.txt", true) == ExternalOpenAction.Confirm, "dirty file needs confirmation");
         Check(ToolkitNotepadOpen.Decide("/docs/one.txt", "/docs/two.txt", false) == ExternalOpenAction.Load, "clean file opens");
         Check(ToolkitNotepadOpen.Decide(null, "/docs/two.txt", true) == ExternalOpenAction.Confirm, "dirty untitled file needs confirmation");
+        CloseConfirmation notesClose = new CloseConfirmation(), mailClose = new CloseConfirmation();
+        Check(!notesClose.Allow(true, "note") && notesClose.Allow(true, "note") && !mailClose.Allow(true, 1L), "separate dirty app prompts");
+        Check(notesClose.Allow(true, "note") && mailClose.Allow(true, 1L), "prior approval survives another app veto");
+        mailClose.Reset(); Check(!mailClose.Allow(true, 1L) && mailClose.Allow(true, 1L), "actual close requires fresh confirmation when reopened");
+        Check(!notesClose.Allow(true, "edited") && !mailClose.Allow(true, 2L), "new edits require renewed confirmation");
+        Check(notesClose.Allow(false, "edited") && !notesClose.Allow(true, "edited"), "clean state resets confirmation");
         OsNotepadStorage.Attach();
         ObenseuerCore.SaveData.Folder = null;
         OsNotepadStorage newGame = new OsNotepadStorage();

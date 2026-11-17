@@ -21,6 +21,7 @@ namespace ObenseuerOS
         private bool wrap = true;
         private bool dark;
         private RecoveredNote retained;
+        private readonly CloseConfirmation closeConfirmation = new CloseConfirmation();
 
         internal readonly VisualElement Window;
 
@@ -68,7 +69,7 @@ namespace ObenseuerOS
             text.style.flexGrow = 1;
             text.style.backgroundColor = Color.white;
             text.style.color = Color.black;
-            text.RegisterValueChangedCallback(delegate { armed = ""; SetTitle(); });
+            text.RegisterValueChangedCallback(delegate { armed = ""; closeConfirmation.Reset(); SetTitle(); });
             Window.Add(text);
             status = new Label(storage == null ? "Files are available when opened through the OS." : "");
             status.style.backgroundColor = Color.white;
@@ -87,7 +88,13 @@ namespace ObenseuerOS
             });
         }
 
-        internal bool CanClose() { return Discard("Close"); }
+        internal bool CanClose()
+        {
+            if (closeConfirmation.Allow(text.value != saved, text.value)) return true;
+            Window.style.display = DisplayStyle.Flex; Window.BringToFront();
+            status.text = storage is OsNotepadStorage ? "Unsaved changes. Choose Close again. Text may remain recoverable until the game exits." : "Unsaved changes. Choose Close again to discard them.";
+            return false;
+        }
 
         internal void RetainDraft()
         {
@@ -96,7 +103,7 @@ namespace ObenseuerOS
             if (session != null) retained = NotepadRecovery.Retain(session.RecoveryKey, session.RecoveryOrigin, text.value, saved);
         }
 
-        internal void ReattachDraft() { NotepadRecovery.Remove(retained); retained = null; }
+        internal void ReattachDraft() { NotepadRecovery.Remove(retained); retained = null; closeConfirmation.Reset(); }
 
         internal void SetTheme(bool value)
         {
@@ -193,7 +200,7 @@ namespace ObenseuerOS
         {
             if (text.value == saved || armed == action) { armed = ""; return true; }
             armed = action;
-            status.text = action == "Close" && storage is OsNotepadStorage ? "Unsaved changes. Choose Close again. Text may remain recoverable until the game exits." : "Unsaved changes. Choose " + action + " again to discard them.";
+            status.text = "Unsaved changes. Choose " + action + " again to discard them.";
             return false;
         }
 
@@ -248,7 +255,7 @@ namespace ObenseuerOS
                 {
                     if (text.value != original && !Discard("Recover")) return;
                     if (!NotepadRecovery.Claim(candidate, ((OsNotepadStorage)storage).RecoveryKey, otherSessions)) { status.text = "That recovery is no longer available."; return; }
-                    saved = null; text.SetValueWithoutNotify(candidate.Text); path = null; armed = "";
+                    closeConfirmation.Reset(); saved = null; text.SetValueWithoutNotify(candidate.Text); path = null; armed = "";
                     HidePopup(); SetTitle(); status.text = "Recovered unsaved text. Use Save as to keep it.";
                 }));
             }

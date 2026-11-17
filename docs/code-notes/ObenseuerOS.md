@@ -174,3 +174,5 @@
 - `examples/HelloOs/src/HelloSite.cs:HelloSite.Build` demonstrates native site registration and two root-relative links while retaining its legacy HTML site.
 
 - `examples/HelloOs/src/HelloSite.cs:HelloSite.Build` is compiled against Unity managed references by `checks/ToolkitCompile/ToolkitCompile.csproj` and exercised through the fake Toolkit site host by `checks/ModTaskbar/SiteChecks.cs:Run`. The full example plugin still needs a game-linked build.
+
+- `src/CloseConfirmation.cs:Allow`, `src/ToolkitNotepad.cs:CanClose`, `src/ToolkitMail.cs:CanClose` retain a close confirmation for unchanged unsaved content, so a second dirty app can request its own confirmation. `src/MailDraft.cs:Revision` invalidates that approval when shared compose or reply content changes. `checks/Notepad/Program.cs:Main` and `checks/MailClient/Program.cs:Main` cover approval, changes and revision tracking. Actual desktop close behavior remains unverified in-game.

@@ -4,6 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\..\src\CloseConfirmation.cs" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <Compile Include="..\..\src\MailClient.cs" />
     <Compile Include="..\..\src\MailPages.cs" />

@@ -5,6 +5,7 @@
     <NoWarn>$(NoWarn);0649;CA1416</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\..\src\CloseConfirmation.cs" />
     <Reference Include="$(UnityManaged)/UnityEngine*.dll" />
     <EmbeddedResource Include="../../prototype-icons/*.png" LogicalName="desktop-icons/%(Filename)%(Extension)" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />

@@ -19,6 +19,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
     private readonly Dictionary<string, Texture2D> iconTextures = new Dictionary<string, Texture2D>();
     private ToolkitModWindows modWindows;
     private ToolkitNotepad notepad;
+    private ToolkitMail mail;
     private ToolkitBrowser browser;
     private VisualElement desktopRoot;
     private RectTransform pinnedTarget;
@@ -232,7 +233,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         OsNotepadStorage osStorage = storage as OsNotepadStorage;
         settings = new ToolkitSettings(wallpaper, root, osStorage != null);
         ToolkitChat chat = new ToolkitChat(osStorage != null, osStorage == null ? (Action)null : osStorage.CheckSession);
-        ToolkitMail mail = new ToolkitMail(new MailClient(osStorage == null ? (Func<Newtonsoft.Json.Linq.JObject, Newtonsoft.Json.Linq.JObject>)null : OsBridge.Reply, osStorage == null ? (Action)null : osStorage.CheckSession), osStorage == null ? new MailDraft() : MailDrafts.ForSession(osStorage.SessionId));
+        mail = new ToolkitMail(new MailClient(osStorage == null ? (Func<Newtonsoft.Json.Linq.JObject, Newtonsoft.Json.Linq.JObject>)null : OsBridge.Reply, osStorage == null ? (Action)null : osStorage.CheckSession), osStorage == null ? new MailDraft() : MailDrafts.ForSession(osStorage.SessionId));
         ToolkitBank bank = new ToolkitBank(osStorage == null ? new TransactionClient("bank", null, null) : TransactionClients.ForSession("bank", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession));
         ToolkitExchange exchange = new ToolkitExchange(osStorage == null ? new TransactionClient("exchange", null, null) : TransactionClients.ForSession("exchange", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession));
         ToolkitShop shop = new ToolkitShop(osStorage == null ? new TransactionClient("shop", null, null) : TransactionClients.ForSession("shop", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession));
@@ -621,6 +622,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
     private void OnDisable()
     {
         if (notepad != null) notepad.RetainDraft();
+        if (mail != null) mail.ResetClose();
         if (browser != null) browser.Dispose();
         active.Remove(this);
         if (modWindows != null) modWindows.CloseAll();

@@ -23,7 +23,8 @@ namespace ObenseuerOS
         private JObject current;
         private string folder = "inbox";
         private string armedReplace = "";
-        private bool composing, armedClose, armedDelete, pageFailed;
+        private bool composing, armedDelete, pageFailed;
+        private readonly CloseConfirmation closeConfirmation = new CloseConfirmation();
         private int total, searchGeneration;
 
         internal ToolkitMail(MailClient client, MailDraft draft)
@@ -52,14 +53,14 @@ namespace ObenseuerOS
 
         internal bool CanClose()
         {
-            if (!Dirty()) { armedClose = false; return true; }
-            if (armedClose) { armedClose = false; return true; }
-            armedClose = true; Window.style.display = DisplayStyle.Flex; Window.BringToFront();
+            if (closeConfirmation.Allow(Dirty(), draft.Revision)) return true;
+            Window.style.display = DisplayStyle.Flex; Window.BringToFront();
             status.text = "Draft not sent. Close again to leave; it will remain for this session."; return false;
         }
 
         private bool Dirty() { return draft.Dirty; }
-        private void Close() { if (CanClose()) Window.style.display = DisplayStyle.None; }
+        internal void ResetClose() { closeConfirmation.Reset(); }
+        private void Close() { if (CanClose()) { closeConfirmation.Reset(); Window.style.display = DisplayStyle.None; } }
         private static VisualElement Row() { VisualElement row = new VisualElement(); row.style.flexDirection = FlexDirection.Row; return row; }
         private static Label Text(string text) { Label label = new Label(text); label.enableRichText = false; label.style.color = Color.black; label.style.whiteSpace = WhiteSpace.Normal; return label; }
         private static UnityEngine.UIElements.Button Button(string text, Action action) { UnityEngine.UIElements.Button b = new UnityEngine.UIElements.Button(action); b.enableRichText = false; b.text = text; return b; }
@@ -288,7 +289,7 @@ namespace ObenseuerOS
             {
                 TextField reply = new TextField("Quick reply"); reply.multiline = true; reply.maxLength = 3000; reply.style.height = 100;
                 reply.SetValueWithoutNotify(draft.Reply(id));
-                reply.RegisterValueChangedCallback(delegate(ChangeEvent<string> e) { draft.SetReply(id, e.newValue); armedClose = false; armedDelete = false; });
+                reply.RegisterValueChangedCallback(delegate(ChangeEvent<string> e) { draft.SetReply(id, e.newValue); closeConfirmation.Reset(); armedDelete = false; });
                 view.Add(reply);
                 view.Add(Button("Reply", delegate
                 {
@@ -296,7 +297,7 @@ namespace ObenseuerOS
                     if (string.IsNullOrWhiteSpace(text)) { reply.Focus(); return; }
                     try { if (!client.SendReply(draft, id, address, (string)message["subject"] ?? "")) return; }
                     catch (Exception e) { status.text = e.Message; return; }
-                    reply.SetValueWithoutNotify(""); armedClose = false; status.text = "Sent.";
+                    reply.SetValueWithoutNotify(""); closeConfirmation.Reset(); status.text = "Sent.";
                 }));
             }
             view.Add(Button("Forward", delegate
@@ -315,18 +316,18 @@ namespace ObenseuerOS
                 if (armedReplace != key) { armedReplace = key; status.text = "Draft not sent. Choose the same action again to replace it."; return; }
             }
             armedReplace = "";
-            composing = true; armedClose = false;
+            composing = true; closeConfirmation.Reset();
             if (to.Length > 0 || subject.Length > 0 || text.Length > 0) { draft.To = to; draft.Subject = subject; draft.Body = text; }
             view.Clear();
             view.Add(Text("New message"));
             if (recipients.Count == 0) { view.Add(Text("No recipients are available.")); return; }
             int index = recipients.IndexOf(draft.To); if (index < 0) index = 0;
             DropdownField toField = new DropdownField("To", new List<string>(recipients), index); draft.To = toField.value;
-            toField.RegisterValueChangedCallback(delegate(ChangeEvent<string> e) { draft.To = e.newValue; armedClose = false; }); view.Add(toField);
+            toField.RegisterValueChangedCallback(delegate(ChangeEvent<string> e) { draft.To = e.newValue; closeConfirmation.Reset(); }); view.Add(toField);
             TextField subj = new TextField("Subject"); subj.maxLength = 100; subj.SetValueWithoutNotify(draft.Subject);
-            subj.RegisterValueChangedCallback(delegate(ChangeEvent<string> e) { draft.Subject = e.newValue ?? ""; armedClose = false; armedReplace = ""; }); view.Add(subj);
+            subj.RegisterValueChangedCallback(delegate(ChangeEvent<string> e) { draft.Subject = e.newValue ?? ""; closeConfirmation.Reset(); armedReplace = ""; }); view.Add(subj);
             TextField message = new TextField("Message"); message.multiline = true; message.maxLength = 3000; message.style.height = 180; message.SetValueWithoutNotify(draft.Body);
-            message.RegisterValueChangedCallback(delegate(ChangeEvent<string> e) { draft.Body = e.newValue ?? ""; armedClose = false; armedReplace = ""; }); view.Add(message);
+            message.RegisterValueChangedCallback(delegate(ChangeEvent<string> e) { draft.Body = e.newValue ?? ""; closeConfirmation.Reset(); armedReplace = ""; }); view.Add(message);
             view.Add(Button("Send", delegate
             {
                 JObject args = new JObject(new JProperty("to", draft.To), new JProperty("subject", draft.Subject), new JProperty("body", draft.Body));
@@ -337,6 +338,6 @@ namespace ObenseuerOS
             subj.Focus();
         }
 
-        private void ClearDraft() { draft.Clear(); armedClose = false; armedReplace = ""; }
+        private void ClearDraft() { draft.Clear(); closeConfirmation.Reset(); armedReplace = ""; }
     }
 }

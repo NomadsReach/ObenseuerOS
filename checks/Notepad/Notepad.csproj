@@ -4,6 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\..\src\CloseConfirmation.cs" />
     <Compile Include="..\..\src\Ugui\NotepadStorage.cs" Link="NotepadStorage.cs" />
     <Compile Include="..\..\src\Ugui\NotepadRecovery.cs" Link="NotepadRecovery.cs" />
     <Compile Include="..\..\src\RecycleStorage.cs" Link="RecycleStorage.cs" />

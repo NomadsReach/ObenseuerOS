@@ -30,6 +30,15 @@ internal static class Program
         MailClient failed = new MailClient(request => JObject.Parse("{\"ok\":false,\"message\":\"mailbox full\"}"), null);
         try { failed.Call("mail.send", null); throw new Exception("error ignored"); }
         catch (InvalidOperationException e) { Check(e.Message == "mailbox full"); }
+        MailDraft revisionCheck = new MailDraft(); long initialRevision = revisionCheck.Revision;
+        revisionCheck.Subject = "subject"; Check(revisionCheck.Revision != initialRevision);
+        long sameRevision = revisionCheck.Revision; revisionCheck.Subject = "subject"; Check(revisionCheck.Revision == sameRevision);
+        revisionCheck.SetReply(7, "reply"); Check(revisionCheck.Revision != sameRevision);
+        CloseConfirmation mailApproval = new CloseConfirmation();
+        Check(!mailApproval.Allow(revisionCheck.Dirty, revisionCheck.Revision));
+        Check(mailApproval.Allow(revisionCheck.Dirty, revisionCheck.Revision));
+        revisionCheck.SetReply(7, "edited");
+        Check(!mailApproval.Allow(revisionCheck.Dirty, revisionCheck.Revision));
         MailDraft original = MailDrafts.ForSession(1);
         original.Subject = "unsent"; original.Body = "kept";
         original.SetReply(7, "inline reply");
