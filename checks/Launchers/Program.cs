@@ -48,6 +48,9 @@ internal static class Program
         Check(ToolkitNativeEvents.Send(new[] { false, true, true }, open => open, handler, "hour", "{\"hour\":2}") && delivered == 1);
         try { ToolkitNativeEvents.Send(new[] { true }, open => open, (name, json) => { throw new InvalidOperationException("handler"); }, "hour", "{}"); throw new Exception("callback failure ignored"); }
         catch (InvalidOperationException e) { Check(e.Message == "handler"); }
+        Check(ToolkitTaskbarState.ShowPinnedLauncher(true, false));
+        Check(!ToolkitTaskbarState.ShowPinnedLauncher(true, true));
+        Check(ToolkitTaskbarState.ShowPinnedLauncher(false, false) && ToolkitTaskbarState.ShowPinnedLauncher(false, true));
         Check(ToolkitTaskbarState.Decide(false, false, false) == TaskbarAction.Open);
         Check(ToolkitTaskbarState.Decide(false, true, false) == TaskbarAction.Restore);
         Check(ToolkitTaskbarState.Decide(true, false, false) == TaskbarAction.Focus);

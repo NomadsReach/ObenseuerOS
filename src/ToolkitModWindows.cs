@@ -10,14 +10,16 @@ namespace ObenseuerOS
     {
         private readonly VisualElement windows;
         private readonly Func<bool> valid;
+        private ToolkitTaskbar taskbar;
         private readonly Dictionary<OsApp, VisualElement> opened = new Dictionary<OsApp, VisualElement>();
         internal ToolkitModWindows(VisualElement windows, Func<bool> valid) { this.windows = windows; this.valid = valid; }
+        internal void SetTaskbar(ToolkitTaskbar value) { taskbar = value; }
         internal bool Has(OsApp app) { return app != null && opened.ContainsKey(app); }
         internal bool Open(OsApp app)
         {
             if (!valid() || app == null || app.BuildUi == null || !Os.Apps.Contains(app)) return false;
             VisualElement existing;
-            if (opened.TryGetValue(app, out existing)) { existing.BringToFront(); return true; }
+            if (opened.TryGetValue(app, out existing)) { if (taskbar == null || !taskbar.RestoreIfMinimized(existing)) existing.BringToFront(); return true; }
             VisualElement frame = new VisualElement(); frame.style.position = Position.Absolute; frame.style.left = 160; frame.style.top = 40;
             frame.style.width = app.Width > 0 ? app.Width : 600; frame.style.height = app.Height > 0 ? app.Height : 450;
             frame.style.paddingLeft = 6; frame.style.paddingRight = 6; frame.style.paddingBottom = 6; frame.style.backgroundColor = (Color)new Color32(190, 205, 222, 217);
@@ -29,6 +31,7 @@ namespace ObenseuerOS
             windows.Add(frame); opened.Add(app, frame);
             try
             {
+                if (taskbar != null) taskbar.Register(frame, app.Title, app.Icon ?? "", false);
                 app.BuildUi(content);
                 if (!valid() || !Os.Apps.Contains(app) || !opened.ContainsKey(app)) { Close(app, true); return false; }
                 Os.Opened(app.Id);
@@ -53,7 +56,9 @@ namespace ObenseuerOS
             if (!opened.TryGetValue(app, out frame) || (!force && !MayClose(app))) return;
             VisualElement current;
             if (!opened.TryGetValue(app, out current) || current != frame) return;
-            opened.Remove(app); frame.RemoveFromHierarchy(); Os.Closed(app.Id);
+            opened.Remove(app);
+            if (taskbar != null) taskbar.Unregister(frame);
+            frame.RemoveFromHierarchy(); Os.Closed(app.Id);
         }
         internal void Reconcile()
         {

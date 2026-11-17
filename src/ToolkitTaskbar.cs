@@ -48,6 +48,13 @@ namespace ObenseuerOS
             minimize.text = "−"; minimize.tooltip = "Minimize"; minimize.style.width = 40; minimize.style.height = 20; minimize.style.marginTop = 8;
             bar.Insert(Math.Max(0, bar.childCount - 1), minimize);
         }
+        internal void Unregister(VisualElement window)
+        {
+            Entry entry;
+            if (!entries.TryGetValue(window, out entry)) return;
+            entries.Remove(window);
+            if (entry.Button != null) entry.Button.RemoveFromHierarchy();
+        }
         internal void Click(VisualElement window, Action open)
         {
             Entry entry;

@@ -82,6 +82,13 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         return OsResult.Unavailable;
     }
 
+    internal static bool NativeWindowOpen(OsApp app)
+    {
+        foreach (ToolkitPrototype prototype in new List<ToolkitPrototype>(active))
+            if (prototype != null && prototype.modWindows != null && prototype.HasSession() && prototype.modWindows.Has(app)) return true;
+        return false;
+    }
+
     internal static bool LaunchRegistered(OsApp app)
     {
         if (!Visible || app == null || !Os.Apps.Contains(app) || app.ModId == Os.ModId || app.Site || !VirusAv.Shows(app.Id)) return false;
@@ -315,6 +322,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         launchWindows[12] = minesweeper.Window; launchWindows[13] = solitaire.Window; launchWindows[16] = bets.Window;
         launchWindows[17] = eye.Window; launchWindows[19] = jobs.Window; launchWindows[20] = lottery.Window; launchWindows[25] = wiki.Window;
         windowTaskbar = new ToolkitTaskbar(windows, Texture);
+        modWindows.SetTaskbar(windowTaskbar);
         windowTaskbar.Register(notepad.Window, "Notepad", "notes", false);
         windowTaskbar.Register(minesweeper.Window, "Minesweeper", "device-gamepad-2", false);
         windowTaskbar.Register(solitaire.Window, "Solitaire", "device-gamepad-2", false);
@@ -340,7 +348,17 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         ToolkitStart start = new ToolkitStart(Names, Icons, Texture, launch, delegate { if (canClose()) ComputerApps.Close(storage == null ? "os.toolkit-prototype" : "os.toolkit-os"); }, delegate(int index) { return index < 14 || installed(Ids[index]); });
         VisualElement pinned = new VisualElement(); pinned.style.flexDirection = FlexDirection.Row;
         Dictionary<OsApp, Label> pinnedBadges = new Dictionary<OsApp, Label>();
-        Action updateBadges = delegate { foreach (KeyValuePair<OsApp, Label> entry in pinnedBadges) entry.Value.text = entry.Key.Badge > 0 ? entry.Key.Badge.ToString() : ""; };
+        Dictionary<OsApp, VisualElement> pinnedButtons = new Dictionary<OsApp, VisualElement>();
+        Action updateBadges = delegate
+        {
+            foreach (KeyValuePair<OsApp, Label> entry in pinnedBadges)
+            {
+                entry.Value.text = entry.Key.Badge > 0 ? entry.Key.Badge.ToString() : "";
+                bool native = entry.Key.BuildUi != null;
+                bool show = ToolkitTaskbarState.ShowPinnedLauncher(native, native && NativeWindowOpen(entry.Key));
+                pinnedButtons[entry.Key].style.display = show ? DisplayStyle.Flex : DisplayStyle.None;
+            }
+        };
         List<OsApp> launchers = new List<OsApp>();
         List<VisualElement> launcherTiles = new List<VisualElement>();
         Func<OsApp, bool> openLauncher = delegate(OsApp app)
@@ -360,7 +378,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
             }
             if (LauncherCatalog.Same(launchers, current)) { updateBadges(); return; }
             foreach (VisualElement old in launcherTiles) { if (selected == old) selected = null; old.RemoveFromHierarchy(); }
-            launcherTiles.Clear(); pinned.Clear(); pinnedBadges.Clear(); launchers = current;
+            launcherTiles.Clear(); pinned.Clear(); pinnedBadges.Clear(); pinnedButtons.Clear(); launchers = current;
             foreach (OsApp entry in launchers)
             {
                 OsApp app = entry;
@@ -371,7 +389,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
                     pin.style.paddingLeft = 2; pin.style.paddingRight = 2; pin.style.flexDirection = FlexDirection.Row;
                     pin.Add(ModIcon(entry, 22));
                     Label badge = new Label(); badge.style.color = Color.white; badge.style.backgroundColor = Color.red; badge.style.fontSize = 9;
-                    pin.Add(badge); pinnedBadges.Add(entry, badge); pinned.Add(pin);
+                    pin.Add(badge); pinnedBadges.Add(entry, badge); pinnedButtons.Add(entry, pin); pinned.Add(pin);
                 }
                 if (!entry.Desktop) continue;
                 VisualElement tile = new VisualElement(); tile.style.width = 88; tile.style.height = 104; tile.style.alignItems = Align.Center;
