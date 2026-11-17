@@ -4,6 +4,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <Compile Include="..\..\src\TransactionClient.cs" />
     <Compile Include="..\..\src\BankQuote.cs" />
+    <Compile Include="..\..\src\BankInvoicePage.cs" />
     <Compile Include="..\..\src\GuardPurchase.cs" />
     <Compile Include="..\..\src\TurvaReceipt.cs" />
     <Compile Include="..\..\src\ShadyReply.cs" />

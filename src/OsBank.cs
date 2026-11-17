@@ -165,13 +165,19 @@ namespace ObenseuerOS
 
         private static string InvoiceList(string args)
         {
+            JObject a = OsBridge.Args(args);
+            bool paged = OsBridge.Flag(a, "paged");
+            int after = paged ? OsBridge.Span(a, "afterId", int.MaxValue, 0) : 0;
             RequireOpen();
             List<InvoiceInfo> all = Invoices.All();
+            int next = 0;
+            List<InvoiceInfo> page = paged ? BankInvoicePage.Select(all, invoice => invoice.Id, after, MaxInvoices, out next) : all;
             List<object> items = new List<object>();
-            foreach (InvoiceInfo invoice in all)
+            foreach (InvoiceInfo invoice in page)
             {
                 if (items.Count < MaxInvoices) items.Add(new { id = invoice.Id, debtor = Clip(Printable(invoice.Debtor), MaxDebtor), amount = invoice.Amount, currency = CurrencyName(invoice.Currency), dueDay = invoice.DueDay, daysLeft = invoice.DaysRemaining, expired = invoice.Expired });
             }
+            if (paged) return JsonConvert.SerializeObject(new { items = items, total = all.Count, nextAfterId = next });
             return JsonConvert.SerializeObject(new { items = items, total = all.Count });
         }
 

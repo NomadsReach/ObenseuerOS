@@ -113,3 +113,5 @@
 - `src/OsModFiles.cs:OsModFiles.Open`, `src/ToolkitPrototype.cs:ToolkitPrototype.OpenFile`, `src/ToolkitNotepad.cs:ToolkitNotepad.OpenExternal` - A mod file request opens in the visible Toolkit Notepad using the current session storage. An already open document is brought forward without replacing edits; another file requires an explicit discard confirmation when the editor is dirty. The request returns Queued while confirmation is pending, and a failed read leaves existing text intact.
 
 - `src/ToolkitBank.cs:ToolkitBank.PaymentsPage` - The invoice bridge can return fewer items than its total; the Payments view reports that limit so missing invoices are not mistaken for an empty or complete list.
+
+- `src/OsBank.cs:OsBank.InvoiceList`, `src/BankInvoicePage.cs:BankInvoicePage.Select`, `src/ToolkitBank.cs:ToolkitBank.PaymentsPage` - Toolkit requests ID-ordered invoice pages with an exclusive cursor. Legacy requests keep their original ordering and response shape. The list is live, so invoices added below the current cursor appear on earlier pages; payment still validates the invoice by ID in the bridge.

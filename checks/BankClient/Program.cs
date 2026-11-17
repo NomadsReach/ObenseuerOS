@@ -65,6 +65,21 @@ internal static class Program
         Check(BankQuote.TryCreate("RM", 12.3m, 2m, out debit, out fee, out sent) && fee == 0.3m && sent == 12m);
         Check(!BankQuote.TryCreate("OC", 1m, 2m, out debit, out fee, out sent));
         Check(!BankQuote.TryCreate("OC", 16000001m, 2m, out debit, out fee, out sent));
+        int nextInvoice;
+        var invoiceIds = new System.Collections.Generic.List<int> { 35, 3, 1, 2, 4, 5 };
+        var invoicePage = BankInvoicePage.Select(invoiceIds, id => id, 0, 3, out nextInvoice);
+        Check(invoicePage.Count == 3 && invoicePage[0] == 1 && invoicePage[2] == 3 && nextInvoice == 3);
+        invoiceIds.Remove(1); invoiceIds.Add(40);
+        invoicePage = BankInvoicePage.Select(invoiceIds, id => id, nextInvoice, 3, out nextInvoice);
+        Check(invoicePage.Count == 3 && invoicePage[0] == 4 && invoicePage[1] == 5 && invoicePage[2] == 35 && nextInvoice == 35);
+        invoicePage = BankInvoicePage.Select(invoiceIds, id => id, nextInvoice, 3, out nextInvoice);
+        Check(invoicePage.Count == 1 && invoicePage[0] == 40 && nextInvoice == 0);
+        BankInvoiceNavigation nav = new BankInvoiceNavigation();
+        Check(!nav.CanGoBack && !nav.Previous() && !nav.Next(0));
+        Check(nav.Next(3) && nav.After == 3 && nav.CanGoBack);
+        Check(!nav.Next(3) && nav.Next(35) && nav.After == 35);
+        Check(nav.Previous() && nav.After == 3 && nav.Previous() && nav.After == 0 && !nav.CanGoBack);
+        Check(nav.Next(3)); nav.Reset(); Check(nav.After == 0 && !nav.CanGoBack);
         Console.WriteLine("Bank client checks passed");
     }
 }

@@ -14,6 +14,7 @@
     <Compile Include="..\..\src\MailDraft.cs" />
     <Compile Include="..\..\src\TransactionClient.cs" />
     <Compile Include="..\..\src\BankQuote.cs" />
+    <Compile Include="..\..\src\BankInvoicePage.cs" />
     <Compile Include="..\..\src\NewsClient.cs" />
     <Compile Include="..\..\src\NewsPhotos.cs" />
     <Compile Include="..\..\src\BrowserState.cs" />

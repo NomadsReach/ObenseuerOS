@@ -21,6 +21,7 @@ namespace ObenseuerOS
         private readonly List<JObject> history = new List<JObject>();
         private string bank = "", section = "Accounts", cashAmount = "", repayAmount = "", cashCurrency = "OC", repayCurrency = "OC", confirm = "", snapshot = "";
         private int beforeId, invoiceId;
+        private readonly BankInvoiceNavigation invoicePages = new BankInvoiceNavigation();
         private long acknowledgedVersion = -1;
         private long observedVersion = -1;
 
@@ -80,7 +81,7 @@ namespace ObenseuerOS
                 if (bank.Length > 0)
                 {
                     if ((bool)nextStatus["history"]) nextLedger = Read("bank.ledger", new JObject(new JProperty("bank", bank), new JProperty("max", 20), new JProperty("beforeId", 0)));
-                    nextInvoices = Read("bank.invoices", null);
+                    nextInvoices = Read("bank.invoices", new JObject(new JProperty("paged", true), new JProperty("afterId", invoicePages.After)));
                     nextLoan = Read("bank.loan.info", Args("bank", bank));
                     if (((bool)nextStatus["history"] && nextLedger == null) || nextInvoices == null || nextLoan == null) { Unavailable(); return; }
                 }
@@ -171,7 +172,17 @@ namespace ObenseuerOS
             List<string> labels = new List<string>(); List<int> ids = new List<int>();
             JArray items = (JArray)invoices["items"];
             int total = (int)invoices["total"];
-            if (total > items.Count) content.Add(Text("Showing " + items.Count + " of " + total + " invoices."));
+            if (total > items.Count || invoicePages.After > 0) content.Add(Text("Showing " + items.Count + " invoices on this page; " + total + " total."));
+            int nextAfter = (int)invoices["nextAfterId"];
+            VisualElement pages = Row();
+            if (invoicePages.CanGoBack)
+            {
+                pages.Add(Button("First page", delegate { invoicePages.Reset(); confirm = ""; Refresh(true); }));
+                pages.Add(Button("Previous invoices", delegate { invoicePages.Previous(); confirm = ""; Refresh(true); }));
+                content.Add(Text("Invoices may change; return to the first page to check for new items."));
+            }
+            if (nextAfter > 0) pages.Add(Button("More invoices", delegate { invoicePages.Next(nextAfter); confirm = ""; Refresh(true); }));
+            if (pages.childCount > 0) content.Add(pages);
             foreach (JToken item in items)
             {
                 string label = "#" + (int)item["id"] + "  " + (string)item["debtor"] + "  " + Money(item["amount"], (string)item["currency"]) + ((bool)item["expired"] ? "  Expired" : "  Due in " + (int)item["daysLeft"] + " days");
