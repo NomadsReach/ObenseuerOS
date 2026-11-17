@@ -132,6 +132,14 @@ namespace ObenseuerOS
 
         internal static void Drop(OsApp app)
         {
+            if (app.Site && app.BuildSite != null)
+            {
+                Apps.Remove(app);
+                OsBridge.RemoveApp(app.Id);
+                Closed(app.Id);
+                ToolkitPrototype.CloseNativeSite(app);
+                return;
+            }
             if (app.BuildUi != null) ToolkitPrototype.CloseNative(app);
             Closed(app.Id);
             Apps.Remove(app);

@@ -57,6 +57,11 @@ namespace ObenseuerOS
             });
             return true;
         }
+        internal string Peek(int delta)
+        {
+            int next = index + delta;
+            return next >= 0 && next < history.Count ? (string)history[next]["url"] : null;
+        }
         internal void Move(int delta)
         {
             int next = index + delta;

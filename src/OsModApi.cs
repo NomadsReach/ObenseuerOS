@@ -46,6 +46,13 @@ namespace ObenseuerOS
         public string[] Keywords;
         public string Folder;
         public string Page = "index.html";
+        public Func<VisualElement, string, OsSitePage> BuildUi;
+    }
+
+    public sealed class OsSitePage
+    {
+        public Func<bool> CanClose;
+        public Action<bool> OnClosed;
     }
 
     public static partial class Os
@@ -299,7 +306,9 @@ namespace ObenseuerOS
                 site.Host = options.Host;
                 site.Description = options.Description ?? "";
                 site.Keywords = options.Keywords ?? new string[0];
-                if (!SetPage(site, "RegisterSite", modId, options.Folder, options.Page)) return false;
+                if (options.BuildUi == null && options.Folder == null) return Refuse("RegisterSite", modId, false, "set Folder or BuildUi");
+                if (options.Folder != null && !SetPage(site, "RegisterSite", modId, options.Folder, options.Page)) return false;
+                site.BuildSite = options.BuildUi;
                 Apps.Add(site);
                 OsView.Map(site);
                 OsView.Refresh();

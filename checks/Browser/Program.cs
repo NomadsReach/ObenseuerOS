@@ -33,7 +33,8 @@ internal static class Program
         Check(state.Current == "old.ts" && state.Marks.Count == 1);
         Check(state.Visit("new.ts", "New")); Check(!state.Visit("new.ts", "New") && !state.Visit("", "Empty")); state.ToggleMark("New");
         Check(state.CanBack && state.IsMarked && (int)JObject.Parse(storage.Value)["extra"] == 42);
-        state.Move(-1); Check(state.Current == "old.ts" && state.CanForward);
+        Check(state.Peek(-1) == "old.ts" && state.Peek(1) == null);
+        state.Move(-1); Check(state.Current == "old.ts" && state.CanForward && state.Peek(1) == "new.ts");
         state.Visit("third.ts", "Third"); Check(!state.CanForward && state.History.Count == 2);
         BrowserState reloaded = new BrowserState(storage); Check(reloaded.Current == "third.ts" && reloaded.Marks.Count == 2);
         string broken = "not json"; storage.Value = broken;

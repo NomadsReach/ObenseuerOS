@@ -19,6 +19,8 @@ namespace ObenseuerOS
         private readonly Label notice;
         private readonly TextField address;
         private BrowserState state;
+        private readonly ToolkitSite site;
+        private bool disposed;
         private static readonly string[,] Sites = {
             { "mail.stalburg.ts", "Stalburg Mail", "Email for Stalburg residents.", "0" },
             { "www.stalburgbank.ts", "Stalburg Bank", "Banking, balances and loans.", "8" },
@@ -47,7 +49,7 @@ namespace ObenseuerOS
             Window.style.backgroundColor = (Color)new Color32(190, 205, 222, 217); Window.style.display = DisplayStyle.None;
             VisualElement titlebar = Row(); titlebar.style.height = 36;
             Label title = Text("Stalburg Web"); title.style.flexGrow = 1; title.style.unityTextAlign = TextAnchor.MiddleLeft; titlebar.Add(title);
-            UnityEngine.UIElements.Button close = Button("×", delegate { Window.style.display = DisplayStyle.None; });
+            UnityEngine.UIElements.Button close = Button("×", Close);
             close.style.width = 46; close.style.height = 20; close.style.marginTop = 8; close.style.backgroundColor = (Color)new Color32(199, 55, 47, 255); close.style.color = Color.white;
             titlebar.Add(close); Window.Add(titlebar); ToolkitUi.MakeDraggable(Window, titlebar);
             VisualElement toolbar = Row();
@@ -60,6 +62,7 @@ namespace ObenseuerOS
             toolbar.Add(Button("☆", Bookmark)); toolbar.Add(Button("History", delegate { Visit(Home + "/history"); })); toolbar.Add(Button("Bookmarks", delegate { Visit(Home + "/bookmarks"); })); Window.Add(toolbar);
             notice = Text(""); notice.style.backgroundColor = Color.white; Window.Add(notice);
             content = new ScrollView(); content.style.flexGrow = 1; content.style.backgroundColor = Color.white; Window.Add(content);
+            site = new ToolkitSite(content);
             Window.schedule.Execute(delegate() { if (Window.style.display != DisplayStyle.None && state != null) Session(); }).Every(1000);
         }
         internal void Open()
@@ -71,17 +74,41 @@ namespace ObenseuerOS
                 try { state = new BrowserState(storage); }
                 catch (Exception e) { notice.text = e.Message; content.Clear(); content.Add(Button("Retry", Open)); return; }
             }
-            if (state.Current.Length == 0) Visit(Home); else Render();
+            if (state.Current.Length == 0) Visit(Home);
+            else if (site.IsCurrent(state.Current)) Render();
+            else Transition(state.Current, delegate { });
         }
         private static VisualElement Row() { VisualElement row = new VisualElement(); row.style.flexDirection = FlexDirection.Row; row.style.flexWrap = Wrap.Wrap; return row; }
         private static Label Text(string value) { Label label = new Label(value); label.enableRichText = false; label.style.color = Color.black; label.style.whiteSpace = WhiteSpace.Normal; return label; }
         private static UnityEngine.UIElements.Button Button(string text, Action action) { UnityEngine.UIElements.Button button = new UnityEngine.UIElements.Button(action); button.enableRichText = false; button.text = text; return button; }
+        internal bool CanClose() { return site.CanClose(); }
+        internal void Dispose() { disposed = true; site.ForceClose(null); }
+        internal void Reattach()
+        {
+            disposed = false;
+            if (Window.style.display != DisplayStyle.None && state != null) Transition(state.Current, delegate { });
+        }
+        internal void DropSite(OsApp app)
+        {
+            if (!site.IsSite(app)) return;
+            site.ForceClose(delegate { content.Clear(); content.Add(Text("This site is no longer available.")); });
+        }
+        private void Close()
+        {
+            if (site.Dismiss()) Window.style.display = DisplayStyle.None;
+        }
         private bool Session()
         {
+            if (disposed) return false;
             try { if (checkSession != null) checkSession(); return true; }
-            catch (Exception e) { state = null; address.SetValueWithoutNotify(""); content.Clear(); notice.text = e.Message; return false; }
+            catch (Exception e) { site.ForceClose(delegate { state = null; address.SetValueWithoutNotify(""); content.Clear(); notice.text = e.Message; }); return false; }
         }
-        private void Move(int direction) { if (state != null && Session()) { state.Move(direction); Render(); } }
+        private void Move(int direction)
+        {
+            if (state == null || !Session()) return;
+            string next = state.Peek(direction);
+            if (next != null) Transition(next, delegate { state.Move(direction); });
+        }
         private static string Host(string url)
         {
             int end = url.IndexOfAny(new[] { '/', '?', '#' }); string host = (end < 0 ? url : url.Substring(0, end)).ToLowerInvariant();
@@ -106,18 +133,31 @@ namespace ObenseuerOS
             if (input.IndexOf(' ') >= 0 || input.IndexOf('.') < 0) Visit(Home + "/search?q=" + Uri.EscapeDataString(input));
             else Visit(input.Length > 300 ? input.Substring(0, 300) : input);
         }
-        internal bool Navigate(string url) { if (state == null) Open(); if (state == null || !Session()) return false; Window.style.display = DisplayStyle.Flex; Visit(url); if (state == null || state.Current != url) return false; Window.BringToFront(); return true; }
-        private void Visit(string url)
+        internal bool Navigate(string url) { if (state == null) Open(); if (state == null || !Session()) return false; Window.style.display = DisplayStyle.Flex; if (!Visit(url) || state == null || state.Current != url) return false; Window.BringToFront(); return true; }
+        private bool Visit(string url)
         {
-            if (state == null || !Session()) return;
-            try
+            if (state == null || !Session()) return false;
+            if (url == state.Current && site.IsCurrent(url)) { Render(); return true; }
+            return Transition(url, delegate
             {
-                bool changed = state.Visit(url, Title(url)); notice.text = "";
+                bool changed = state.Visit(url, Title(url));
                 if (changed && browser != null)
                     try { browser.Read("virus.browse", new JObject(new JProperty("host", Host(url)))); } catch (Exception) { }
+            });
+        }
+        private bool Transition(string url, Action commit)
+        {
+            if (state == null || !Session()) return false;
+            OsApp destination = BrowserSiteCatalog.Find(Os.Apps, Host(url));
+            bool committed = false;
+            bool done = site.Transition(destination, url, Session, delegate { commit(); committed = true; });
+            if (!done)
+            {
+                notice.text = committed ? "The destination became unavailable." : "Navigation was cancelled or the site could not be opened.";
+                if (committed && state != null) Render();
+                return false;
             }
-            catch (Exception e) { notice.text = "History was not saved: " + e.Message; }
-            Render();
+            notice.text = ""; Render(); return true;
         }
         private void Bookmark()
         {
@@ -129,7 +169,9 @@ namespace ObenseuerOS
         private void Render()
         {
             if (state == null || !Session()) return;
-            string url = state.Current; address.SetValueWithoutNotify(url); content.Clear();
+            string url = state.Current; address.SetValueWithoutNotify(url);
+            if (site.IsCurrent(url)) return;
+            content.Clear();
             string host = Host(url);
             if (host == Home)
             {

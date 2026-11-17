@@ -81,6 +81,10 @@ Toolkit desktop icons are generated from the existing SVG artwork. The public OS
 An offline wiki bundle may be placed in `wiki-offline/pages/` before packaging. The package includes files under `wiki-offline/`, including attribution and license files. No complete wiki bundle is included yet.
 
 
+### Native UI Toolkit mod sites (prototype)
+
+`Os.RegisterSite` accepts `OsSiteOptions.BuildUi` for a native site. The callback receives a page root and the URL suffix, including path, query and fragment, and returns an `OsSitePage` with optional `CanClose` and `OnClosed` callbacks for that page instance. The page root is built while detached; return null if no lifecycle callbacks are needed. If the builder throws before returning, it must clean up any resources it allocated. The browser checks `CanClose` before navigation or closing; `OnClosed(true)` indicates forced teardown. A site may also provide `Folder` for the legacy browser. Native callbacks are trusted in-process code, not sandboxed HTML. Existing HTML-only sites need a native port to open in the Toolkit browser.
+
 ### Native UI Toolkit mod apps (prototype)
 
 Mods can register a native app for the Toolkit desktop using `Os.RegisterApp`. Set exactly one of `Folder`, `OnOpen`, or `BuildUi`. The `BuildUi` callback receives a Unity `VisualElement` that the mod can fill with controls; an optional `CanClose` callback can prevent a user-requested close while the app has unsaved changes. Set `OnClosed` to an `Action<bool>` to be notified after a window closes; the argument is true for forced teardown. Store important state as it changes, since the game save may no longer be available during forced teardown. Set `OnEvent` to an `Action<string, string>` to receive the event name and JSON passed to `Os.Emit` while that app is open. For native apps, call `Os.Emit` on the Unity main thread. The callback runs synchronously on that thread. Native apps are trusted managed code and are not sandboxed. They are available only while the Toolkit desktop is open; legacy HTML apps have not been converted automatically.

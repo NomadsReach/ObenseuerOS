@@ -170,6 +170,7 @@ namespace ObenseuerOS
         internal bool Desktop = true;
         internal bool Pinned;
         internal bool Site;
+        internal Func<VisualElement, string, OsSitePage> BuildSite;
         internal string Host;
         internal string Description;
         internal string[] Keywords;

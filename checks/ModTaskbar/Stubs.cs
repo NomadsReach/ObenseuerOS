@@ -89,6 +89,7 @@ namespace UnityEngine.UIElements
         internal void CapturePointer(int id) { captured = id; }
         internal bool HasPointerCapture(int id) { return captured == id; }
         internal void ReleasePointer(int id) { if (captured == id) captured = -1; }
+        internal void Clear() { while (children.Count > 0) children[0].RemoveFromHierarchy(); }
         internal void Add(VisualElement child) { child.RemoveFromHierarchy(); children.Add(child); child.parent = this; }
         internal void Insert(int index, VisualElement child) { child.RemoveFromHierarchy(); children.Insert(index, child); child.parent = this; }
         internal void RemoveFromHierarchy() { if (parent != null) { parent.children.Remove(this); parent = null; } }
@@ -130,11 +131,13 @@ namespace ObenseuerCore.Ui
 namespace ObenseuerOS
 {
     using UnityEngine.UIElements;
+    internal sealed class OsSitePage { internal Func<bool> CanClose; internal Action<bool> OnClosed; }
     internal sealed class OsApp
     {
         internal string Id, Title, Icon;
         internal int Width, Height;
         internal Action<VisualElement> BuildUi;
+        internal Func<VisualElement, string, OsSitePage> BuildSite;
         internal Func<bool> CanClose;
         internal Action<bool> OnClosed;
     }

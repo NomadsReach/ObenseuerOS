@@ -19,6 +19,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
     private readonly Dictionary<string, Texture2D> iconTextures = new Dictionary<string, Texture2D>();
     private ToolkitModWindows modWindows;
     private ToolkitNotepad notepad;
+    private ToolkitBrowser browser;
     private VisualElement desktopRoot;
     private RectTransform pinnedTarget;
     private ToolkitNotifications notifications;
@@ -135,6 +136,12 @@ internal sealed class ToolkitPrototype : MonoBehaviour
             app.OnEvent, name, json);
     }
 
+    internal static void CloseNativeSite(OsApp app)
+    {
+        foreach (ToolkitPrototype prototype in new List<ToolkitPrototype>(active))
+            if (prototype != null && prototype.browser != null) prototype.browser.DropSite(app);
+    }
+
     internal static void CloseNative(OsApp app)
     {
         foreach (ToolkitPrototype prototype in new List<ToolkitPrototype>(active))
@@ -234,7 +241,6 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         ToolkitBets bets = new ToolkitBets(osStorage == null ? new TransactionClient("bets", null, null) : TransactionClients.ForSession("bets", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession), osStorage == null ? (Action)null : osStorage.CheckSession);
         news = new ToolkitNews(new NewsClient(osStorage == null ? (Func<Newtonsoft.Json.Linq.JObject, Newtonsoft.Json.Linq.JObject>)null : OsBridge.Reply, osStorage == null ? (Action)null : osStorage.CheckSession));
         ToolkitTerminal terminal = null;
-        ToolkitBrowser browser = null;
         ToolkitSecurity security = null;
         ToolkitTurva turva = null;
         ToolkitShady shady = null;
@@ -299,7 +305,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
                 return LaunchRegistered(LauncherCatalog.Find(LauncherCatalog.Select(Os.Apps, Os.ModId, VirusAv.Shows), app));
             },
             delegate(string path) { if (path == null) { notepad.Window.style.display = DisplayStyle.Flex; notepad.Window.BringToFront(); } else notepad.OpenPath(path); if (explorer != null) explorer.RefreshIfOpen(); });
-        canClose = delegate { return notepad.CanClose() && mail.CanClose() && (modWindows == null || modWindows.CanCloseAll()); };
+        canClose = delegate { return notepad.CanClose() && mail.CanClose() && browser.CanClose() && (modWindows == null || modWindows.CanCloseAll()); };
         ComputerApps.SetCloseGuard(transform.parent, canClose);
         VisualElement window = notepad.Window;
         VisualElement guardTile = null, turvaTile = null;
@@ -604,14 +610,18 @@ internal sealed class ToolkitPrototype : MonoBehaviour
     private void OnEnable()
     {
         if (notepad != null) notepad.ReattachDraft();
-        if (!(storage is OsNotepadStorage) || modWindows == null) return;
-        if (!active.Contains(this)) active.Add(this);
-        Os.SyncWindow();
+        if (storage is OsNotepadStorage && modWindows != null)
+        {
+            if (!active.Contains(this)) active.Add(this);
+            Os.SyncWindow();
+        }
+        if (browser != null) browser.Reattach();
     }
 
     private void OnDisable()
     {
         if (notepad != null) notepad.RetainDraft();
+        if (browser != null) browser.Dispose();
         active.Remove(this);
         if (modWindows != null) modWindows.CloseAll();
         if (notifications != null) notifications.Clear();

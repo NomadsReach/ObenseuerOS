@@ -63,6 +63,7 @@ internal static class Program
         Os.Apps.Add(callback);
         Check(mods.Open(callback)); mods.Close(callback, false);
         Check(callbackCount == 1 && !mods.Has(callback) && Os.CrashCount == 2);
+        SiteChecks.Run();
         Console.WriteLine("Native taskbar lifecycle checks passed");
     }
 }

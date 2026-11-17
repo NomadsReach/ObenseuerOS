@@ -263,8 +263,8 @@ namespace ObenseuerOS
             ordered.AddRange(Os.Apps.FindAll(x => x.ModId != Os.ModId));
             foreach (OsApp app in ordered)
             {
-                if (app.Site) sites.Add(SiteEntry(app));
-                else if (app.BuildUi == null && VirusAv.Shows(app.Id)) apps.Add(AppEntry(app));
+                if (app.Site && app.Folder != null) sites.Add(SiteEntry(app));
+                else if (!app.Site && app.BuildUi == null && VirusAv.Shows(app.Id)) apps.Add(AppEntry(app));
             }
             JObject list = new JObject(new JProperty("v", 1), new JProperty("type", "apps"), new JProperty("apps", apps), new JProperty("sites", sites));
             string user = OsDesktopState.UserName();
