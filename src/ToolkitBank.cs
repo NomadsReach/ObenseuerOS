@@ -169,7 +169,10 @@ namespace ObenseuerOS
         {
             content.Add(Text("Unpaid invoices"));
             List<string> labels = new List<string>(); List<int> ids = new List<int>();
-            foreach (JToken item in (JArray)invoices["items"])
+            JArray items = (JArray)invoices["items"];
+            int total = (int)invoices["total"];
+            if (total > items.Count) content.Add(Text("Showing " + items.Count + " of " + total + " invoices."));
+            foreach (JToken item in items)
             {
                 string label = "#" + (int)item["id"] + "  " + (string)item["debtor"] + "  " + Money(item["amount"], (string)item["currency"]) + ((bool)item["expired"] ? "  Expired" : "  Due in " + (int)item["daysLeft"] + " days");
                 content.Add(Text(label));

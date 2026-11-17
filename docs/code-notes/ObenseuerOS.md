@@ -111,3 +111,5 @@
 - `src/ToolkitBrowser.cs:ToolkitBrowser.Render`, `src/ToolkitEye.cs:ToolkitEye.OpenRoute`, `src/EyeRoute.cs:EyeRoute.Resolve` - EYEbook browser links select their existing native views, including URL-decoded search queries. Session checks precede routing, unknown paths show the home view, and the route only affects local UI state.
 
 - `src/OsModFiles.cs:OsModFiles.Open`, `src/ToolkitPrototype.cs:ToolkitPrototype.OpenFile`, `src/ToolkitNotepad.cs:ToolkitNotepad.OpenExternal` - A mod file request opens in the visible Toolkit Notepad using the current session storage. An already open document is brought forward without replacing edits; another file requires an explicit discard confirmation when the editor is dirty. The request returns Queued while confirmation is pending, and a failed read leaves existing text intact.
+
+- `src/ToolkitBank.cs:ToolkitBank.PaymentsPage` - The invoice bridge can return fewer items than its total; the Payments view reports that limit so missing invoices are not mistaken for an empty or complete list.
