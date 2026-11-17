@@ -136,6 +136,7 @@ namespace ObenseuerOS
         internal int Width, Height;
         internal Action<VisualElement> BuildUi;
         internal Func<bool> CanClose;
+        internal Action<bool> OnClosed;
     }
     internal static class Os
     {

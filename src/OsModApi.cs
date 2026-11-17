@@ -22,6 +22,7 @@ namespace ObenseuerOS
         public Action OnOpen;
         public Action<VisualElement> BuildUi;
         public Func<bool> CanClose;
+        public Action<bool> OnClosed;
         public Action<string, string> OnEvent;
     }
 
@@ -145,7 +146,7 @@ namespace ObenseuerOS
             {
                 if (!Accept("RegisterApp", modId)) return false;
                 if (options == null) return Refuse("RegisterApp", modId, false, "options must not be null");
-                if (!NativeAppRegistration.Valid(options.Folder != null, options.OnOpen != null, options.BuildUi != null, options.CanClose != null || options.OnEvent != null)) return Refuse("RegisterApp", modId, false, "set exactly one of Folder, OnOpen or BuildUi; CanClose and OnEvent require BuildUi");
+                if (!NativeAppRegistration.Valid(options.Folder != null, options.OnOpen != null, options.BuildUi != null, options.CanClose != null || options.OnClosed != null || options.OnEvent != null)) return Refuse("RegisterApp", modId, false, "set exactly one of Folder, OnOpen or BuildUi; CanClose, OnClosed and OnEvent require BuildUi");
                 string title = OsScope.CleanTitle(options.Title);
                 if (!CheckNew("RegisterApp", modId, appId, title)) return false;
                 if (CountOf(modId, false) >= OsScope.MaxAppsPerMod) return Refuse("RegisterApp", modId, false, "a mod may register 8 apps");
@@ -153,6 +154,7 @@ namespace ObenseuerOS
                 OsApp app = new OsApp(modId, appId, title, null, options.OnOpen);
                 app.BuildUi = options.BuildUi;
                 app.CanClose = options.CanClose;
+                app.OnClosed = options.OnClosed;
                 app.OnEvent = options.OnEvent;
                 app.Desktop = options.Desktop;
                 app.Pinned = options.Pinned;

@@ -9,10 +9,11 @@ internal static class Program
     private static void Main()
     {
         bool valid = true, allowClose = false;
+        int notifications = 0; bool forced = false;
         VisualElement windows = new VisualElement();
         ToolkitTaskbar taskbar = new ToolkitTaskbar(windows, name => null);
         ToolkitModWindows mods = new ToolkitModWindows(windows, () => valid); mods.SetTaskbar(taskbar);
-        OsApp app = new OsApp { Id = "one", Title = "One", BuildUi = content => content.Add(new Label("content")), CanClose = () => allowClose };
+        OsApp app = new OsApp { Id = "one", Title = "One", BuildUi = content => content.Add(new Label("content")), CanClose = () => allowClose, OnClosed = value => { notifications++; forced = value; } };
         Os.Apps.Add(app);
         Check(mods.Open(app) && mods.Has(app) && Os.OpenedCount == 1 && taskbar.Items.childCount == 1);
         VisualElement frame = windows[0]; frame.layout = new Rect(160, 40, 600, 450);
@@ -43,9 +44,9 @@ internal static class Program
         grip.Dispatch(new PointerDownEvent { button = 0, pointerId = 7, position = new Vector3(100, 100) });
         Check(grip.HasPointerCapture(7)); taskbar.Reset(); Check(!grip.HasPointerCapture(7));
 
-        mods.Close(app, false); Check(mods.Has(app) && taskbar.Items.childCount == 1 && Os.ClosedCount == 0);
+        mods.Close(app, false); Check(mods.Has(app) && taskbar.Items.childCount == 1 && Os.ClosedCount == 0 && notifications == 0);
         allowClose = true; mods.Close(app, false);
-        Check(!mods.Has(app) && taskbar.Items.childCount == 0 && windows.childCount == 0 && Os.ClosedCount == 1);
+        Check(!mods.Has(app) && taskbar.Items.childCount == 0 && windows.childCount == 0 && Os.ClosedCount == 1 && notifications == 1 && !forced);
         OsApp reentrant = new OsApp { Id = "two", Title = "Two" };
         reentrant.BuildUi = content => { Os.Apps.Remove(reentrant); mods.Close(reentrant, true); };
         Os.Apps.Add(reentrant);
@@ -54,7 +55,14 @@ internal static class Program
         Os.Apps.Add(broken);
         Check(!mods.Open(broken) && Os.CrashCount == 1 && windows.childCount == 0 && taskbar.Items.childCount == 0);
         allowClose = false; Check(mods.Open(app)); Check(((Color)windows[0].style.backgroundColor).r == 52f / 255f); valid = false; mods.Reconcile();
-        Check(!mods.Has(app) && windows.childCount == 0 && taskbar.Items.childCount == 0 && Os.ClosedCount == 2);
+        Check(!mods.Has(app) && windows.childCount == 0 && taskbar.Items.childCount == 0 && Os.ClosedCount == 2 && notifications == 2 && forced);
+        valid = true;
+        OsApp callback = new OsApp { Id = "callback", Title = "Callback", BuildUi = content => { } };
+        int callbackCount = 0;
+        callback.OnClosed = value => { callbackCount++; mods.Close(callback, true); throw new InvalidOperationException("callback failed"); };
+        Os.Apps.Add(callback);
+        Check(mods.Open(callback)); mods.Close(callback, false);
+        Check(callbackCount == 1 && !mods.Has(callback) && Os.CrashCount == 2);
         Console.WriteLine("Native taskbar lifecycle checks passed");
     }
 }

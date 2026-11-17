@@ -11,6 +11,7 @@ namespace ObenseuerOS
         private readonly VisualElement windows;
         private readonly Func<bool> valid;
         private ToolkitTaskbar taskbar;
+        private readonly HashSet<OsApp> ready = new HashSet<OsApp>();
         private readonly Dictionary<OsApp, VisualElement> opened = new Dictionary<OsApp, VisualElement>();
         internal ToolkitModWindows(VisualElement windows, Func<bool> valid) { this.windows = windows; this.valid = valid; }
         internal void SetTaskbar(ToolkitTaskbar value) { taskbar = value; }
@@ -34,6 +35,7 @@ namespace ObenseuerOS
                 if (taskbar != null) taskbar.Register(frame, app.Title, app.Icon ?? "", false);
                 app.BuildUi(content);
                 if (!valid() || !Os.Apps.Contains(app) || !opened.ContainsKey(app)) { Close(app, true); return false; }
+                ready.Add(app);
                 Os.Opened(app.Id);
                 return opened.ContainsKey(app);
             }
@@ -57,8 +59,14 @@ namespace ObenseuerOS
             VisualElement current;
             if (!opened.TryGetValue(app, out current) || current != frame) return;
             opened.Remove(app);
+            bool notify = ready.Remove(app);
             if (taskbar != null) taskbar.Unregister(frame);
             frame.RemoveFromHierarchy(); Os.Closed(app.Id);
+            if (notify && app.OnClosed != null)
+            {
+                try { app.OnClosed(force); }
+                catch (Exception e) { Os.Crash("native app " + app.Id + " close notification", e); }
+            }
         }
         internal void Reconcile()
         {
