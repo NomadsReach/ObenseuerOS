@@ -14,6 +14,7 @@ namespace ObenseuerOS
             internal bool Minimized, Maximized;
             internal StyleLength Left, Top, Right, Bottom, Width, Height;
             internal UnityEngine.UIElements.Button Maximize;
+            internal ToolkitWindowResize Resize;
         }
         internal readonly VisualElement Items;
         private readonly VisualElement windows;
@@ -45,6 +46,7 @@ namespace ObenseuerOS
                 else { Label text = new Label(title.Substring(0, 1)); text.enableRichText = false; text.style.color = Color.white; button.Add(text); }
                 button.style.display = DisplayStyle.None; entry.Button = button; Items.Add(button);
             }
+            entry.Resize = new ToolkitWindowResize(window, delegate { return !entry.Maximized; });
             VisualElement bar = window[0];
             UnityEngine.UIElements.Button minimize = new UnityEngine.UIElements.Button(delegate { Minimize(entry); });
             minimize.text = "−"; minimize.tooltip = "Minimize"; minimize.style.width = 40; minimize.style.height = 20; minimize.style.marginTop = 8;
@@ -67,6 +69,7 @@ namespace ObenseuerOS
         private void ToggleMaximize(Entry entry)
         {
             if (entry.Maximized) { RestoreBounds(entry); return; }
+            entry.Resize.Cancel();
             VisualElement window = entry.Window;
             entry.Left = window.style.left; entry.Top = window.style.top;
             entry.Right = window.style.right; entry.Bottom = window.style.bottom;
@@ -89,6 +92,7 @@ namespace ObenseuerOS
             Entry entry;
             if (!entries.TryGetValue(window, out entry)) return;
             entries.Remove(window);
+            if (entry.Resize != null) entry.Resize.Release();
             if (entry.Button != null) entry.Button.RemoveFromHierarchy();
         }
         internal void Click(VisualElement window, Action open)
@@ -114,7 +118,7 @@ namespace ObenseuerOS
         }
         private void Minimize(Entry entry)
         {
-            entry.Minimized = true; entry.Window.style.display = DisplayStyle.None; Refresh();
+            entry.Resize.Cancel(); entry.Minimized = true; entry.Window.style.display = DisplayStyle.None; Refresh();
         }
         private VisualElement Front()
         {
@@ -128,6 +132,7 @@ namespace ObenseuerOS
             foreach (Entry entry in entries.Values)
             {
                 bool visible = entry.Window.style.display != DisplayStyle.None;
+                if (!visible) entry.Resize.Cancel();
                 if (visible && entry.Minimized) entry.Minimized = false;
                 if (!visible && !entry.Minimized && entry.Maximized) RestoreBounds(entry);
                 if (entry.Button == null) continue;
@@ -138,7 +143,10 @@ namespace ObenseuerOS
         internal void Reset()
         {
             foreach (Entry entry in entries.Values)
+            {
+                entry.Resize.Cancel();
                 if (entry.Minimized) { entry.Minimized = false; entry.Window.style.display = DisplayStyle.Flex; }
+            }
             Refresh();
         }
     }

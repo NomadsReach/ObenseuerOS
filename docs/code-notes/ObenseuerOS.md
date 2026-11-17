@@ -125,3 +125,6 @@
 
 - `src/ToolkitTaskbar.cs:ToolkitTaskbar.ToggleMaximize`, `src/ToolkitTaskbar.cs:ToolkitTaskbar.RestoreBounds` - Built-in and native mod windows can fill the desktop window layer and restore their prior inline bounds. Title-bar dragging is suppressed while maximized, while its buttons remain interactive. Minimize preserves maximized state; closing a retained built-in window resets it on taskbar reconciliation. In-game layout and input remain unverified.
 - `checks/ModTaskbar/Program.cs:Program.Main` - Maximize checks exercise saved bounds and the local pointer gate against simplified UI stubs; they do not model Unity event propagation or the framework drag handler.
+
+- `src/ToolkitWindowResize.cs:ToolkitWindowResize`, `src/ToolkitTaskbar.cs:ToolkitTaskbar.Register` - Toolkit windows have a bottom-right resize grip using parent-local pointer coordinates and the existing desktop minimum of 360 by 240. Pointer capture ends on release, cancellation, lost capture, minimization, maximization, unregister, and host reset. Maximized windows cannot resize.
+- `checks/ModTaskbar/Program.cs:Program.Main` - Resize checks cover local bounds and capture-state decisions using simplified stubs; real Unity coordinate transforms, event propagation, pointer capture, and in-game input remain unverified.
