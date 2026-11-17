@@ -78,7 +78,7 @@ namespace ObenseuerOS
         internal void Hide() { Menu.style.display = DisplayStyle.None; }
         internal void Refresh() { Filter(search.value); }
 
-        internal void SetLaunchers(List<OsApp> entries, Func<OsApp, bool> opener)
+        internal void SetLaunchers(List<OsApp> entries, Func<OsApp, bool> opener, Func<OsApp, int, VisualElement> iconFor)
         {
             while (buttons.Count > names.Length) { int last = buttons.Count - 1; buttons[last].RemoveFromHierarchy(); buttons.RemoveAt(last); }
             launchers.Clear(); launchers.AddRange(entries); openLauncher = opener;
@@ -88,7 +88,7 @@ namespace ObenseuerOS
                 UnityEngine.UIElements.Button button = new UnityEngine.UIElements.Button(delegate { Launch(index); });
                 button.style.width = 96; button.style.height = 96; button.style.marginRight = 8; button.style.marginBottom = 8;
                 button.style.backgroundColor = (Color)new Color32(47, 102, 179, 255);
-                Label icon = new Label(launchers[i].Title.Substring(0, 1)); icon.style.color = Color.white; icon.style.fontSize = 28; icon.style.unityTextAlign = TextAnchor.MiddleCenter; button.Add(icon);
+                VisualElement icon = iconFor(launchers[i], 32); icon.style.alignSelf = Align.Center; button.Add(icon);
                 Label title = new Label(launchers[i].Title); title.style.color = Color.white; title.style.fontSize = 12; title.style.whiteSpace = WhiteSpace.Normal; button.Add(title);
                 buttons.Add(button); scroll.Add(button);
             }

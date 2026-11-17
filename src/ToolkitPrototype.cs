@@ -15,6 +15,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
     private static readonly string[] Icons = { "mail", "world", "folder-filled", "trash", "settings", "chart-line", "terminal-2", "notes", "building-bank", "news", "message-circle", "shopping-cart", "device-gamepad-2", "device-gamepad-2", "", "" };
     private static readonly List<ToolkitPrototype> active = new List<ToolkitPrototype>();
     private readonly List<Texture2D> textures = new List<Texture2D>();
+    private readonly Dictionary<string, Texture2D> iconTextures = new Dictionary<string, Texture2D>();
     private ToolkitModWindows modWindows;
     private ToolkitNotifications notifications;
     private VisualElement selected;
@@ -274,6 +275,9 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         windows.Add(eye.Window);
         windows.Add(bets.Window);
         ToolkitStart start = new ToolkitStart(Names, Icons, Texture, launch, delegate { if (canClose()) ComputerApps.Close(storage == null ? "os.toolkit-prototype" : "os.toolkit-os"); }, delegate(int index) { return index < 14 || installed(Ids[index]); });
+        VisualElement pinned = new VisualElement(); pinned.style.flexDirection = FlexDirection.Row;
+        Dictionary<OsApp, Label> pinnedBadges = new Dictionary<OsApp, Label>();
+        Action updateBadges = delegate { foreach (KeyValuePair<OsApp, Label> entry in pinnedBadges) entry.Value.text = entry.Key.Badge > 0 ? entry.Key.Badge.ToString() : ""; };
         List<OsApp> launchers = new List<OsApp>();
         List<VisualElement> launcherTiles = new List<VisualElement>();
         Func<OsApp, bool> openLauncher = delegate(OsApp app)
@@ -293,15 +297,24 @@ internal sealed class ToolkitPrototype : MonoBehaviour
                 try { osStorage.CheckSession(); current = LauncherCatalog.Select(Os.Apps, Os.ModId, VirusAv.Shows); }
                 catch (Exception) { }
             }
-            if (LauncherCatalog.Same(launchers, current)) return;
+            if (LauncherCatalog.Same(launchers, current)) { updateBadges(); return; }
             foreach (VisualElement old in launcherTiles) { if (selected == old) selected = null; old.RemoveFromHierarchy(); }
-            launcherTiles.Clear(); launchers = current;
+            launcherTiles.Clear(); pinned.Clear(); pinnedBadges.Clear(); launchers = current;
             foreach (OsApp entry in launchers)
             {
-                if (!entry.Desktop) continue;
                 OsApp app = entry;
+                if (entry.Pinned)
+                {
+                    UnityEngine.UIElements.Button pin = new UnityEngine.UIElements.Button(delegate { openLauncher(app); });
+                    pin.tooltip = entry.Title; pin.style.width = 40; pin.style.height = 36; pin.style.marginTop = 2;
+                    pin.style.paddingLeft = 2; pin.style.paddingRight = 2; pin.style.flexDirection = FlexDirection.Row;
+                    pin.Add(ModIcon(entry, 22));
+                    Label badge = new Label(); badge.style.color = Color.white; badge.style.backgroundColor = Color.red; badge.style.fontSize = 9;
+                    pin.Add(badge); pinnedBadges.Add(entry, badge); pinned.Add(pin);
+                }
+                if (!entry.Desktop) continue;
                 VisualElement tile = new VisualElement(); tile.style.width = 88; tile.style.height = 104; tile.style.alignItems = Align.Center;
-                Label icon = new Label(entry.Title.Substring(0, 1)); icon.style.color = Color.white; icon.style.fontSize = 36; icon.style.height = 52; icon.style.unityTextAlign = TextAnchor.MiddleCenter; tile.Add(icon);
+                VisualElement icon = ModIcon(entry, 48); icon.style.marginTop = 4; tile.Add(icon);
                 Label text = new Label(entry.Title); text.style.color = Color.white; text.style.fontSize = 12; text.style.unityTextAlign = TextAnchor.UpperCenter; text.style.whiteSpace = WhiteSpace.Normal; text.style.width = 80; text.style.marginTop = 4; tile.Add(text);
                 tile.RegisterCallback<ClickEvent>(delegate(ClickEvent e)
                 {
@@ -312,7 +325,8 @@ internal sealed class ToolkitPrototype : MonoBehaviour
                 });
                 launcherTiles.Add(tile); desktop.Add(tile);
             }
-            start.SetLaunchers(launchers, openLauncher);
+            start.SetLaunchers(launchers, openLauncher, ModIcon);
+            updateBadges();
         };
         Action updateGuard = delegate { guardTile.style.display = installed("pcguard") ? DisplayStyle.Flex : DisplayStyle.None; turvaTile.style.display = installed("turvapro") ? DisplayStyle.Flex : DisplayStyle.None; updateLaunchers(); start.Refresh(); };
         updateGuard(); desktop.schedule.Execute(updateGuard).Every(1000);
@@ -340,6 +354,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
             if (name == "world") icon.RegisterCallback<ClickEvent>(delegate(ClickEvent e) { if (e.button == 0) browser.Open(); });
             taskbar.Add(icon);
         }
+        taskbar.Add(pinned);
         VisualElement spacer = new VisualElement();
         spacer.style.flexGrow = 1;
         taskbar.Add(spacer);
@@ -403,8 +418,23 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         else money.text = "";
     }
 
+    private VisualElement ModIcon(OsApp app, int size)
+    {
+        Texture2D texture = string.IsNullOrEmpty(app.Icon) ? null : Texture(app.Icon);
+        if (texture != null)
+        {
+            Image image = new Image(); image.image = texture; image.scaleMode = ScaleMode.ScaleToFit;
+            image.style.width = size; image.style.height = size; return image;
+        }
+        Label label = new Label(app.Title.Substring(0, 1)); label.enableRichText = false; label.style.color = Color.white;
+        label.style.fontSize = size * 3 / 4; label.style.width = size; label.style.height = size;
+        label.style.unityTextAlign = TextAnchor.MiddleCenter; return label;
+    }
+
     private Texture2D Texture(string name)
     {
+        Texture2D cached;
+        if (iconTextures.TryGetValue(name, out cached)) return cached;
         using (Stream stream = typeof(ToolkitPrototype).Assembly.GetManifestResourceStream("desktop-icons/" + name + ".png"))
         {
             if (stream == null) return null;
@@ -414,6 +444,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
                 Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
                 if (!ImageConversion.LoadImage(texture, buffer.ToArray())) { Destroy(texture); return null; }
                 textures.Add(texture);
+                iconTextures[name] = texture;
                 return texture;
             }
         }
