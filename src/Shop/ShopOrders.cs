@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Newtonsoft.Json;
 using ObenseuerCore;
 
 namespace ObenseuerOS
@@ -73,9 +72,8 @@ namespace ObenseuerOS
         }
     }
 
-    internal static class ShopOrders
+    internal static partial class ShopOrders
     {
-        internal const int MaxLines = 12;
         internal const int MaxDelayMinutes = 1439;
         internal const int MinutesPerDay = 1440;
         internal const int MaxSaved = 200;
@@ -83,12 +81,8 @@ namespace ObenseuerOS
         internal const long MaxTotal = 16000000;
         internal const string Placed = "placed";
         internal const string Arrived = "arrived";
-        internal const string WalletPay = "wallet";
-        internal const string ViaParcel = "parcel";
-        internal const string ViaMail = "mail";
         internal const string StoreName = "Stalburg Shop";
         internal const string BankPrefix = "bank:";
-        internal const string ConflictText = "This order was already placed with different contents.";
 
         internal static void Attach()
         {
@@ -130,11 +124,6 @@ namespace ObenseuerOS
         internal static string OrderName(int n)
         {
             return "Order " + n.ToString("0000");
-        }
-
-        internal static bool LinesOk(int count)
-        {
-            return count >= 1 && count <= MaxLines;
         }
 
         internal static int ClampQty(int qty, int maxQty, int maxStack)
@@ -200,25 +189,6 @@ namespace ObenseuerOS
         {
             WorldTime now = WorldClock.Now;
             return now.Day * MinutesPerDay + now.Hour * 60 + now.Minute;
-        }
-
-        internal static string Fingerprint(List<ShopLine> lines, string tier, string pay, string via)
-        {
-            List<string> parts = new List<string>();
-            foreach (ShopLine line in lines) parts.Add(JsonConvert.SerializeObject(new object[] { line.Key, line.Qty }));
-            parts.Sort((a, b) => string.CompareOrdinal(a, b));
-            return JsonConvert.SerializeObject(new { lines = parts, tier = tier, pay = pay, via = via });
-        }
-
-        internal static OrderRec Saved(ShopSave state, string cid, string print)
-        {
-            foreach (OrderRec order in state.Orders)
-            {
-                if (order.Cid != cid) continue;
-                if (order.Print != print) throw new OsBridgeException("bad_args", ConflictText);
-                return order;
-            }
-            return null;
         }
 
         internal static void UnitPrice(ShopListing listing, ItemDef item, out int oc, out int rm)
