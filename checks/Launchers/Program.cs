@@ -26,6 +26,13 @@ internal static class Program
             Check(NativeAppRegistration.Valid(page, callback, ui, false) == one);
             Check(NativeAppRegistration.Valid(page, callback, ui, true) == (mode == 4));
         }
+        WindowVisibility windows = new WindowVisibility();
+        Check(!windows.Update(false, false));
+        Check(windows.Update(true, false) && windows.Visible);
+        Check(!windows.Update(true, true) && !windows.Update(false, true));
+        Check(windows.Update(false, false) && !windows.Visible);
+        Check(windows.Update(false, true) && windows.Visible);
+        Check(windows.Update(false, false) && !windows.Visible);
         Console.WriteLine("Launcher catalog checks passed");
     }
 }

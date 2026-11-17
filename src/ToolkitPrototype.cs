@@ -91,7 +91,11 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         ToolkitPrototype prototype = owner.AddComponent<ToolkitPrototype>();
         prototype.storage = storage;
         prototype.Build();
-        if (storage is OsNotepadStorage) active.Add(prototype);
+        if (storage is OsNotepadStorage)
+        {
+            if (!active.Contains(prototype)) active.Add(prototype);
+            Os.SyncWindow();
+        }
     }
 
     private void Build()
@@ -401,6 +405,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         }
         if (clock == null || money == null || Time.unscaledTime < nextStatusUpdate) return;
         nextStatusUpdate = Time.unscaledTime + 1f;
+        if (storage is OsNotepadStorage) Os.SyncWindow();
         if (modWindows != null) modWindows.Reconcile();
         if (notifications != null)
         {
@@ -450,15 +455,25 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        if (!(storage is OsNotepadStorage) || modWindows == null) return;
+        if (!active.Contains(this)) active.Add(this);
+        Os.SyncWindow();
+    }
+
     private void OnDisable()
     {
+        active.Remove(this);
         if (modWindows != null) modWindows.CloseAll();
         if (notifications != null) notifications.Clear();
+        if (storage is OsNotepadStorage) Os.SyncWindow();
     }
 
     private void OnDestroy()
     {
         active.Remove(this);
+        if (storage is OsNotepadStorage) Os.SyncWindow();
         if (virusFx != null) virusFx.Release();
         if (wiki != null) wiki.Release();
         if (news != null) news.Release();

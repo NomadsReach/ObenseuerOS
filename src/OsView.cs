@@ -57,11 +57,10 @@ namespace ObenseuerOS
         {
             if (!Available) return false;
             if ((view == null || view.IsClosed) && !Create()) return false;
-            bool was = Visible;
             view.PinTo(screen);
             if (!view.Show()) return false;
             Push();
-            if (!was) Os.RaiseWindow(true);
+            Os.SyncWindow();
             if (screen != null) Log.Debug("view.pinned", "OS pinned, projected bounds " + ProjectedBounds(screen));
             return true;
         }
@@ -73,7 +72,7 @@ namespace ObenseuerOS
             bool was = view.IsVisible;
             if (was) view.Hide();
             ComputerApps.Close(Os.AppId);
-            if (was) Os.RaiseWindow(false);
+            Os.SyncWindow();
         }
 
         internal static void Reset(bool mainMenu)

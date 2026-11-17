@@ -98,3 +98,5 @@
 - `src/ToolkitMail.cs:ToolkitMail.ShowMessage`, `src/MailDraft.cs:MailDraft.SetReply` - Eligible inbox messages provide inline replies through the existing mail bridge. Unsent replies are retained per message in the current save session, survive mailbox redraws and compose-draft clearing, and participate in the close guard. A successful send clears only that reply; failures retain it.
 - `src/ToolkitMail.cs:ToolkitMail.Delete` - Deleting a message with an unsent quick reply requires a second confirmation; replies are removed only after each corresponding deletion succeeds.
 - `src/MailClient.cs:MailClient.SendReply` - The reply draft is cleared only after the existing mail bridge returns a result; bridge failures leave the text available for the current session.
+
+- `src/OsModApi.cs:Os.SyncWindow`, `src/WindowVisibility.cs:WindowVisibility.Update`, `src/ToolkitPrototype.cs:ToolkitPrototype.OnEnable` - OS window events follow the combined visibility of the web and Toolkit desktops, so opening a second desktop or closing one while the other remains visible does not emit a duplicate transition. Toolkit session invalidation and host lifecycle refresh this state.

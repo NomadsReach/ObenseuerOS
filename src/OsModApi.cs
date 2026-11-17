@@ -60,6 +60,7 @@ namespace ObenseuerOS
         private static Action<OsAppArgs> appClosed;
         private static Action windowOpened;
         private static Action windowClosed;
+        private static readonly WindowVisibility WindowState = new WindowVisibility();
         private static readonly Dictionary<string, string> OpenApps = new Dictionary<string, string>();
         private static readonly Dictionary<string, RateLimit> ModLimits = new Dictionary<string, RateLimit>();
 
@@ -322,9 +323,10 @@ namespace ObenseuerOS
             }
         }
 
-        internal static void RaiseWindow(bool opened)
+        internal static void SyncWindow()
         {
-            if (opened) Raise(windowOpened, "WindowOpened");
+            if (!WindowState.Update(OsView.Visible, ToolkitPrototype.Visible)) return;
+            if (WindowState.Visible) Raise(windowOpened, "WindowOpened");
             else Raise(windowClosed, "WindowClosed");
         }
 
