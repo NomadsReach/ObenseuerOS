@@ -130,3 +130,6 @@
 - `checks/ModTaskbar/Program.cs:Program.Main` - Resize checks cover local bounds and capture-state decisions using simplified stubs; real Unity coordinate transforms, event propagation, pointer capture, and in-game input remain unverified.
 
 - `src/ToolkitTaskbar.cs:ToolkitTaskbar.Register`, `src/ToolkitTaskbar.cs:ToolkitTaskbar.Unregister` - The desktop supplies its styled grip to the framework resize API and disposes the returned handle when removing a window. The public checks compile the framework handle against UI stubs and Unity managed references.
+
+- `src/ToolkitDesktopMenu.cs:ToolkitDesktopMenu` opens the desktop context menu only on the empty desktop and routes wallpaper, settings, and refresh actions to the existing Toolkit state.
+- `src/ToolkitSettings.cs:SelectWallpaper` shares wallpaper selection between Control Panel and the desktop menu while retaining the saved preference.

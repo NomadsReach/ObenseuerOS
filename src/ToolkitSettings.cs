@@ -51,14 +51,31 @@ namespace ObenseuerOS
             {
                 int index = names.IndexOf(e.newValue);
                 if (index < 0 || index >= keys.Count) return;
-                selected = keys[index]; PlayerPrefs.SetString(Preference, selected);
-                ClearTexture(); background.image = null; shown = null; revision = -1; Apply();
+                SelectWallpaper(keys[index]);
             });
             body.Add(choice); Window.Add(body);
             Refresh();
         }
 
         internal void Open() { Refresh(); Window.style.display = DisplayStyle.Flex; Window.BringToFront(); }
+
+        internal List<KeyValuePair<string, string>> Wallpapers()
+        {
+            Refresh();
+            List<KeyValuePair<string, string>> result = new List<KeyValuePair<string, string>>();
+            for (int i = 0; i < keys.Count; i++)
+                if (names[i] != "Saved wallpaper (unavailable)") result.Add(new KeyValuePair<string, string>(keys[i], names[i]));
+            return result;
+        }
+
+        internal void SelectWallpaper(string key)
+        {
+            int index = keys.IndexOf(key);
+            if (index < 0 || names[index] == "Saved wallpaper (unavailable)") return;
+            selected = key; PlayerPrefs.SetString(Preference, selected);
+            choice.SetValueWithoutNotify(names[index]);
+            ClearTexture(); background.image = null; shown = null; revision = -1; Apply();
+        }
 
         internal void Refresh()
         {

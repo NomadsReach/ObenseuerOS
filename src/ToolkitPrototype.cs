@@ -470,6 +470,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         close.style.width = 120;
         close.style.height = 40;
         root.Add(close);
+        new ToolkitDesktopMenu(root, desktop, settings, delegate { launch(4); }, delegate { updateGuard(); settings.Refresh(); });
     }
 
     private void Update()
