@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using ObenseuerCore.Ui;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -14,7 +15,7 @@ namespace ObenseuerOS
             internal bool Minimized, Maximized;
             internal StyleLength Left, Top, Right, Bottom, Width, Height;
             internal UnityEngine.UIElements.Button Maximize;
-            internal ToolkitWindowResize Resize;
+            internal ToolkitResizeHandle Resize;
         }
         internal readonly VisualElement Items;
         private readonly VisualElement windows;
@@ -46,7 +47,11 @@ namespace ObenseuerOS
                 else { Label text = new Label(title.Substring(0, 1)); text.enableRichText = false; text.style.color = Color.white; button.Add(text); }
                 button.style.display = DisplayStyle.None; entry.Button = button; Items.Add(button);
             }
-            entry.Resize = new ToolkitWindowResize(window, delegate { return !entry.Maximized; });
+            Label grip = new Label("◢"); grip.enableRichText = false; grip.tooltip = "Resize";
+            grip.style.position = Position.Absolute; grip.style.right = 0; grip.style.bottom = 0;
+            grip.style.width = 16; grip.style.height = 16; grip.style.color = (Color)new Color32(110, 130, 150, 255);
+            grip.style.unityTextAlign = TextAnchor.MiddleCenter; window.Add(grip);
+            entry.Resize = ToolkitUi.MakeResizable(window, grip, 360, 240, delegate { return !entry.Maximized; });
             VisualElement bar = window[0];
             UnityEngine.UIElements.Button minimize = new UnityEngine.UIElements.Button(delegate { Minimize(entry); });
             minimize.text = "−"; minimize.tooltip = "Minimize"; minimize.style.width = 40; minimize.style.height = 20; minimize.style.marginTop = 8;
@@ -92,7 +97,7 @@ namespace ObenseuerOS
             Entry entry;
             if (!entries.TryGetValue(window, out entry)) return;
             entries.Remove(window);
-            if (entry.Resize != null) entry.Resize.Release();
+            if (entry.Resize != null) entry.Resize.Dispose();
             if (entry.Button != null) entry.Button.RemoveFromHierarchy();
         }
         internal void Click(VisualElement window, Action open)

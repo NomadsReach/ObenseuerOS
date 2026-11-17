@@ -43,6 +43,7 @@
     <Compile Include="..\..\src\Ugui\MinesweeperInput.cs" />
     <Compile Include="..\..\src\Ugui\NotepadStorage.cs" />
     <Compile Include="$(FrameworkSource)/src/Ui/ToolkitUi.cs" />
+    <Compile Include="$(FrameworkSource)/src/Ui/ToolkitResizeHandle.cs" />
     <Compile Include="$(FrameworkSource)/src/Ui/ToolkitWindowBounds.cs" />
   </ItemGroup>
 </Project>

@@ -81,6 +81,7 @@ namespace UnityEngine.UIElements
         internal VisualElement this[int index] { get { return children[index]; } }
         internal void RegisterCallback<T>(Action<T> callback) { callbacks[typeof(T)] = callback; }
         internal void RegisterCallback<T>(Action<T> callback, TrickleDown phase) { RegisterCallback(callback); }
+        internal void UnregisterCallback<T>(Action<T> callback) { callbacks.Remove(typeof(T)); }
         internal void Dispatch<T>(T e) { Delegate callback; if (callbacks.TryGetValue(typeof(T), out callback)) ((Action<T>)callback)(e); }
         internal Vector2 WorldToLocal(Vector2 value) { return value; }
         internal void CapturePointer(int id) { captured = id; }
@@ -115,7 +116,14 @@ namespace UnityEngine.UIElements
 namespace ObenseuerCore.Ui
 {
     using UnityEngine.UIElements;
-    internal static class ToolkitUi { internal static void MakeDraggable(VisualElement window, VisualElement bar) { } }
+    internal static class ToolkitUi
+    {
+        internal static void MakeDraggable(VisualElement window, VisualElement bar) { }
+        internal static ToolkitResizeHandle MakeResizable(VisualElement window, VisualElement grip, float minWidth, float minHeight, Func<bool> allowed)
+        {
+            return new ToolkitResizeHandle(window, grip, minWidth, minHeight, allowed);
+        }
+    }
 }
 namespace ObenseuerOS
 {

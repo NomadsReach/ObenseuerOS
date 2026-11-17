@@ -4,6 +4,7 @@
     <Compile Include="..\..\src\ToolkitModWindows.cs" />
     <Compile Include="..\..\src\ToolkitTaskbar.cs" />
     <Compile Include="..\..\src\ToolkitTaskbarState.cs" />
-    <Compile Include="..\..\src\ToolkitWindowResize.cs" />
+    <Compile Include="$(FrameworkSource)/src/Ui/ToolkitResizeHandle.cs" />
+    <Compile Include="$(FrameworkSource)/src/Ui/ToolkitWindowBounds.cs" />
   </ItemGroup>
 </Project>
