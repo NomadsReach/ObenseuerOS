@@ -46,7 +46,7 @@ namespace ObenseuerOS
             unread = panel.style.display == DisplayStyle.None; Refresh();
             VisualElement popup = Entry(notice); popups.Add(popup);
             while (popups.childCount > 4) popups.RemoveAt(0);
-            popup.schedule.Execute(delegate { popup.RemoveFromHierarchy(); }).StartingIn(6000);
+            popup.schedule.Execute(delegate() { popup.RemoveFromHierarchy(); }).StartingIn(6000);
         }
         private void Refresh()
         {
