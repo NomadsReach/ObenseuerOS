@@ -5,6 +5,7 @@ using System.Reflection;
 using BepInEx;
 using Newtonsoft.Json.Linq;
 using ObenseuerCore;
+using UnityEngine.UIElements;
 
 namespace ObenseuerOS
 {
@@ -19,6 +20,8 @@ namespace ObenseuerOS
         public bool Desktop = true;
         public bool Pinned;
         public Action OnOpen;
+        public Action<VisualElement> BuildUi;
+        public Func<bool> CanClose;
     }
 
     public sealed class OsAppArgs
@@ -112,7 +115,7 @@ namespace ObenseuerOS
         {
             get
             {
-                return OsView.Visible;
+                return OsView.Visible || ToolkitPrototype.Visible;
             }
         }
 
@@ -140,12 +143,14 @@ namespace ObenseuerOS
             {
                 if (!Accept("RegisterApp", modId)) return false;
                 if (options == null) return Refuse("RegisterApp", modId, false, "options must not be null");
-                if ((options.Folder == null) == (options.OnOpen == null)) return Refuse("RegisterApp", modId, false, "set exactly one of Folder (a page app) or OnOpen (a launcher app)");
+                if (!NativeAppRegistration.Valid(options.Folder != null, options.OnOpen != null, options.BuildUi != null, options.CanClose != null)) return Refuse("RegisterApp", modId, false, "set exactly one of Folder, OnOpen or BuildUi; CanClose requires BuildUi");
                 string title = OsScope.CleanTitle(options.Title);
                 if (!CheckNew("RegisterApp", modId, appId, title)) return false;
                 if (CountOf(modId, false) >= OsScope.MaxAppsPerMod) return Refuse("RegisterApp", modId, false, "a mod may register 8 apps");
                 if (options.Width < 0 || options.Height < 0) return Refuse("RegisterApp", modId, false, "width and height are 0 for the default or a size in pixels");
                 OsApp app = new OsApp(modId, appId, title, null, options.OnOpen);
+                app.BuildUi = options.BuildUi;
+                app.CanClose = options.CanClose;
                 app.Desktop = options.Desktop;
                 app.Pinned = options.Pinned;
                 app.Width = Size(options.Width, 360);
@@ -257,6 +262,7 @@ namespace ObenseuerOS
                 OsApp app = OwnedApp("OpenApp", modId, appId);
                 if (app == null) return OsResult.Invalid;
                 if (app.Site) return Refuse("OpenApp", modId, OsResult.Invalid, appId + " is a site, it opens in Stalburg Web");
+                if (app.BuildUi != null) return ToolkitPrototype.OpenNative(app) ? OsResult.Ok : OsResult.Unavailable;
                 if (!IsAvailable) return OsResult.Unavailable;
                 return OsView.OpenApp(appId);
             }

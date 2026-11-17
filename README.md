@@ -79,3 +79,19 @@ The sample mod in `examples\HelloOs` builds against these outputs.
 Toolkit desktop icons are generated from the existing SVG artwork. The public OS workflow publishes them as the `toolkit-desktop-icons` artifact; place those PNGs in `prototype-icons/` before building the OS. The source generator is `tools/desktop-icons.py` and requires Playwright with Chromium.
 
 An offline wiki bundle may be placed in `wiki-offline/pages/` before packaging. The package includes files under `wiki-offline/`, including attribution and license files. No complete wiki bundle is included yet.
+
+
+### Native UI Toolkit mod apps (prototype)
+
+Mods can register a native app for the Toolkit desktop using `Os.RegisterApp`. Set exactly one of `Folder`, `OnOpen`, or `BuildUi`. The `BuildUi` callback receives a Unity `VisualElement` that the mod can fill with controls; an optional `CanClose` callback can prevent a user-requested close while the app has unsaved changes. Native apps are trusted managed code and are not sandboxed. They are available only while the Toolkit desktop is open; legacy HTML apps have not been converted automatically.
+
+```csharp
+Os.RegisterApp("my.mod", "my.mod.hello", new OsAppOptions
+{
+    Title = "Hello",
+    BuildUi = delegate(UnityEngine.UIElements.VisualElement content)
+    {
+        content.Add(new UnityEngine.UIElements.Label("Hello from a mod"));
+    }
+});
+```

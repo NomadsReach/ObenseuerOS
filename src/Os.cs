@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using ObenseuerCore;
+using UnityEngine.UIElements;
 
 namespace ObenseuerOS
 {
@@ -156,6 +157,8 @@ namespace ObenseuerOS
         internal readonly string Title;
         internal string Icon;
         internal readonly Action OnOpen;
+        internal Action<VisualElement> BuildUi;
+        internal Func<bool> CanClose;
         internal string IconFile;
         internal string Folder;
         internal string Page;

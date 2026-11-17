@@ -276,7 +276,7 @@ namespace ObenseuerOS
             foreach (OsApp app in ordered)
             {
                 if (app.Site) sites.Add(SiteEntry(app));
-                else if (VirusAv.Shows(app.Id)) apps.Add(AppEntry(app));
+                else if (app.BuildUi == null && VirusAv.Shows(app.Id)) apps.Add(AppEntry(app));
             }
             JObject list = new JObject(new JProperty("v", 1), new JProperty("type", "apps"), new JProperty("apps", apps), new JProperty("sites", sites));
             string user = UserName();

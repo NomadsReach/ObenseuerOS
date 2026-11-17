@@ -15,6 +15,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
     private static readonly string[] Icons = { "mail", "world", "folder-filled", "trash", "settings", "chart-line", "terminal-2", "notes", "building-bank", "news", "message-circle", "shopping-cart", "device-gamepad-2", "device-gamepad-2", "", "" };
     private static readonly List<ToolkitPrototype> active = new List<ToolkitPrototype>();
     private readonly List<Texture2D> textures = new List<Texture2D>();
+    private ToolkitModWindows modWindows;
     private VisualElement selected;
     private NotepadStorage storage;
     private ToolkitExplorer explorer;
@@ -43,6 +44,37 @@ internal sealed class ToolkitPrototype : MonoBehaviour
             }
             return false;
         }
+    }
+
+    private bool HasSession()
+    {
+        if (!isActiveAndEnabled || !gameObject.activeInHierarchy) return false;
+        OsNotepadStorage current = storage as OsNotepadStorage;
+        if (current == null) return false;
+        try { current.CheckSession(); return true; }
+        catch (Exception) { return false; }
+    }
+
+    internal static bool OpenNative(OsApp app)
+    {
+        foreach (ToolkitPrototype prototype in new List<ToolkitPrototype>(active))
+        {
+            if (prototype == null || prototype.modWindows == null) continue;
+            prototype.modWindows.Reconcile();
+            if (prototype.modWindows.Has(app) && prototype.HasSession()) return prototype.modWindows.Open(app);
+        }
+        for (int i = active.Count - 1; i >= 0; i--)
+        {
+            ToolkitPrototype prototype = active[i];
+            if (prototype != null && prototype.modWindows != null && prototype.HasSession()) return prototype.modWindows.Open(app);
+        }
+        return false;
+    }
+
+    internal static void CloseNative(OsApp app)
+    {
+        foreach (ToolkitPrototype prototype in new List<ToolkitPrototype>(active))
+            if (prototype != null && prototype.modWindows != null) prototype.modWindows.Close(app, true);
     }
 
     internal static void Open(RectTransform host)
@@ -167,7 +199,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
                 return false;
             },
             delegate(string path) { if (path == null) { notepad.Window.style.display = DisplayStyle.Flex; notepad.Window.BringToFront(); } else notepad.OpenPath(path); if (explorer != null) explorer.RefreshIfOpen(); });
-        Func<bool> canClose = delegate { return notepad.CanClose() && mail.CanClose(); };
+        Func<bool> canClose = delegate { return notepad.CanClose() && mail.CanClose() && (modWindows == null || modWindows.CanCloseAll()); };
         ComputerApps.SetCloseGuard(transform.parent, canClose);
         VisualElement window = notepad.Window;
         VisualElement guardTile = null, turvaTile = null;
@@ -217,6 +249,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         windows.style.top = 0;
         windows.style.bottom = 40;
         root.Add(windows);
+        modWindows = new ToolkitModWindows(windows, HasSession);
         windows.Add(window);
         windows.Add(minesweeper.Window);
         windows.Add(solitaire.Window);
@@ -247,7 +280,8 @@ internal sealed class ToolkitPrototype : MonoBehaviour
             if (osStorage == null) return false;
             try { osStorage.CheckSession(); }
             catch (Exception) { return false; }
-            if (app == null || !Os.Apps.Contains(app) || app.ModId == Os.ModId || app.Site || app.OnOpen == null || !VirusAv.Shows(app.Id)) return false;
+            if (app == null || !Os.Apps.Contains(app) || app.ModId == Os.ModId || app.Site || (app.OnOpen == null && app.BuildUi == null) || !VirusAv.Shows(app.Id)) return false;
+            if (app.BuildUi != null) return OpenNative(app);
             Os.Opened(app.Id); return true;
         };
         Action updateLaunchers = delegate
@@ -348,6 +382,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         }
         if (clock == null || money == null || Time.unscaledTime < nextStatusUpdate) return;
         nextStatusUpdate = Time.unscaledTime + 1f;
+        if (modWindows != null) modWindows.Reconcile();
         if (WorldClock.IsAvailable)
         {
             WorldTime now = WorldClock.Now;
@@ -373,6 +408,11 @@ internal sealed class ToolkitPrototype : MonoBehaviour
                 return texture;
             }
         }
+    }
+
+    private void OnDisable()
+    {
+        if (modWindows != null) modWindows.CloseAll();
     }
 
     private void OnDestroy()

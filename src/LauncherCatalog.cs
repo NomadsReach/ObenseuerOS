@@ -9,7 +9,7 @@ namespace ObenseuerOS
         {
             List<OsApp> result = new List<OsApp>();
             foreach (OsApp app in apps)
-                if (app != null && app.ModId != osOwner && !app.Site && app.OnOpen != null && visible(app.Id)) result.Add(app);
+                if (app != null && app.ModId != osOwner && !app.Site && (app.OnOpen != null || app.BuildUi != null) && visible(app.Id)) result.Add(app);
             return result;
         }
         internal static bool Same(List<OsApp> first, List<OsApp> second)

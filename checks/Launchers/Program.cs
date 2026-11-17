@@ -4,7 +4,7 @@ using ObenseuerOS;
 
 namespace ObenseuerOS
 {
-    internal sealed class OsApp { internal string Id, ModId, Title; internal bool Site, Desktop; internal Action OnOpen; }
+    internal sealed class OsApp { internal string Id, ModId, Title; internal bool Site, Desktop; internal Action OnOpen, BuildUi; }
 }
 internal static class Program
 {
@@ -13,11 +13,19 @@ internal static class Program
     {
         OsApp launcher = new OsApp { Id = "mod-tool", ModId = "mod", Title = "Tool", Desktop = true, OnOpen = delegate { } };
         OsApp hidden = new OsApp { Id = "hidden", ModId = "mod", Title = "Hidden", OnOpen = delegate { } };
-        List<OsApp> apps = new List<OsApp> { launcher, hidden, new OsApp { Id = "built-in", ModId = "os", OnOpen = delegate { } }, new OsApp { Id = "site", ModId = "mod", Site = true, OnOpen = delegate { } }, new OsApp { Id = "html", ModId = "mod" } };
+        OsApp native = new OsApp { Id = "native", ModId = "mod", BuildUi = delegate { } };
+        List<OsApp> apps = new List<OsApp> { launcher, hidden, native, new OsApp { Id = "built-in", ModId = "os", OnOpen = delegate { } }, new OsApp { Id = "site", ModId = "mod", Site = true, OnOpen = delegate { } }, new OsApp { Id = "html", ModId = "mod" } };
         List<OsApp> first = LauncherCatalog.Select(apps, "os", id => id != "hidden");
-        Check(first.Count == 1 && object.ReferenceEquals(first[0], launcher));
+        Check(first.Count == 2 && object.ReferenceEquals(first[0], launcher) && object.ReferenceEquals(first[1], native));
         Check(LauncherCatalog.Same(first, LauncherCatalog.Select(apps, "os", id => id != "hidden")));
         apps.Remove(launcher); Check(!LauncherCatalog.Same(first, LauncherCatalog.Select(apps, "os", id => true)));
+        for (int mode = 0; mode < 8; mode++)
+        {
+            bool page = (mode & 1) != 0, callback = (mode & 2) != 0, ui = (mode & 4) != 0;
+            bool one = mode == 1 || mode == 2 || mode == 4;
+            Check(NativeAppRegistration.Valid(page, callback, ui, false) == one);
+            Check(NativeAppRegistration.Valid(page, callback, ui, true) == (mode == 4));
+        }
         Console.WriteLine("Launcher catalog checks passed");
     }
 }
