@@ -138,3 +138,5 @@
 
 - `src/ToolkitPrototype.cs:Build` applies framework appearance changes to the shell and unsubscribes in `OnDestroy`; `src/ToolkitTaskbar.cs:SetTheme` applies the current palette to existing and newly registered window frames.
 - `src/ToolkitSettings.cs:SetTheme` styles Control Panel and updates the wallpaper fallback; explicit plain wallpaper keeps its original blue in both themes. App-specific content remains separately styled.
+
+- `src/ToolkitNotepad.cs:SetTheme` applies the existing OS light and dark palette to the editor, menu, status and open dialogs without changing their content. Dynamic menus and dialogs use the active palette when created; editor and dialog rendering still need in-game verification.

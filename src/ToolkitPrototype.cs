@@ -480,7 +480,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
             money.style.color = ink; clock.style.color = ink; notifications.Tray.style.color = ink;
             for (int i = 0; i < 3; i++) { Image icon = taskbar[i] as Image; if (icon != null && icon != startIcon) icon.tintColor = ink; }
             start.Menu.style.backgroundColor = dark ? (Color)new Color32(21, 40, 63, 255) : (Color)new Color32(31, 63, 102, 255);
-            settings.SetTheme(dark); windowTaskbar.SetTheme(dark);
+            settings.SetTheme(dark); notepad.SetTheme(dark); windowTaskbar.SetTheme(dark);
         };
         UiAppearance.Changed += appearanceChanged;
         appearanceChanged(UiAppearance.Theme);

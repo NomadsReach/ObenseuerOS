@@ -12,11 +12,14 @@ namespace ObenseuerOS
         private readonly TextField text;
         private readonly Label title;
         private readonly Label status;
+        private readonly VisualElement menuBar;
         private VisualElement popup;
+        private bool popupIsMenu;
         private string path;
         private string saved = "";
         private string armed = "";
         private bool wrap = true;
+        private bool dark;
 
         internal readonly VisualElement Window;
 
@@ -53,13 +56,12 @@ namespace ObenseuerOS
             bar.Add(close);
             Window.Add(bar);
             ToolkitUi.MakeDraggable(Window, bar);
-            VisualElement menu = new VisualElement();
-            menu.style.height = 28;
-            menu.style.flexDirection = FlexDirection.Row;
-            menu.style.backgroundColor = Color.white;
-            menu.Add(Button("File", FileMenu));
-            menu.Add(Button("Edit", EditMenu));
-            Window.Add(menu);
+            menuBar = new VisualElement();
+            menuBar.style.height = 28;
+            menuBar.style.flexDirection = FlexDirection.Row;
+            menuBar.Add(Button("File", FileMenu));
+            menuBar.Add(Button("Edit", EditMenu));
+            Window.Add(menuBar);
             text = new TextField();
             text.multiline = true;
             text.style.flexGrow = 1;
@@ -85,6 +87,43 @@ namespace ObenseuerOS
 
         internal bool CanClose() { return Discard("Close"); }
 
+        internal void SetTheme(bool value)
+        {
+            dark = value;
+            Color content = Content();
+            menuBar.style.backgroundColor = Pane();
+            foreach (VisualElement child in menuBar.Children()) StylePopup(child);
+            StyleField(text);
+            status.style.backgroundColor = content;
+            status.style.color = dark ? (Color)new Color32(163, 163, 163, 255) : (Color)new Color32(107, 107, 107, 255);
+            if (popup != null) { popup.style.backgroundColor = popupIsMenu ? Content() : Pane(); StylePopup(popup); }
+        }
+
+        private Color Ink() { return dark ? (Color)new Color32(236, 236, 236, 255) : Color.black; }
+        private Color Content() { return dark ? (Color)new Color32(30, 30, 30, 255) : Color.white; }
+        private Color Pane() { return dark ? (Color)new Color32(38, 38, 38, 255) : (Color)new Color32(243, 246, 250, 255); }
+
+        private void StyleField(TextField field)
+        {
+            field.style.color = Ink(); field.style.backgroundColor = Content();
+            VisualElement input = field.Q<VisualElement>("unity-text-input");
+            if (input != null) { input.style.color = Ink(); input.style.backgroundColor = Content(); }
+        }
+
+        private void StylePopup(VisualElement element)
+        {
+            TextField field = element as TextField;
+            if (field != null) { StyleField(field); return; }
+            if (element is UnityEngine.UIElements.Button)
+            {
+                element.style.color = Ink(); element.style.backgroundColor = Color.clear; return;
+            }
+            if (element is Label) { element.style.color = Ink(); return; }
+            ScrollView scroll = element as ScrollView;
+            VisualElement parent = scroll == null ? element : scroll.contentContainer;
+            foreach (VisualElement child in parent.Children()) StylePopup(child);
+        }
+
         internal void OpenPath(string file)
         {
             Window.style.display = DisplayStyle.Flex;
@@ -105,6 +144,7 @@ namespace ObenseuerOS
             question.enableRichText = false; question.style.whiteSpace = WhiteSpace.Normal; panel.Add(question);
             panel.Add(Button("Discard and open", delegate { Load(file); }));
             panel.Add(Button("Cancel", delegate { HidePopup(); status.text = "Open cancelled."; }));
+            StylePopup(panel);
             status.text = "Unsaved changes. Confirm before opening the requested file.";
             return OsResult.Queued;
         }
@@ -122,10 +162,12 @@ namespace ObenseuerOS
             Window.style.display = DisplayStyle.None;
         }
 
-        private static UnityEngine.UIElements.Button Button(string label, Action action)
+        private UnityEngine.UIElements.Button Button(string label, Action action)
         {
             UnityEngine.UIElements.Button result = new UnityEngine.UIElements.Button(action);
             result.text = label;
+            result.RegisterCallback<PointerEnterEvent>(delegate { result.style.backgroundColor = dark ? (Color)new Color32(120, 170, 230, 77) : (Color)new Color32(170, 200, 240, 89); });
+            result.RegisterCallback<PointerLeaveEvent>(delegate { result.style.backgroundColor = Color.clear; });
             return result;
         }
 
@@ -150,31 +192,33 @@ namespace ObenseuerOS
             popup = null;
         }
 
-        private VisualElement Popup(float x, float width)
+        private VisualElement Popup(float x, float width, bool isMenu = false)
         {
             HidePopup();
+            popupIsMenu = isMenu;
             popup = new VisualElement();
             popup.style.position = UnityEngine.UIElements.Position.Absolute;
             popup.style.left = x;
             popup.style.top = 64;
             popup.style.width = width;
-            popup.style.backgroundColor = (Color)new Color32(245, 245, 245, 255);
+            popup.style.backgroundColor = isMenu ? Content() : Pane();
             Window.Add(popup);
             return popup;
         }
 
         private void FileMenu()
         {
-            VisualElement menu = Popup(8, 150);
+            VisualElement menu = Popup(8, 150, true);
             menu.Add(Button("New", delegate { HidePopup(); New(); }));
             menu.Add(Button("Open...", delegate { HidePopup(); Open(); }));
             menu.Add(Button("Save", delegate { HidePopup(); Save(); }));
             menu.Add(Button("Save as...", delegate { HidePopup(); SaveAs(); }));
+            StylePopup(menu);
         }
 
         private void EditMenu()
         {
-            VisualElement menu = Popup(50, 150);
+            VisualElement menu = Popup(50, 150, true);
             menu.Add(Button("Select all", delegate { HidePopup(); text.Focus(); text.SelectAll(); }));
             menu.Add(Button(wrap ? "✓ Word wrap" : "Word wrap", delegate
             {
@@ -183,6 +227,7 @@ namespace ObenseuerOS
                 VisualElement input = text.Q<VisualElement>("unity-text-input");
                 if (input != null) input.style.whiteSpace = wrap ? WhiteSpace.Normal : WhiteSpace.NoWrap;
             }));
+            StylePopup(menu);
         }
 
         private void New()
@@ -221,6 +266,7 @@ namespace ObenseuerOS
                     }));
                 }
                 panel.Add(Button("Cancel", HidePopup));
+                StylePopup(panel);
             }
             catch (Exception e) { status.text = "Not opened: " + e.Message; }
         }
@@ -261,6 +307,7 @@ namespace ObenseuerOS
             Action commit = delegate { CommitAs(name.value.Trim()); };
             panel.Add(Button("Save", commit));
             panel.Add(Button("Cancel", delegate { armed = ""; HidePopup(); }));
+            StylePopup(panel);
             name.RegisterCallback<KeyDownEvent>(delegate(KeyDownEvent e)
             {
                 if (e.keyCode != KeyCode.Return && e.keyCode != KeyCode.KeypadEnter) return;
