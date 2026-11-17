@@ -19,7 +19,7 @@ namespace ObenseuerOS
         {
             get
             {
-                return ComputerApps.IsAvailable && (ToolkitPrototype.Visible || OsView.Available);
+                return ComputerApps.IsAvailable;
             }
         }
 
@@ -141,7 +141,7 @@ namespace ObenseuerOS
 
         public static bool Open()
         {
-            return ToolkitPrototype.Visible || OsView.Show();
+            return ToolkitPrototype.Visible || ComputerApps.OpenStandalone(ModId, AppId);
         }
 
         public static void Close()

@@ -69,7 +69,6 @@ namespace ObenseuerOS
             if (view == null) return;
             bool was = view.IsVisible;
             if (was) view.Hide();
-            ComputerApps.Close(Os.AppId);
             Os.SyncWindow();
         }
 

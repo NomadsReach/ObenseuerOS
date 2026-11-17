@@ -83,7 +83,7 @@ namespace ObenseuerOS
                     UnityEngine.Object.Destroy(rect.gameObject);
                     return false;
                 }
-                if (!ComputerApps.OpenPinned(Os.ModId, "os.toolkit-os", rect))
+                if (!ComputerApps.OpenPinned(Os.ModId, Os.AppId, rect))
                 {
                     UnityEngine.Object.Destroy(rect.gameObject);
                     return false;
@@ -161,7 +161,7 @@ namespace ObenseuerOS
             try
             {
                 if (active && !returning && (cam == null || pin == null || ComputerApps.PinnedScreen != pin)) Close(false);
-                else if (active && !returning && Time.frameCount >= exitFrame && !ToolkitPrototype.TextEditing && ExitPressed()) ComputerApps.RequestClose("os.toolkit-os");
+                else if (active && !returning && Time.frameCount >= exitFrame && !ToolkitPrototype.TextEditing && ExitPressed()) ComputerApps.RequestClose(Os.AppId);
             }
             catch (Exception e)
             {
@@ -171,7 +171,7 @@ namespace ObenseuerOS
 
         private static void ForcePinned(RectTransform target)
         {
-            try { if (target != null && ComputerApps.PinnedScreen == target) ComputerApps.Close("os.toolkit-os"); }
+            try { if (target != null && ComputerApps.PinnedScreen == target) ComputerApps.Close(Os.AppId); }
             catch (Exception e) { Log.Error("laptop screen: host cleanup failed: " + e); }
         }
 

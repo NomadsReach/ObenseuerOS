@@ -82,17 +82,15 @@ namespace ObenseuerOS
             SaveController.PlayerWillLoadGame += OnSaveLoad;
             ComputerApps.ScreenChanged += OsView.OnScreenChanged;
             Cash.MoneyChanged += OsView.OnMoneyChanged;
-            if (!ComputerApps.Register(Os.ModId, Os.AppId, DeskTitle, null, host => OsView.Show())) Log.Warn("OS not added to the computer");
+            if (!ComputerApps.Register(Os.ModId, Os.AppId, DeskTitle, null, host => ToolkitPrototype.Open(host, new OsNotepadStorage()))) Log.Warn("OS not added to the computer");
             if (Config.Bind("Debug", "UguiPrototype", false, "Show the experimental uGUI desktop prototype in the computer app list.").Value &&
                 !ComputerApps.Register(Os.ModId, "os.ugui-prototype", "Viewports 8 uGUI prototype", null, host => OsUguiPrototype.Build(host, new OsNotepadStorage())))
                 Log.Warn("uGUI prototype not added to the computer");
-            if (!ComputerApps.Register(Os.ModId, "os.toolkit-os", "Viewports 8 UI Toolkit prototype", null, host => ToolkitPrototype.Open(host, new OsNotepadStorage())))
-                Log.Warn("UI Toolkit prototype not added to the computer");
         }
 
         public static bool OpenLaptop()
         {
-            return !OsView.Visible && ComputerApps.OpenStandalone(Os.ModId, "os.toolkit-os");
+            return !OsView.Visible && ComputerApps.OpenStandalone(Os.ModId, Os.AppId);
         }
 
         public static bool OpenLaptop(GameObject laptop)

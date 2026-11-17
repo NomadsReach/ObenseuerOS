@@ -91,8 +91,8 @@ internal sealed class ToolkitPrototype : MonoBehaviour
     {
         foreach (ToolkitPrototype prototype in new List<ToolkitPrototype>(active))
             if (prototype != null && prototype.pinnedTarget != null && prototype.pinnedTarget == ComputerApps.PinnedScreen)
-            { ComputerApps.RequestClose("os.toolkit-os"); return true; }
-        return closeGate.Dismiss(ActiveSessions, delegate(ToolkitPrototype prototype) { return prototype.canClose == null || prototype.canClose(); }, delegate { ComputerApps.Close("os.toolkit-os"); });
+            { ComputerApps.RequestClose(Os.AppId); return true; }
+        return closeGate.Dismiss(ActiveSessions, delegate(ToolkitPrototype prototype) { return prototype.canClose == null || prototype.canClose(); }, delegate { ComputerApps.Close(Os.AppId); });
     }
 
     private static List<ToolkitPrototype> ActiveSessions()
@@ -189,8 +189,8 @@ internal sealed class ToolkitPrototype : MonoBehaviour
 
     private void CloseDesktop()
     {
-        if (pinnedTarget != null && pinnedTarget == ComputerApps.PinnedScreen) ComputerApps.RequestClose("os.toolkit-os");
-        else if (canClose()) ComputerApps.Close(storage == null ? "os.toolkit-prototype" : "os.toolkit-os");
+        if (pinnedTarget != null && pinnedTarget == ComputerApps.PinnedScreen) ComputerApps.RequestClose(Os.AppId);
+        else if (canClose()) ComputerApps.Close(storage == null ? "os.toolkit-prototype" : Os.AppId);
     }
 
     private void Build()
