@@ -26,11 +26,11 @@ namespace ObenseuerOS
             { "jobs.stalburg.ts", "Jobs", "Work stations and wages.", "19" },
             { "shop.stalburg.ts", "Shop", "Goods for sale.", "11" },
             { "bets.stalburg.ts", "NaSpoBet", "Football, ice hockey and volleyball odds.", "16" },
-            { "lottery.stalburg.ts", "LOTTO by NaSpoBet", "Scratch cards and a number draw.", "15" },
+            { "lottery.stalburg.ts", "LOTTO by NaSpoBet", "Scratch cards and a number draw.", "20" },
             { "wiki.stalburg.ts", "Stalburg Wiki", "Articles on Stolland and Obenseuer.", "" },
             { "www.eyebook.com", "EYEbook", "International social network.", "17" },
             { "www.pcmaster.ts", "PC Master", "Computers, parts and security software.", "18" },
-            { "www.turvapro.ts", "TurvaPro 2000", "Antivirus and security.", "" },
+            { "www.turvapro.ts", "TurvaPro 2000", "Antivirus and security.", "21" },
             { "www.free-rm.ts", "FREE RM GENERATOR", "Free RM generator.", "" },
             { "www.kolhola-warez.ts", "Kolhola Warez", "Games and tools.", "" },
             { "www.voittaja.ts", "VOITTAJA!", "Claim your prize.", "" }

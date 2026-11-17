@@ -39,6 +39,10 @@ internal static class Program
         Check(acknowledgedVersion != shared.PendingVersion && !shared.MayStart("bank.payInvoice", thirdRequest, acknowledgedVersion == shared.PendingVersion));
         Check(GuardPurchase.Accepted(JObject.Parse("{\"owned\":true}")));
         Check(!GuardPurchase.Accepted(JObject.Parse("{\"owned\":false}")) && !GuardPurchase.Accepted(JObject.Parse("{\"owned\":\"true\"}")) && !GuardPurchase.Accepted(new JObject()) && !GuardPurchase.Accepted(null));
+        Check(TurvaReceipt.Accepted(JObject.Parse("{\"owned\":true,\"status\":\"active\"}")));
+        Check(!TurvaReceipt.Accepted(JObject.Parse("{\"owned\":true,\"status\":\"lapsed\"}")) && !TurvaReceipt.Accepted(new JObject()) && !TurvaReceipt.Accepted(null));
+        Check(TurvaReceipt.ScanAccepted(JObject.Parse("{\"cookies\":3,\"found\":[{\"name\":\"worm\",\"result\":\"missed\"}]}")));
+        Check(!TurvaReceipt.ScanAccepted(JObject.Parse("{\"cookies\":3,\"found\":[{}]}")) && !TurvaReceipt.ScanAccepted(JObject.Parse("{\"cookies\":\"3\",\"found\":[]}")) && !TurvaReceipt.ScanAccepted(null));
         decimal debit, fee, sent;
         Check(BankQuote.TryCreate("OC", 100m, 2m, out debit, out fee, out sent) && debit == 100m && fee == 2m && sent == 98m);
         Check(BankQuote.TryCreate("RM", 12.3m, 2m, out debit, out fee, out sent) && fee == 0.3m && sent == 12m);

@@ -10,9 +10,9 @@ namespace ObenseuerOS
 {
 internal sealed class ToolkitPrototype : MonoBehaviour
 {
-    private static readonly string[] Names = { "Stalburg Mail", "Stalburg Web", "Explorer", "Recycle Bin", "Control Panel", "Stal-Ex", "Command Prompt", "Notepad", "Stalburg Bank", "Stalburg Times", "TOR-Turnip Chat v0.3.9", "Shop", "Minesweeper", "Solitaire", "PC Master Guard" };
-    private static readonly string[] Ids = { "mail", "browser", "files", "recycle", "settings", "exchange", "terminal", "notes", "bank", "news", "chat", "shop", "minesweeper", "solitaire", "pcguard" };
-    private static readonly string[] Icons = { "mail", "world", "folder-filled", "trash", "settings", "chart-line", "terminal-2", "notes", "building-bank", "news", "message-circle", "shopping-cart", "device-gamepad-2", "device-gamepad-2", "" };
+    private static readonly string[] Names = { "Stalburg Mail", "Stalburg Web", "Explorer", "Recycle Bin", "Control Panel", "Stal-Ex", "Command Prompt", "Notepad", "Stalburg Bank", "Stalburg Times", "TOR-Turnip Chat v0.3.9", "Shop", "Minesweeper", "Solitaire", "PC Master Guard", "TurvaPro 2000" };
+    private static readonly string[] Ids = { "mail", "browser", "files", "recycle", "settings", "exchange", "terminal", "notes", "bank", "news", "chat", "shop", "minesweeper", "solitaire", "pcguard", "turvapro" };
+    private static readonly string[] Icons = { "mail", "world", "folder-filled", "trash", "settings", "chart-line", "terminal-2", "notes", "building-bank", "news", "message-circle", "shopping-cart", "device-gamepad-2", "device-gamepad-2", "", "" };
     private readonly List<Texture2D> textures = new List<Texture2D>();
     private VisualElement selected;
     private NotepadStorage storage;
@@ -79,10 +79,11 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         ToolkitTerminal terminal = null;
         ToolkitBrowser browser = null;
         ToolkitSecurity security = null;
-        Func<bool> guardInstalled = delegate
+        ToolkitTurva turva = null;
+        Func<string, bool> installed = delegate(string id)
         {
             if (osStorage == null) return false;
-            try { osStorage.CheckSession(); return VirusAv.Shows("pcguard"); }
+            try { osStorage.CheckSession(); return VirusAv.Shows(id); }
             catch (Exception) { return false; }
         };
         Func<int, bool> launch = delegate(int index)
@@ -103,17 +104,20 @@ internal sealed class ToolkitPrototype : MonoBehaviour
                 case 11: shop.Open(); return true;
                 case 12: minesweeper.Open(); return true;
                 case 13: solitaire.Open(); return true;
-                case 14: if (!guardInstalled()) return false; security.OpenGuard(); return true;
-                case 15: lottery.Open(); return true;
+                case 14: if (!installed("pcguard")) return false; security.OpenGuard(); return true;
+                case 15: if (!installed("turvapro")) return false; turva.OpenProgram(); return true;
                 case 16: bets.Open(); return true;
                 case 17: eye.Open(); return true;
                 case 18: security.OpenStore(); return true;
                 case 19: jobs.Open(); return true;
+                case 20: lottery.Open(); return true;
+                case 21: turva.OpenSite(); return true;
                 default: return false;
             }
         };
         browser = new ToolkitBrowser(storage, launch, osStorage == null ? (Action)null : osStorage.CheckSession, osStorage == null ? null : new TransactionClient("browser", OsBridge.Reply, osStorage.CheckSession));
         security = new ToolkitSecurity(osStorage == null ? new TransactionClient("pcmaster", null, null) : TransactionClients.ForSession("pcmaster", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession), osStorage == null ? new TransactionClient("pcguard", null, null) : TransactionClients.ForSession("pcguard", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession), osStorage == null ? (Action)null : osStorage.CheckSession);
+        turva = new ToolkitTurva(osStorage == null ? new TransactionClient("turvasite", null, null) : TransactionClients.ForSession("turvasite", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession), osStorage == null ? new TransactionClient("turvapro", null, null) : TransactionClients.ForSession("turvapro", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession), osStorage == null ? (Action)null : osStorage.CheckSession);
         eye = new ToolkitEye(osStorage == null ? (Func<EyeState>)(() => new EyeState(storage)) : () => EyeStates.ForSession(osStorage.SessionId, storage), osStorage == null ? (Action)null : osStorage.CheckSession, OsView.UserName, new NewsClient(osStorage == null ? (Func<Newtonsoft.Json.Linq.JObject, Newtonsoft.Json.Linq.JObject>)null : OsBridge.Reply, osStorage == null ? (Action)null : osStorage.CheckSession), launch);
         jobs = new ToolkitJobs(new TransactionClient("jobs", osStorage == null ? (Func<Newtonsoft.Json.Linq.JObject, Newtonsoft.Json.Linq.JObject>)null : OsBridge.Reply, osStorage == null ? (Action)null : osStorage.CheckSession), osStorage == null ? (Action)null : osStorage.CheckSession, launch);
         terminal = new ToolkitTerminal(storage, storage as ExplorerStorage, OsView.UserName,
@@ -130,7 +134,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         Func<bool> canClose = delegate { return notepad.CanClose() && mail.CanClose(); };
         ComputerApps.SetCloseGuard(transform.parent, canClose);
         VisualElement window = notepad.Window;
-        VisualElement guardTile = null;
+        VisualElement guardTile = null, turvaTile = null;
         for (int i = 0; i < Names.Length; i++)
         {
             int index = i;
@@ -145,10 +149,10 @@ internal sealed class ToolkitPrototype : MonoBehaviour
             icon.style.width = 48;
             icon.style.height = 48;
             icon.style.marginTop = 4;
-            if (i == 14)
+            if (i >= 14)
             {
-                Label letter = new Label("P"); letter.style.color = Color.white; letter.style.fontSize = 36; letter.style.height = 52; letter.style.unityTextAlign = TextAnchor.MiddleCenter; tile.Add(letter);
-                guardTile = tile; tile.style.display = DisplayStyle.None;
+                Label letter = new Label(Names[i].Substring(0, 1)); letter.style.color = Color.white; letter.style.fontSize = 36; letter.style.height = 52; letter.style.unityTextAlign = TextAnchor.MiddleCenter; tile.Add(letter);
+                if (i == 14) guardTile = tile; else turvaTile = tile; tile.style.display = DisplayStyle.None;
             }
             else tile.Add(icon);
             Label label = new Label(Names[i]);
@@ -192,12 +196,13 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         windows.Add(news.Window);
         windows.Add(browser.Window);
         windows.Add(security.Window);
+        windows.Add(turva.Window);
         windows.Add(jobs.Window);
         windows.Add(lottery.Window);
         windows.Add(eye.Window);
         windows.Add(bets.Window);
-        ToolkitStart start = new ToolkitStart(Names, Icons, Texture, launch, delegate { if (canClose()) ComputerApps.Close(storage == null ? "os.toolkit-prototype" : "os.toolkit-os"); }, delegate(int index) { return index != 14 || guardInstalled(); });
-        Action updateGuard = delegate { guardTile.style.display = guardInstalled() ? DisplayStyle.Flex : DisplayStyle.None; start.Refresh(); };
+        ToolkitStart start = new ToolkitStart(Names, Icons, Texture, launch, delegate { if (canClose()) ComputerApps.Close(storage == null ? "os.toolkit-prototype" : "os.toolkit-os"); }, delegate(int index) { return index < 14 || installed(Ids[index]); });
+        Action updateGuard = delegate { guardTile.style.display = installed("pcguard") ? DisplayStyle.Flex : DisplayStyle.None; turvaTile.style.display = installed("turvapro") ? DisplayStyle.Flex : DisplayStyle.None; start.Refresh(); };
         updateGuard(); desktop.schedule.Execute(updateGuard).Every(1000);
         VisualElement taskbar = new VisualElement();
         taskbar.style.height = 40;
