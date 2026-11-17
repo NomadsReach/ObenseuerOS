@@ -30,6 +30,8 @@ jobs:
       - run: dotnet run --project checks/Browser/Browser.csproj -c Release
       - run: dotnet run --project checks/Jobs/Jobs.csproj -c Release
       - run: dotnet run --project checks/ScratchRecord/ScratchRecord.csproj -c Release
+      - run: dotnet run --project checks/BetRecord/BetRecord.csproj -c Release
+      - run: dotnet run --project checks/BetIdentity/BetIdentity.csproj -c Release
   reference:
     runs-on: ubuntu-latest
     timeout-minutes: 10

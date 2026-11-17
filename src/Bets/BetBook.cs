@@ -60,7 +60,7 @@ namespace ObenseuerOS
         public int Oc;
     }
 
-    internal static class BetBook
+    internal static partial class BetBook
     {
         internal const string StoreId = "nomad.obenseuer.os.bets";
         internal const int MaxSaved = 200;
@@ -70,7 +70,6 @@ namespace ObenseuerOS
         internal const string Open = "open";
         internal const string Won = "won";
         internal const string Lost = "lost";
-        internal const string ConflictText = "This bet was already placed with different contents.";
         private static BetSave save = new BetSave();
 
         internal static BetSave Current
@@ -122,17 +121,6 @@ namespace ObenseuerOS
             if (day >= state.StartDay + BetModel.Rounds) BetSchedule.Create(state, day);
         }
 
-        internal static BetRec Saved(BetSave state, string cid, string print)
-        {
-            foreach (BetRec bet in state.Bets)
-            {
-                if (bet.Cid != cid) continue;
-                if (bet.Print != print) throw new OsBridgeException("bad_args", ConflictText);
-                return bet;
-            }
-            return null;
-        }
-
         internal static string Problem(BetSave state, FixtureRec fixture, int stake, int now)
         {
             if (fixture.Done || now >= fixture.Kickoff) return "This match has kicked off. Bets are closed.";
@@ -157,9 +145,13 @@ namespace ObenseuerOS
             bet.Ret = Payout(stake, odds);
             bet.State = Open;
             bet.PlacedMin = now;
+            if (state.Bets.Capacity == state.Bets.Count) state.Bets.Capacity = state.Bets.Count + 1;
+            if (state.Pending.Capacity == state.Pending.Count) state.Pending.Capacity = state.Pending.Count + 1;
+            PendingRec refundDue = new PendingRec { Oc = stake };
+            Action<BetRec> append = state.Bets.Add;
+            Func<bool> refund = () => Refund(state, refundDue);
             if (!Cash.TrySpend(MoneyCurrency.OC, stake)) throw new OsBridgeException("failed", "The payment was refused. Nothing was spent.");
-            state.NextBet = bet.N;
-            state.Bets.Add(bet);
+            Record(state, bet, append, refund);
             Prune(state);
             return bet;
         }
@@ -242,10 +234,15 @@ namespace ObenseuerOS
                 bet.State = Lost;
                 return;
             }
-            bet.State = Won;
             PendingRec owed = new PendingRec();
             owed.Oc = bet.Ret;
-            state.Pending.Add(owed);
+            QueueWin(state, bet, owed, state.Pending.Add);
+        }
+
+        private static bool Refund(BetSave state, PendingRec owed)
+        {
+            if (Cash.Give(MoneyCurrency.OC, owed.Oc)) return true;
+            state.Pending.Add(owed); return false;
         }
 
         private static void RetryPending(BetSave state)
