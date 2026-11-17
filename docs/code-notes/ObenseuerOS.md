@@ -156,3 +156,5 @@
 - `src/ToolkitNotepad.cs:RetainDraft` and `src/ToolkitPrototype.cs:OnDisable` retain unsaved Notepad text in memory when a host is destroyed, including after an approved discard, so a later close-guard veto cannot erase a draft. `src/OsNotepadStorage.cs:RecoveryKey` captures the save folder and session when the host opens; `src/Ugui/NotepadRecovery.cs:List` separates matching drafts from other sessions, and `src/ToolkitNotepad.cs:Recover` requires an explicit choice for either list. Recovered text opens untitled and requires Save As. The buffer is lost on game exit and does not preserve third-party app state.
 
 - `src/ToolkitPrototype.cs:OnDisable` does not retain Mail or third-party app state during forced teardown.
+
+- `src/ToolkitChat.cs:Poll`, `src/ToolkitChat.cs:AddRooms` display chat messages and room names as plain text so markup in a name or message remains visible.

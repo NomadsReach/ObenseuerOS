@@ -44,7 +44,7 @@ namespace ObenseuerOS
             body.style.backgroundColor = Color.white;
             rooms = new ScrollView(); rooms.style.width = 200; rooms.style.flexShrink = 0; body.Add(rooms);
             VisualElement main = new VisualElement(); main.style.flexGrow = 1;
-            title = new Label("TOR-Turnip"); title.style.color = Color.black; title.style.fontSize = 18; main.Add(title);
+            title = new Label("TOR-Turnip"); title.enableRichText = false; title.style.color = Color.black; title.style.fontSize = 18; main.Add(title);
             status = new Label(); status.style.color = Color.red; main.Add(status);
             messages = new ScrollView(); messages.style.flexGrow = 1; main.Add(messages);
             VisualElement composer = new VisualElement(); composer.style.flexDirection = FlexDirection.Row;
@@ -97,6 +97,7 @@ namespace ObenseuerOS
                 foreach (ChatLine line in ChatHistory.Since(current, next))
                 {
                     Label row = new Label(line.From + ": " + line.Text);
+                    row.enableRichText = false;
                     row.style.color = line.Own ? (Color)new Color32(33, 84, 151, 255) : Color.black;
                     row.style.whiteSpace = WhiteSpace.Normal; messages.Add(row);
                     messages.schedule.Execute(delegate() { messages.ScrollTo(row); });
@@ -115,6 +116,7 @@ namespace ObenseuerOS
                 if (item.Contact != contact) continue;
                 string id = item.Id;
                 UnityEngine.UIElements.Button button = new UnityEngine.UIElements.Button(delegate { Switch(id); });
+                button.enableRichText = false;
                 roomButtons.Add(id, button); rooms.Add(button);
             }
         }
