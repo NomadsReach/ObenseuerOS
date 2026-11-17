@@ -14,6 +14,7 @@ namespace ObenseuerOS
         private static readonly string[] Levels = { "Beginner", "Intermediate", "Expert" };
         private static readonly Color[] NumberColors = { Color.black, Color.blue, new Color32(0, 128, 0, 255), Color.red, new Color32(0, 0, 128, 255), new Color32(128, 0, 0, 255), new Color32(0, 128, 128, 255), Color.black, Color.gray };
         private readonly VisualElement board;
+        private readonly VisualElement boardViewport;
         private readonly Label counter;
         private readonly Label timer;
         private readonly Label message;
@@ -100,6 +101,8 @@ namespace ObenseuerOS
             viewport.style.flexGrow = 1;
             viewport.style.minHeight = 0;
             content.Add(viewport);
+            boardViewport = viewport.contentViewport;
+            boardViewport.RegisterCallback<GeometryChangedEvent>(delegate { LayoutBoard(); });
             board = new VisualElement();
             board.style.alignSelf = Align.Center;
             viewport.Add(board);
@@ -158,7 +161,6 @@ namespace ObenseuerOS
             board.Clear();
             cells = new VisualElement[game.Cells.Length];
             labels = new Label[game.Cells.Length];
-            float size = Mathf.Max(16f, Mathf.Floor(Mathf.Min(660f / game.Columns, 390f / game.Rows)));
             for (int row = 0; row < game.Rows; row++)
             {
                 VisualElement line = new VisualElement();
@@ -168,12 +170,9 @@ namespace ObenseuerOS
                 {
                     int index = row * game.Columns + col;
                     VisualElement cell = new VisualElement();
-                    cell.style.width = size;
-                    cell.style.height = size;
                     Label label = new Label();
                     label.pickingMode = PickingMode.Ignore;
                     label.style.flexGrow = 1;
-                    label.style.fontSize = Mathf.Max(10, Mathf.RoundToInt(size * 0.65f));
                     label.style.unityFontStyleAndWeight = UnityEngine.FontStyle.Bold;
                     label.style.unityTextAlign = TextAnchor.MiddleCenter;
                     cell.Add(label);
@@ -184,7 +183,19 @@ namespace ObenseuerOS
                     line.Add(cell);
                 }
             }
+            LayoutBoard();
             Paint();
+        }
+
+        private void LayoutBoard()
+        {
+            if (game == null || cells == null) return;
+            int size = MinesweeperLayout.CellSize(boardViewport.layout.width, boardViewport.layout.height, game.Columns, game.Rows);
+            for (int i = 0; i < cells.Length; i++)
+            {
+                cells[i].style.width = size; cells[i].style.height = size;
+                labels[i].style.fontSize = Mathf.Max(10, Mathf.RoundToInt(size * 0.65f));
+            }
         }
 
         private void Press(int index, int button, int buttons)

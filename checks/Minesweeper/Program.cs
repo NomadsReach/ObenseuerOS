@@ -10,6 +10,10 @@ internal static class Program
 
     private static void Main()
     {
+        Check(MinesweeperLayout.CellSize(660, 390, 9, 9) == 43, "beginner board fits viewport");
+        Check(MinesweeperLayout.CellSize(300, 200, 30, 16) == 16, "expert board keeps minimum cell size");
+        Check(MinesweeperLayout.CellSize(900, 600, 30, 16) == 30, "expert board grows with viewport");
+        Check(MinesweeperLayout.CellSize(float.NaN, 0, 9, 9) == 16, "unlaid out viewport uses minimum size");
         MinesweeperGame clicks = new MinesweeperGame(9, 9, 10, new Random(11));
         MinesweeperInput input = new MinesweeperInput(clicks);
         Check(!input.Press(0, 0, 1) && !input.Release(1, 0, false) && !clicks.Placed, "release on another cell");

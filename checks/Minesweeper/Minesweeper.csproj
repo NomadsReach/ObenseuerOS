@@ -6,5 +6,6 @@
   <ItemGroup>
     <Compile Include="..\..\src\Ugui\MinesweeperGame.cs" Link="MinesweeperGame.cs" />
     <Compile Include="..\..\src\Ugui\MinesweeperInput.cs" Link="MinesweeperInput.cs" />
+    <Compile Include="..\..\src\Ugui\MinesweeperLayout.cs" Link="MinesweeperLayout.cs" />
   </ItemGroup>
 </Project>

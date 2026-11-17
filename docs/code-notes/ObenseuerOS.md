@@ -133,3 +133,5 @@
 
 - `src/ToolkitDesktopMenu.cs:ToolkitDesktopMenu` opens the desktop context menu only on the empty desktop and routes wallpaper, settings, and refresh actions to the existing Toolkit state.
 - `src/ToolkitSettings.cs:SelectWallpaper` shares wallpaper selection between Control Panel and the desktop menu while retaining the saved preference.
+
+- `src/ToolkitMinesweeper.cs:LayoutBoard` resizes the existing board on viewport geometry changes without restarting the game; `src/Ugui/MinesweeperLayout.cs:CellSize` retains the 16-pixel minimum for scrolling.
