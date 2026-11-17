@@ -164,3 +164,5 @@
 - `src/ToolkitModWindows.cs:Close`, `src/OsModApi.cs:OsAppOptions.OnClosed` notify successfully opened native apps after closure, with a forced flag for teardown. The window is removed before the callback, and callback exceptions are logged. A forced close does not guarantee that game-save storage is available.
 
 - `src/OsLaptop.cs:Open`, `src/ToolkitPrototype.cs:Build`, `src/OsPlugin.cs:OpenLaptop` use the framework pinned host for laptop UI Toolkit and use guarded close for normal exit. The laptop owns camera and controls; scene teardown forces cleanup. This route requires in-game camera, input, target-loss and close-guard verification.
+
+- `src/BrowserSiteCatalog.cs:Find`, `src/ToolkitBrowser.cs:Render` expose registered mod-site metadata in Toolkit search and resolve their host names, including the www alias. HTML sites still need a native UI Toolkit implementation before they can open here. `checks/Browser/Program.cs:Main` covers resolution, search keywords, and removal.

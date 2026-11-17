@@ -91,11 +91,12 @@ namespace ObenseuerOS
             if (host == "stalburg.ts") return Home;
             return host;
         }
-        private static string Title(string url)
+        private string Title(string url)
         {
             string host = Host(url); if (host == Home) return "Stalburg Web";
             for (int i = 0; i < Sites.GetLength(0); i++) if (Sites[i, 0] == host) return Sites[i, 1];
-            return "Server not found";
+            OsApp site = BrowserSiteCatalog.Find(Os.Apps, host);
+            return site == null ? "Server not found" : site.Title;
         }
         private void Go(string text)
         {
@@ -145,6 +146,12 @@ namespace ObenseuerOS
                     if (query.Length > 0 && (Sites[i, 0] + " " + Sites[i, 1] + " " + Sites[i, 2]).IndexOf(query, StringComparison.OrdinalIgnoreCase) < 0) continue;
                     content.Add(Button(Sites[i, 1] + " — " + Sites[i, 2], delegate { Visit(Sites[site, 0]); }));
                 }
+                foreach (OsApp entry in Os.Apps)
+                {
+                    if (!BrowserSiteCatalog.Matches(entry, query)) continue;
+                    OsApp site = entry;
+                    content.Add(Button(site.Title + " — " + site.Description, delegate { Visit(site.Host); }));
+                }
                 return;
             }
             for (int i = 0; i < Sites.GetLength(0); i++)
@@ -159,6 +166,13 @@ namespace ObenseuerOS
                     content.Add(Button("Open " + Sites[i, 1], delegate { if (!Session()) return; if (app == 25 && openWiki != null) openWiki(path); else if (app == 17 && openEye != null) openEye(path); else launch(app); }));
                 }
                 else content.Add(Text(host == "wiki.stalburg.ts" ? "Offline wiki articles are not installed yet." : "This site is not available in the Toolkit interface yet."));
+                return;
+            }
+            OsApp modSite = BrowserSiteCatalog.Find(Os.Apps, host);
+            if (modSite != null)
+            {
+                content.Add(Text(modSite.Title)); content.Add(Text(modSite.Description));
+                content.Add(Text("This mod site needs a native UI Toolkit version before it can open here."));
                 return;
             }
             content.Add(Text("Server not found: " + host));

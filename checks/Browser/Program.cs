@@ -1,8 +1,13 @@
 using System;
 using System.IO;
+using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using ObenseuerOS;
 
+namespace ObenseuerOS
+{
+    internal sealed class OsApp { internal bool Site; internal string Host, Title, Description; internal string[] Keywords; }
+}
 internal sealed class Storage : NotepadStorage
 {
     internal string Value;
@@ -18,6 +23,11 @@ internal static class Program
     private static void Check(bool ok) { if (!ok) throw new Exception("Browser state check failed"); }
     private static void Main()
     {
+        OsApp site = new OsApp { Site = true, Host = "www.example.ts", Title = "Example", Description = "Local shop", Keywords = new[] { "parts" } };
+        List<OsApp> sites = new List<OsApp> { null, new OsApp { Host = "example.ts" }, site };
+        Check(BrowserSiteCatalog.Find(sites, "EXAMPLE.TS") == site && BrowserSiteCatalog.Find(sites, "www.unknown.ts") == null);
+        Check(BrowserSiteCatalog.Matches(site, "PARTS") && BrowserSiteCatalog.Matches(site, "shop") && !BrowserSiteCatalog.Matches(site, "missing"));
+        sites.Remove(site); Check(BrowserSiteCatalog.Find(sites, "example.ts") == null);
         Storage storage = new Storage { Value = "{\"marks\":[{\"url\":\"mod.ts\",\"title\":\"Mod\"}],\"history\":[{\"url\":\"old.ts\",\"title\":\"Old\"}],\"extra\":42}" };
         BrowserState state = new BrowserState(storage);
         Check(state.Current == "old.ts" && state.Marks.Count == 1);
