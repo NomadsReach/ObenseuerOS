@@ -86,4 +86,4 @@ jobs:
       - name: Compile Toolkit windows against Unity
         run: dotnet build checks/ToolkitCompile/ToolkitCompile.csproj -c Release -p:UnityManaged="$RUNNER_TEMP/Editor/Data/PlaybackEngines/LinuxStandaloneSupport/Variations/mono/Managed" -p:FrameworkSource="$GITHUB_WORKSPACE/framework-source"
       - name: Verify embedded desktop icons
-        run: dotnet run --project checks/IconResources/IconResources.csproj -c Release -- checks/ToolkitCompile/bin/Release/net10.0/ToolkitCompile.dll
+        run: dotnet run --project checks/IconResources/IconResources.csproj -c Release -- checks/ToolkitCompile/bin/Release/ToolkitCompile.dll
