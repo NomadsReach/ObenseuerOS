@@ -31,7 +31,7 @@ namespace ObenseuerOS
             bar.Add(close); Window.Add(bar); ToolkitUi.MakeDraggable(Window, bar);
             notice = Text(""); notice.style.backgroundColor = Color.white; Window.Add(notice);
             content = new ScrollView(); content.style.flexGrow = 1; content.style.backgroundColor = Color.white; Window.Add(content);
-            Window.schedule.Execute(delegate { if (Window.style.display != DisplayStyle.None && state != null) Session(); }).Every(1000);
+            Window.schedule.Execute(delegate() { if (Window.style.display != DisplayStyle.None && state != null) Session(); }).Every(1000);
         }
         internal void OpenStore() { program = false; Open(); }
         private void OpenGuard() { program = true; Open(); }
