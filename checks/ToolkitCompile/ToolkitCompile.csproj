@@ -20,6 +20,7 @@
     <Compile Include="..\..\src\TurvaReceipt.cs" />
     <Compile Include="..\..\src\ShadyReply.cs" />
     <Compile Include="..\..\src\VirusPopupRules.cs" />
+    <Compile Include="..\..\src\VirusDesktopState.cs" />
     <Compile Include="..\..\src\EyeState.cs" />
     <Compile Include="..\..\src\JobsList.cs" />
     <Compile Include="..\..\src\ScratchProgress.cs" />

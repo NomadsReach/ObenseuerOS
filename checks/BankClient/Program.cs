@@ -56,6 +56,10 @@ internal static class Program
         Check(object.ReferenceEquals(claim, TransactionClients.ForSession("virusfx", 101, request => null, null)) && claimCalls == 1);
         Check(!claim.Forget("virus.claim", new JObject(new JProperty("kind", "moca"))) && claim.HasPending);
         Check(claim.Forget("virus.claim", claimArgs) && !claim.HasPending);
+        bool wall, shuffle;
+        Check(VirusDesktopState.TryRead(JObject.Parse("{\"fx\":{\"wall\":true,\"shuffle\":false}}"), out wall, out shuffle) && wall && !shuffle);
+        Check(VirusDesktopState.TryRead(JObject.Parse("{\"fx\":{\"wall\":false,\"shuffle\":true}}"), out wall, out shuffle) && !wall && shuffle);
+        Check(!VirusDesktopState.TryRead(JObject.Parse("{\"fx\":{\"wall\":true,\"shuffle\":1}}"), out wall, out shuffle) && !wall && !shuffle);
         decimal debit, fee, sent;
         Check(BankQuote.TryCreate("OC", 100m, 2m, out debit, out fee, out sent) && debit == 100m && fee == 2m && sent == 98m);
         Check(BankQuote.TryCreate("RM", 12.3m, 2m, out debit, out fee, out sent) && fee == 0.3m && sent == 12m);

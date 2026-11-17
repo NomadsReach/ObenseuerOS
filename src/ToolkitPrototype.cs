@@ -70,6 +70,15 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         wallpaper.style.position = UnityEngine.UIElements.Position.Absolute;
         wallpaper.style.left = 0; wallpaper.style.right = 0; wallpaper.style.top = 0; wallpaper.style.bottom = 40;
         root.Add(wallpaper);
+        VisualElement virusWall = new VisualElement(); virusWall.pickingMode = PickingMode.Ignore; virusWall.style.position = Position.Absolute;
+        virusWall.style.left = 0; virusWall.style.right = 0; virusWall.style.top = 0; virusWall.style.bottom = 40; virusWall.style.display = DisplayStyle.None;
+        virusWall.style.flexDirection = FlexDirection.Column; virusWall.style.overflow = Overflow.Hidden;
+        for (int i = 0; i < 12; i++)
+        {
+            Label line = new Label("MOCA-COLA ICE COLD  *  FREE CRATE  *  CLAIM NOW!!!"); line.pickingMode = PickingMode.Ignore; line.style.flexGrow = 1; line.style.fontSize = 34; line.style.unityFontStyleAndWeight = FontStyle.Bold;
+            line.style.color = i % 2 == 0 ? Color.white : Color.yellow; line.style.backgroundColor = i % 3 == 0 ? Color.red : i % 3 == 1 ? Color.yellow : (Color)new Color32(0, 136, 255, 255); virusWall.Add(line);
+        }
+        root.Add(virusWall);
         VisualElement desktop = new VisualElement();
         desktop.style.flexGrow = 1;
         desktop.style.flexDirection = FlexDirection.Column;
@@ -270,7 +279,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         root.Add(taskbar);
         root.Add(start.Menu);
         VisualElement virusLayer = new VisualElement(); virusLayer.pickingMode = PickingMode.Ignore; virusLayer.style.position = UnityEngine.UIElements.Position.Absolute; virusLayer.style.left = 0; virusLayer.style.right = 0; virusLayer.style.top = 0; virusLayer.style.bottom = 40; root.Add(virusLayer);
-        virusFx = new ToolkitVirusFx(virusLayer, delegate { if (!isActiveAndEnabled || !gameObject.activeInHierarchy || osStorage == null) return false; try { osStorage.CheckSession(); return true; } catch (Exception) { return false; } }, browser.Navigate, delegate(int index) { launch(index); }, delegate { return installed("turvapro"); }, turva.OpenProgram, osStorage == null ? new TransactionClient("virusfx", null, null) : TransactionClients.ForSession("virusfx", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession));
+        virusFx = new ToolkitVirusFx(virusLayer, desktop, virusWall, delegate { if (!isActiveAndEnabled || !gameObject.activeInHierarchy || osStorage == null) return false; try { osStorage.CheckSession(); return true; } catch (Exception) { return false; } }, browser.Navigate, delegate(int index) { launch(index); }, delegate { return installed("turvapro"); }, turva.OpenProgram, osStorage == null ? new TransactionClient("virusfx", null, null) : TransactionClients.ForSession("virusfx", osStorage.SessionId, OsBridge.Reply, osStorage.CheckSession));
         root.RegisterCallback<PointerDownEvent>(delegate(PointerDownEvent e)
         {
             VisualElement target = e.target as VisualElement;

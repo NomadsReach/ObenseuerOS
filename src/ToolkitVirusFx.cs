@@ -8,7 +8,9 @@ namespace ObenseuerOS
 {
     internal sealed class ToolkitVirusFx
     {
-        private readonly VisualElement layer;
+        private readonly VisualElement layer, desktop, wall;
+        private readonly List<VisualElement> desktopOrder = new List<VisualElement>();
+        private bool shuffled;
         private readonly Func<bool> visible;
         private readonly Func<string, bool> navigate;
         private readonly Action<int> openSite;
@@ -22,28 +24,43 @@ namespace ObenseuerOS
         private static readonly string[] Details = { "Click CLAIM PRIZE now. Offer ends today!", "Ice cold, 100 % free. Only 3 crates left!", "Generate 1 000 RM in seconds.", "Speed up your PC for free.", "The application has performed an illegal operation.", "Your PC is at risk.", "Your prize will arrive by post." };
         private static readonly string[] Buttons = { "CLAIM PRIZE", "CLAIM NOW", "DOWNLOAD NOW", "SPEED UP", "", "SCAN NOW", "" };
 
-        internal ToolkitVirusFx(VisualElement layer, Func<bool> visible, Func<string, bool> navigate, Action<int> openSite, Func<bool> turvaInstalled, Action openTurva, TransactionClient client)
+        internal ToolkitVirusFx(VisualElement layer, VisualElement desktop, VisualElement wall, Func<bool> visible, Func<string, bool> navigate, Action<int> openSite, Func<bool> turvaInstalled, Action openTurva, TransactionClient client)
         {
-            this.layer = layer; this.visible = visible; this.navigate = navigate; this.openSite = openSite; this.turvaInstalled = turvaInstalled; this.openTurva = openTurva; this.client = client;
+            this.layer = layer; this.desktop = desktop; this.wall = wall; this.visible = visible; this.navigate = navigate; this.openSite = openSite; this.turvaInstalled = turvaInstalled; this.openTurva = openTurva; this.client = client;
+            foreach (VisualElement child in desktop.Children()) desktopOrder.Add(child);
             VirusFx.Pulsed += Pulse;
             layer.schedule.Execute(Poll).Every(2000);
         }
-        internal void Release() { VirusFx.Pulsed -= Pulse; Clear(); }
+        internal void Release() { VirusFx.Pulsed -= Pulse; Clear(); ResetDesktop(); }
         private void Clear() { foreach (VisualElement popup in live) popup.RemoveFromHierarchy(); live.Clear(); }
         private void Poll()
         {
-            if (!visible()) { Clear(); return; }
+            if (!visible()) { Clear(); ResetDesktop(); return; }
             try
             {
                 JObject state = client.Read("virus.state", null) as JObject; JObject fx = state == null ? null : state["fx"] as JObject;
-                if (fx == null) return;
+                bool wallOn, shuffleOn;
+                if (fx == null || !VirusDesktopState.TryRead(state, out wallOn, out shuffleOn)) return;
+                wall.style.display = wallOn ? DisplayStyle.Flex : DisplayStyle.None;
+                if (shuffleOn && !shuffled) Shuffle();
+                else if (!shuffleOn && shuffled) RestoreOrder();
                 if ((int?)fx["popups"] == 0 && (int?)fx["lag"] == 0 && (bool?)fx["wall"] == false && (bool?)fx["shuffle"] == false && (bool?)fx["errors"] == false && (bool?)fx["nag"] == false) Clear();
             }
             catch (Exception) { }
         }
+        private void ResetDesktop() { wall.style.display = DisplayStyle.None; if (shuffled) RestoreOrder(); }
+        private void RestoreOrder() { foreach (VisualElement child in desktopOrder) child.BringToFront(); shuffled = false; }
+        private void Shuffle()
+        {
+            List<VisualElement> order = new List<VisualElement>(desktopOrder);
+            for (int i = order.Count - 1; i > 0; i--) { int j = random.Next(i + 1); VisualElement swap = order[i]; order[i] = order[j]; order[j] = swap; }
+            foreach (VisualElement child in order) child.BringToFront();
+            shuffled = true;
+        }
         private void Pulse(VirusPulse pulse)
         {
             if (!visible()) return;
+            if (shuffled && random.NextDouble() < 0.3) Shuffle();
             for (int i = 0; i < pulse.Popups; i++) Open(random.Next(4), false);
             if (pulse.Error) Open(4, false);
             if (pulse.Nag) Open(5, false);
