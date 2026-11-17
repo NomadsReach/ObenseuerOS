@@ -11,6 +11,7 @@
     <Compile Include="..\..\src\Toolkit*.cs" />
     <Compile Include="..\..\src\TerminalSession.cs" />
     <Compile Include="..\..\src\MailClient.cs" />
+    <Compile Include="..\..\src\MailPages.cs" />
     <Compile Include="..\..\src\MailDraft.cs" />
     <Compile Include="..\..\src\TransactionClient.cs" />
     <Compile Include="..\..\src\BankQuote.cs" />

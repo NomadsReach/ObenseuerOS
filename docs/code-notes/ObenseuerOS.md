@@ -158,3 +158,5 @@
 - `src/ToolkitPrototype.cs:OnDisable` does not retain Mail or third-party app state during forced teardown.
 
 - `src/ToolkitChat.cs:Poll`, `src/ToolkitChat.cs:AddRooms` display chat messages and room names as plain text so markup in a name or message remains visible.
+
+- `src/ToolkitMail.cs:LoadRows`, `src/ToolkitMail.cs:SearchMore`, `src/MailPages.cs:Append` load mail a page at a time and search up to ten extra pages in scheduled steps; the user can continue with Show more. Failed pages do not advance the offset, and selection applies to loaded matching messages.

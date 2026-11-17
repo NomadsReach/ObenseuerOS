@@ -23,7 +23,8 @@ namespace ObenseuerOS
         private JObject current;
         private string folder = "inbox";
         private string armedReplace = "";
-        private bool composing, armedClose, armedDelete;
+        private bool composing, armedClose, armedDelete, pageFailed;
+        private int total, searchGeneration;
 
         internal ToolkitMail(MailClient client, MailDraft draft)
         {
@@ -72,6 +73,7 @@ namespace ObenseuerOS
 
         private void Refresh()
         {
+            searchGeneration++;
             armedDelete = false;
             status.text = "";
             JObject state = Call("mail.status", null) as JObject;
@@ -79,8 +81,11 @@ namespace ObenseuerOS
             recipients.Clear();
             foreach (JToken item in (JArray)state["recipients"]) recipients.Add((string)item);
             if (state["account"] == null || state["account"].Type == JTokenType.Null) { SignUp(); return; }
+            string query = search == null ? "" : search.value;
             BuildMailbox((string)state["account"]["address"], (int)state["unread"]);
+            search.SetValueWithoutNotify(query);
             LoadRows();
+            if (!string.IsNullOrWhiteSpace(query) && !pageFailed) SearchRows();
             if (composing) Compose("", "", "");
             else if (current != null) ShowMessage(current); else Hint();
             if (Dirty() && !composing) status.text = "Unsent mail kept for this session.";
@@ -116,7 +121,7 @@ namespace ObenseuerOS
             }
             columns.Add(rail);
             VisualElement middle = new VisualElement(); middle.style.width = 270; middle.style.flexShrink = 0;
-            search = new TextField("Search"); search.RegisterValueChangedCallback(delegate { RenderRows(); }); middle.Add(search);
+            search = new TextField("Search"); search.RegisterValueChangedCallback(delegate { SearchRows(); }); middle.Add(search);
             VisualElement tools = Row();
             tools.Add(Button("All", delegate { Pick(true); })); tools.Add(Button("None", delegate { Pick(false); }));
             tools.Add(Button("Read", delegate { PickRead(true); })); tools.Add(Button("Unread", delegate { PickRead(false); })); middle.Add(tools);
@@ -130,17 +135,47 @@ namespace ObenseuerOS
 
         private void LoadRows()
         {
-            rows.Clear();
-            for (int offset = 0; ; )
-            {
-                JObject page = Call("mail.list", new JObject(new JProperty("folder", folder), new JProperty("offset", offset), new JProperty("limit", 20))) as JObject;
-                if (page == null) break;
-                JArray items = (JArray)page["items"];
-                foreach (JToken item in items) rows.Add((JObject)item);
-                offset += items.Count;
-                if (items.Count == 0 || offset >= (int)page["total"]) break;
-            }
+            searchGeneration++;
+            rows.Clear(); total = 0; pageFailed = false;
+            LoadPage();
             RenderRows();
+        }
+
+        private bool LoadPage()
+        {
+            JObject page = Call("mail.list", new JObject(new JProperty("folder", folder), new JProperty("offset", rows.Count), new JProperty("limit", 20))) as JObject;
+            if (page != null && MailPages.Append(rows, page, ref total)) { pageFailed = false; return true; }
+            pageFailed = true;
+            status.text = "Could not load messages. Retry to try again.";
+            return false;
+        }
+
+        private void SearchRows()
+        {
+            int generation = ++searchGeneration;
+            status.text = "";
+            RenderRows();
+            SearchMore(generation, 10);
+        }
+
+        private void SearchMore(int generation, int remaining)
+        {
+            if (generation != searchGeneration || search == null || string.IsNullOrWhiteSpace(search.value) || rows.Exists(Matches) || rows.Count >= total) return;
+            if (remaining == 0) { status.text = "No match in the messages loaded so far. Show more to keep searching."; return; }
+            Window.schedule.Execute(delegate
+            {
+                if (generation != searchGeneration) return;
+                if (!LoadPage()) { RenderRows(); return; }
+                RenderRows();
+                SearchMore(generation, remaining - 1);
+            });
+        }
+
+        private void ShowMore()
+        {
+            searchGeneration++;
+            if (LoadPage()) { RenderRows(); SearchMore(searchGeneration, 10); }
+            else RenderRows();
         }
 
         private bool Matches(JObject row)
@@ -167,7 +202,8 @@ namespace ObenseuerOS
                 UnityEngine.UIElements.Button open = Button(((bool)row["read"] ? "" : "● ") + from + "\n" + (string)row["subject"], delegate { Read(id); });
                 open.style.flexGrow = 1; line.Add(open); list.Add(line);
             }
-            if (shown == 0) list.Add(Text(rows.Count == 0 ? "No messages here." : "No matching messages."));
+            if (shown == 0) list.Add(Text(pageFailed ? "Messages could not be loaded." : rows.Count == 0 ? "No messages here." : "No matching messages."));
+            if (pageFailed || rows.Count < total) list.Add(Button(pageFailed ? "Retry" : "Show more", ShowMore));
         }
 
         private void Pick(bool value) { picked.Clear(); if (value) foreach (JObject row in rows) if (Matches(row)) picked.Add((int)row["id"]); armedDelete = false; RenderRows(); }

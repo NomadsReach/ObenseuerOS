@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using ObenseuerOS;
 
@@ -7,6 +8,13 @@ internal static class Program
     private static void Check(bool value) { if (!value) throw new Exception("Mail client check failed"); }
     private static void Main()
     {
+        List<JObject> pages = new List<JObject>(); int total = 0;
+        Check(MailPages.Append(pages, JObject.Parse("{\"items\":[{\"id\":1},{\"id\":2}],\"total\":3}"), ref total) && pages.Count == 2 && total == 3);
+        Check(!MailPages.Append(pages, JObject.Parse("{\"items\":[1],\"total\":3}"), ref total) && pages.Count == 2 && total == 3);
+        Check(!MailPages.Append(pages, null, ref total) && pages.Count == 2 && total == 3);
+        Check(!MailPages.Append(pages, JObject.Parse("{\"items\":[],\"total\":\"bad\"}"), ref total) && pages.Count == 2 && total == 3);
+        Check(MailPages.Append(pages, JObject.Parse("{\"items\":[{\"id\":3}],\"total\":3}"), ref total) && pages.Count == 3 && total == 3);
+        Check(MailPages.Append(pages, JObject.Parse("{\"items\":[],\"total\":8}"), ref total) && total == pages.Count);
         int calls = 0;
         bool busy = false;
         MailClient client = new MailClient(request =>
