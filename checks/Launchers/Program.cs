@@ -33,6 +33,13 @@ internal static class Program
         Check(windows.Update(false, false) && !windows.Visible);
         Check(windows.Update(false, true) && windows.Visible);
         Check(windows.Update(false, false) && !windows.Visible);
+        int delivered = 0;
+        Action<string, string> handler = (name, json) => { Check(name == "hour" && json == "{\"hour\":2}"); delivered++; };
+        Check(!ToolkitNativeEvents.Send(new[] { false, false }, open => open, handler, "hour", "{\"hour\":2}") && delivered == 0);
+        Check(!ToolkitNativeEvents.Send(new[] { true }, open => open, null, "hour", "{}"));
+        Check(ToolkitNativeEvents.Send(new[] { false, true, true }, open => open, handler, "hour", "{\"hour\":2}") && delivered == 1);
+        try { ToolkitNativeEvents.Send(new[] { true }, open => open, (name, json) => { throw new InvalidOperationException("handler"); }, "hour", "{}"); throw new Exception("callback failure ignored"); }
+        catch (InvalidOperationException e) { Check(e.Message == "handler"); }
         Console.WriteLine("Launcher catalog checks passed");
     }
 }

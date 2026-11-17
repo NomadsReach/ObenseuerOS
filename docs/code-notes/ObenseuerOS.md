@@ -100,3 +100,5 @@
 - `src/MailClient.cs:MailClient.SendReply` - The reply draft is cleared only after the existing mail bridge returns a result; bridge failures leave the text available for the current session.
 
 - `src/OsModApi.cs:Os.SyncWindow`, `src/WindowVisibility.cs:WindowVisibility.Update`, `src/ToolkitPrototype.cs:ToolkitPrototype.OnEnable` - OS window events follow the combined visibility of the web and Toolkit desktops, so opening a second desktop or closing one while the other remains visible does not emit a duplicate transition. Toolkit session invalidation and host lifecycle refresh this state.
+
+- `src/OsModApi.cs:Os.Emit`, `src/ToolkitPrototype.cs:ToolkitPrototype.EmitNative` - Native Toolkit apps may supply OnEvent to receive the validated event name and original JSON synchronously while their registered window is open and its game session is valid. Existing ownership, JSON validation, and per-mod rate limits apply; callback exceptions are logged by Os.Emit and reported as failed delivery.

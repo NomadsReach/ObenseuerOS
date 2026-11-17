@@ -159,6 +159,7 @@ namespace ObenseuerOS
         internal readonly Action OnOpen;
         internal Action<VisualElement> BuildUi;
         internal Func<bool> CanClose;
+        internal Action<string, string> OnEvent;
         internal string IconFile;
         internal string Folder;
         internal string Page;

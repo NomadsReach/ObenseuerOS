@@ -22,6 +22,7 @@ namespace ObenseuerOS
         public Action OnOpen;
         public Action<VisualElement> BuildUi;
         public Func<bool> CanClose;
+        public Action<string, string> OnEvent;
     }
 
     public sealed class OsAppArgs
@@ -144,7 +145,7 @@ namespace ObenseuerOS
             {
                 if (!Accept("RegisterApp", modId)) return false;
                 if (options == null) return Refuse("RegisterApp", modId, false, "options must not be null");
-                if (!NativeAppRegistration.Valid(options.Folder != null, options.OnOpen != null, options.BuildUi != null, options.CanClose != null)) return Refuse("RegisterApp", modId, false, "set exactly one of Folder, OnOpen or BuildUi; CanClose requires BuildUi");
+                if (!NativeAppRegistration.Valid(options.Folder != null, options.OnOpen != null, options.BuildUi != null, options.CanClose != null || options.OnEvent != null)) return Refuse("RegisterApp", modId, false, "set exactly one of Folder, OnOpen or BuildUi; CanClose and OnEvent require BuildUi");
                 string title = OsScope.CleanTitle(options.Title);
                 if (!CheckNew("RegisterApp", modId, appId, title)) return false;
                 if (CountOf(modId, false) >= OsScope.MaxAppsPerMod) return Refuse("RegisterApp", modId, false, "a mod may register 8 apps");
@@ -152,6 +153,7 @@ namespace ObenseuerOS
                 OsApp app = new OsApp(modId, appId, title, null, options.OnOpen);
                 app.BuildUi = options.BuildUi;
                 app.CanClose = options.CanClose;
+                app.OnEvent = options.OnEvent;
                 app.Desktop = options.Desktop;
                 app.Pinned = options.Pinned;
                 app.Width = Size(options.Width, 360);
@@ -196,7 +198,8 @@ namespace ObenseuerOS
             try
             {
                 if (!Accept("Emit", modId)) return false;
-                if (OwnedApp("Emit", modId, appId) == null) return false;
+                OsApp app = OwnedApp("Emit", modId, appId);
+                if (app == null) return false;
                 if (!OsScope.ValidName(name)) return Refuse("Emit", modId, false, "name must be 1 to 64 letters, digits, '.', '_' or '-' and not start with 'os.'");
                 if (!OsScope.FitsArgs(json)) return Refuse("Emit", modId, false, "json must be text of at most 12 KB");
                 JToken data;
@@ -210,6 +213,7 @@ namespace ObenseuerOS
                 }
                 if (!OsScope.Allow(ModLimits, "emit " + modId, OsScope.EmitsPerSecond, 1000, OsScope.NowMs())) return Refuse("Emit", modId, false, "30 events a second");
                 if (!OpenApps.ContainsKey(appId)) return false;
+                if (app.BuildUi != null) return ToolkitPrototype.EmitNative(app, name, json);
                 return OsView.Deliver(new JObject(new JProperty("v", 1), new JProperty("type", "event"), new JProperty("app", appId), new JProperty("name", name), new JProperty("data", data)));
             }
             catch (Exception e)

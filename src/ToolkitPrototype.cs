@@ -73,6 +73,14 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         return false;
     }
 
+    internal static bool EmitNative(OsApp app, string name, string json)
+    {
+        if (app == null || app.OnEvent == null || !Os.Apps.Contains(app)) return false;
+        return ToolkitNativeEvents.Send(new List<ToolkitPrototype>(active),
+            delegate(ToolkitPrototype prototype) { return prototype != null && prototype.modWindows != null && prototype.HasSession() && prototype.modWindows.Has(app); },
+            app.OnEvent, name, json);
+    }
+
     internal static void CloseNative(OsApp app)
     {
         foreach (ToolkitPrototype prototype in new List<ToolkitPrototype>(active))
