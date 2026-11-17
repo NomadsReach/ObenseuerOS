@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using BepInEx;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -21,7 +20,6 @@ namespace ObenseuerOS
         private static bool pageReady;
         private static int lastMinute = -1;
         private static string webFolder;
-        private static bool live;
         private static string held;
         private static string heldApp;
         private static readonly NoticeQueue notices = new NoticeQueue();
@@ -38,7 +36,7 @@ namespace ObenseuerOS
         {
             get
             {
-                return live;
+                return false;
             }
         }
 
@@ -165,23 +163,8 @@ namespace ObenseuerOS
             if (WikiBridge.SavesCopies && !view.MapFolder("wikisite", WikiBridge.Folder)) Log.Warn("wiki site folder not mapped");
             if (!view.MapFolder("sdk", Path.Combine(webFolder, "sdk"))) Log.Warn("sdk folder not mapped");
             foreach (OsApp app in Os.Apps) Map(app);
-            live = false;
-            try
-            {
-                live = AllowLiveHost(view);
-            }
-            catch (MissingMethodException)
-            {
-            }
-            if (!live) Log.Warn("wiki live pages off");
             view.Dismissed += Dismiss;
             return true;
-        }
-
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        private static bool AllowLiveHost(WebView target)
-        {
-            return target.AllowFrameHost(WikiTitle.Host);
         }
 
         internal static void OnScreenChanged(RectTransform screen)

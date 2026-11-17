@@ -28,14 +28,14 @@ namespace ObenseuerOS
             }
         }
 
-        internal static void Attach(bool enabled, int cacheMb, int minIntervalMs)
+        internal static void Attach(int cacheMb)
         {
             string root = Path.Combine(Paths.BepInExRootPath, "cache", "ObenseuerOS");
             folder = Path.Combine(root, "wiki-site");
             cache = SavedCopy ? new WikiCache(folder, Math.Max(1, cacheMb) * 1024L * 1024L) : null;
             string state = Path.Combine(root, "wiki");
             Directory.CreateDirectory(state);
-            WikiNet.Attach(state, enabled, minIntervalMs);
+            WikiNet.Attach(state, false, 1000);
         }
 
         internal static void Register()
@@ -65,6 +65,7 @@ namespace ObenseuerOS
         {
             JToken allow = OsBridge.Args(args)["allow"];
             if (allow == null || allow.Type != JTokenType.Boolean) throw new OsBridgeException("bad_args", "allow must be true or false");
+            if ((bool)allow) throw new OsBridgeException("denied", "The wiki is offline.");
             try
             {
                 WikiNet.SetConsent((bool)allow);

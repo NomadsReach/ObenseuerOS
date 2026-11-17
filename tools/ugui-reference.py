@@ -21,6 +21,16 @@ def main():
             page.locator('#desk [data-app="notes"]').dblclick()
             page.locator('.window[data-app="notes"] textarea').wait_for()
             page.screenshot(path="reference-notepad.png")
+            wiki = page.evaluate("""() => {
+                const slot = document.createElement('div');
+                let calls = 0;
+                document.body.append(slot);
+                const mounted = Apps.mount('wiki', slot, { live: true, send() { calls++; } }, {}, true);
+                return { mounted, text: slot.textContent, frames: slot.querySelectorAll('iframe').length, calls,
+                    csp: document.querySelector('meta[http-equiv="Content-Security-Policy"]').content };
+            }""")
+            assert wiki["mounted"] and "Offline wiki articles are not installed yet." in wiki["text"]
+            assert wiki["frames"] == 0 and wiki["calls"] == 0 and "stalburg.net" not in wiki["csp"]
             browser.close()
     finally:
         server.shutdown()

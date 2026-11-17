@@ -56,9 +56,7 @@ namespace ObenseuerOS
             Setup("market", () => MarketHost.Attach(Config.Bind("Market", "Currency", MarketHost.LegacyCurrency() ?? "RM", new ConfigDescription("Money the market trades in. Changing it closes open positions at the next load and pays them back in the old currency.", new AcceptableValueList<string>("RM", "OC"))).Value));
             Setup("stal-ex", () => StalExBridge.Attach());
             Setup("wiki", () => WikiBridge.Attach(
-                Config.Bind("Wiki", "Enabled", true, "Allow the Stalburg Wiki to contact stalburg.net. Off keeps the wiki offline even after the player allows it.").Value,
-                Config.Bind("Wiki", "CacheMaxMB", 128, "Most space the saved wiki copy may use, in megabytes. The oldest pages are removed first.").Value,
-                Config.Bind("Wiki", "MinIntervalMs", 1000, "Least time between two requests to stalburg.net, in milliseconds. Values below 500 are raised to 500.").Value));
+                Config.Bind("Wiki", "CacheMaxMB", 128, "Most space the saved wiki copy may use, in megabytes. The oldest pages are removed first.").Value));
             Setup("viruses", () => VirusCore.Attach(
                 Config.Bind("Viruses", "Enabled", true, "Computer viruses, pop-ups and infections. Off stops new infections and cleans existing ones, restoring files; a bought antivirus keeps working.").Value,
                 Config.Bind("Viruses", "MoneyTheft", true, "Let viruses take small amounts of OC from the wallet and RM from a bank account, within daily and weekly caps.").Value));
