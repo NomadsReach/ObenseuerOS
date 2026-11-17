@@ -105,3 +105,5 @@
 
 - `src/ToolkitPrototype.cs:ToolkitPrototype.LaunchRegistered`, `src/LauncherCatalog.cs:LauncherCatalog.Find`, `src/OsModApi.cs:Os.OpenApp` - Callback and native mod launchers share the session, registration and visibility checks in the Toolkit desktop. Command Prompt resolves eligible mod launchers by ID or title; programmatic callback launches use Toolkit when it is visible. Legacy HTML apps still require the web desktop.
 - `src/LauncherCatalog.cs:LauncherCatalog.Find` - Command Prompt prioritizes exact IDs and refuses ambiguous titles, so one mod cannot accidentally launch another mod with the same display name.
+
+- `src/ToolkitBrowser.cs:ToolkitBrowser.Render`, `src/ToolkitWiki.cs:ToolkitWiki.OpenPage`, `src/OfflineWiki.cs:OfflineWiki.FindPage` - Browser links to the offline wiki retain their article path and resolve only against locally loaded saved pages, using the existing validated title parser. Missing or unsupported links report that they cannot be opened offline; no request is sent to the network. Other site routes still open at their app root.

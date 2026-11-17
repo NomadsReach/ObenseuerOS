@@ -61,6 +61,11 @@ internal static class Program
         Check(OfflineWiki.LinkTitle("https://example.com/x") == null && OfflineWiki.LinkTitle("//example.com/x") == null && OfflineWiki.LinkTitle("/index.php?title=Bad") == null && OfflineWiki.LinkTitle("#section") == null && OfflineWiki.LinkTitle("/Special:Random") == null && OfflineWiki.LinkTitle("/A/../B") == null && OfflineWiki.LinkTitle("/A//B") == null);
         OfflineWikiPage linked = OfflineWiki.Parse("OBXWIKI1\ntitle:Main_Page\nrev:3\nfetched:4\n\n<a href=\"/INFRA\">one</a><a href='/INFRA'>two</a><script><a href=\"/hidden\">bad</a></script>");
         Check(linked != null && linked.Links.Count == 1 && linked.Links[0] == "INFRA");
+        Check(OfflineWiki.LinkTitle("/An_Article%20Name#part") == "An Article Name");
+        Check(OfflineWiki.LinkTitle("/An_Article?edit=1") == null && OfflineWiki.LinkTitle("//evil.test/INFRA") == null && OfflineWiki.LinkTitle("/../secret") == null);
+        var articlePages = new[] { linked, OfflineWiki.Parse("OBXWIKI1\ntitle:An_Article_Name\nrev:1\nfetched:1\n\ntext") };
+        Check(object.ReferenceEquals(OfflineWiki.FindPage(articlePages, "an article name"), articlePages[1]));
+        Check(OfflineWiki.FindPage(articlePages, "missing") == null && OfflineWiki.FindPage(articlePages, null) == null);
         OfflineWikiPage pictured = OfflineWiki.Parse("OBXWIKI1\ntitle:Main_Page\nrev:3\nfetched:4\n\n<img src=\"/images/0/01/INFRA.png\"><img src=\"https://evil.test/x.png\"><script><img src=\"/images/0/01/hidden.png\"></script>");
         Check(pictured != null && pictured.Images.Count == 1 && pictured.Images[0] == "/images/0/01/INFRA.png");
         Check(OfflineWiki.ImageKey("/images/thumb/0/01/INFRA.png/200px-INFRA.png") != null && OfflineWiki.ImageKey("https://evil.test/images/0/01/INFRA.png") == null && OfflineWiki.ImageKey("/images/../secret.png") == null);

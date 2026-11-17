@@ -12,6 +12,7 @@ namespace ObenseuerOS
         internal readonly VisualElement Window;
         private readonly NotepadStorage storage;
         private readonly Func<int, bool> launch;
+        private readonly Action<string> openWiki;
         private readonly Action checkSession;
         private readonly TransactionClient browser;
         private readonly ScrollView content;
@@ -37,9 +38,9 @@ namespace ObenseuerOS
         };
         private const string Home = "www.stalburg.ts";
 
-        internal ToolkitBrowser(NotepadStorage storage, Func<int, bool> launch, Action checkSession, TransactionClient browser)
+        internal ToolkitBrowser(NotepadStorage storage, Func<int, bool> launch, Action<string> openWiki, Action checkSession, TransactionClient browser)
         {
-            this.storage = storage; this.launch = launch; this.checkSession = checkSession; this.browser = browser;
+            this.storage = storage; this.launch = launch; this.openWiki = openWiki; this.checkSession = checkSession; this.browser = browser;
             Window = new VisualElement(); Window.style.position = UnityEngine.UIElements.Position.Absolute;
             Window.style.left = 120; Window.style.top = 28; Window.style.width = 1100; Window.style.height = 700;
             Window.style.paddingLeft = 6; Window.style.paddingRight = 6; Window.style.paddingBottom = 6;
@@ -151,7 +152,12 @@ namespace ObenseuerOS
                 if (Sites[i, 0] != host) continue;
                 content.Add(Text(Sites[i, 1])); content.Add(Text(Sites[i, 2]));
                 int app;
-                if (int.TryParse(Sites[i, 3], out app)) content.Add(Button("Open " + Sites[i, 1], delegate { if (Session()) launch(app); }));
+                if (int.TryParse(Sites[i, 3], out app))
+                {
+                    int pathAt = url.IndexOfAny(new[] { '/', '?', '#' });
+                    string path = pathAt < 0 ? "" : url.Substring(pathAt);
+                    content.Add(Button("Open " + Sites[i, 1], delegate { if (!Session()) return; if (app == 25 && openWiki != null) openWiki(path); else launch(app); }));
+                }
                 else content.Add(Text(host == "wiki.stalburg.ts" ? "Offline wiki articles are not installed yet." : "This site is not available in the Toolkit interface yet."));
                 return;
             }

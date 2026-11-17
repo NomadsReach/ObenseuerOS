@@ -37,6 +37,16 @@ namespace ObenseuerOS
         {
             Window.style.display = DisplayStyle.Flex; Window.BringToFront(); pages = OfflineWiki.Load(new[] { bundle, legacy }, out limited); history.Clear(); current = null; Index();
         }
+        internal void OpenPage(string path)
+        {
+            Open();
+            if (string.IsNullOrEmpty(path) || path == "/") return;
+            string title = OfflineWiki.LinkTitle(path);
+            OfflineWikiPage page = OfflineWiki.FindPage(pages, title);
+            if (page != null) { Show(page, false); return; }
+            ClearBody(); body.Add(Button("← Articles", Index));
+            body.Add(Text(title == null ? "This wiki link cannot be opened offline." : "The saved article '" + title + "' is not available offline."));
+        }
         private static Label Text(string value) { Label label = new Label(value); label.enableRichText = false; label.style.color = Color.black; label.style.whiteSpace = WhiteSpace.Normal; return label; }
         private static UnityEngine.UIElements.Button Button(string value, Action action) { UnityEngine.UIElements.Button button = new UnityEngine.UIElements.Button(action); button.enableRichText = false; button.text = value; return button; }
         private void Index()

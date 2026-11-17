@@ -143,6 +143,13 @@ namespace ObenseuerOS
             }
             return null;
         }
+        internal static OfflineWikiPage FindPage(IEnumerable<OfflineWikiPage> pages, string title)
+        {
+            if (pages == null || title == null) return null;
+            foreach (OfflineWikiPage page in pages)
+                if (page != null && string.Equals(page.Title, title, StringComparison.OrdinalIgnoreCase)) return page;
+            return null;
+        }
         internal static string LinkTitle(string href)
         {
             if (string.IsNullOrEmpty(href) || href.Length > 1024) return null;
