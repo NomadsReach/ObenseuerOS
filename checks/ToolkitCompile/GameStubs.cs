@@ -27,6 +27,8 @@ namespace ObenseuerCore
 
 namespace ObenseuerOS
 {
+    internal sealed class OsApp { internal string Id, ModId, Title; internal bool Site, Desktop; internal Action OnOpen; }
+    internal static class Os { internal const string ModId = "os"; internal static readonly List<OsApp> Apps = new List<OsApp>(); internal static void Opened(string id) { } }
     internal sealed class VirusPulse { internal int Popups; internal bool Error, Nag; }
     internal static class VirusFx { internal static event Action<VirusPulse> Pulsed { add { } remove { } } }
     internal static class WikiBridge { internal static string LegacyPages { get { return ""; } } internal static string BundledPages { get { return ""; } } }

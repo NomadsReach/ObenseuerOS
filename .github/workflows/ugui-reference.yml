@@ -28,6 +28,7 @@ jobs:
       - run: dotnet run --project checks/Market/Market.csproj -c Release
       - run: dotnet run --project checks/ShopResult/ShopResult.csproj -c Release
       - run: dotnet run --project checks/Browser/Browser.csproj -c Release
+      - run: dotnet run --project checks/Launchers/Launchers.csproj -c Release
       - run: dotnet run --project checks/Jobs/Jobs.csproj -c Release
       - run: dotnet run --project checks/ScratchRecord/ScratchRecord.csproj -c Release
       - run: dotnet run --project checks/BetRecord/BetRecord.csproj -c Release

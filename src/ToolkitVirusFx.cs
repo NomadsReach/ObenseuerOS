@@ -48,10 +48,16 @@ namespace ObenseuerOS
             }
             catch (Exception) { }
         }
+        private void SyncDesktop()
+        {
+            desktopOrder.RemoveAll(delegate(VisualElement child) { return child.parent != desktop; });
+            foreach (VisualElement child in desktop.Children()) if (!desktopOrder.Contains(child)) desktopOrder.Add(child);
+        }
         private void ResetDesktop() { wall.style.display = DisplayStyle.None; if (shuffled) RestoreOrder(); }
-        private void RestoreOrder() { foreach (VisualElement child in desktopOrder) child.BringToFront(); shuffled = false; }
+        private void RestoreOrder() { SyncDesktop(); foreach (VisualElement child in desktopOrder) child.BringToFront(); shuffled = false; }
         private void Shuffle()
         {
+            SyncDesktop();
             List<VisualElement> order = new List<VisualElement>(desktopOrder);
             for (int i = order.Count - 1; i > 0; i--) { int j = random.Next(i + 1); VisualElement swap = order[i]; order[i] = order[j]; order[j] = swap; }
             foreach (VisualElement child in order) child.BringToFront();

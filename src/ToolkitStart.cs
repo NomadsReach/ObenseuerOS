@@ -9,6 +9,9 @@ namespace ObenseuerOS
     {
         internal readonly VisualElement Menu;
         private readonly TextField search;
+        private readonly ScrollView scroll;
+        private readonly List<OsApp> launchers = new List<OsApp>();
+        private Func<OsApp, bool> openLauncher;
         private readonly List<UnityEngine.UIElements.Button> buttons = new List<UnityEngine.UIElements.Button>();
         private readonly string[] names;
         private readonly Func<int, bool> open, available;
@@ -38,7 +41,7 @@ namespace ObenseuerOS
                 }
             }, TrickleDown.TrickleDown);
             Menu.Add(search);
-            ScrollView scroll = new ScrollView(); scroll.style.flexShrink = 1;
+            scroll = new ScrollView(); scroll.style.flexShrink = 1;
             scroll.contentContainer.style.flexDirection = FlexDirection.Row;
             scroll.contentContainer.style.flexWrap = Wrap.Wrap;
             Menu.Add(scroll);
@@ -75,13 +78,37 @@ namespace ObenseuerOS
         internal void Hide() { Menu.style.display = DisplayStyle.None; }
         internal void Refresh() { Filter(search.value); }
 
-        private void Launch(int index) { if (open(index)) Hide(); }
+        internal void SetLaunchers(List<OsApp> entries, Func<OsApp, bool> opener)
+        {
+            while (buttons.Count > names.Length) { int last = buttons.Count - 1; buttons[last].RemoveFromHierarchy(); buttons.RemoveAt(last); }
+            launchers.Clear(); launchers.AddRange(entries); openLauncher = opener;
+            for (int i = 0; i < launchers.Count; i++)
+            {
+                int index = names.Length + i;
+                UnityEngine.UIElements.Button button = new UnityEngine.UIElements.Button(delegate { Launch(index); });
+                button.style.width = 96; button.style.height = 96; button.style.marginRight = 8; button.style.marginBottom = 8;
+                button.style.backgroundColor = (Color)new Color32(47, 102, 179, 255);
+                Label icon = new Label(launchers[i].Title.Substring(0, 1)); icon.style.color = Color.white; icon.style.fontSize = 28; icon.style.unityTextAlign = TextAnchor.MiddleCenter; button.Add(icon);
+                Label title = new Label(launchers[i].Title); title.style.color = Color.white; title.style.fontSize = 12; title.style.whiteSpace = WhiteSpace.Normal; button.Add(title);
+                buttons.Add(button); scroll.Add(button);
+            }
+            Refresh();
+        }
+        private void Launch(int index)
+        {
+            bool opened = index < names.Length ? open(index) : openLauncher != null && index - names.Length < launchers.Count && openLauncher(launchers[index - names.Length]);
+            if (opened) Hide();
+        }
 
         private void Filter(string query)
         {
             string text = (query ?? "").Trim();
             for (int i = 0; i < buttons.Count; i++)
-                buttons[i].style.display = available(i) && names[i].IndexOf(text, StringComparison.OrdinalIgnoreCase) >= 0 ? DisplayStyle.Flex : DisplayStyle.None;
+            {
+                string name = i < names.Length ? names[i] : launchers[i - names.Length].Title;
+                bool shown = i >= names.Length || available(i);
+                buttons[i].style.display = shown && name.IndexOf(text, StringComparison.OrdinalIgnoreCase) >= 0 ? DisplayStyle.Flex : DisplayStyle.None;
+            }
         }
 
         private void Navigate(KeyDownEvent e)

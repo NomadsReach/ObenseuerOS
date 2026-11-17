@@ -240,7 +240,46 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         windows.Add(eye.Window);
         windows.Add(bets.Window);
         ToolkitStart start = new ToolkitStart(Names, Icons, Texture, launch, delegate { if (canClose()) ComputerApps.Close(storage == null ? "os.toolkit-prototype" : "os.toolkit-os"); }, delegate(int index) { return index < 14 || installed(Ids[index]); });
-        Action updateGuard = delegate { guardTile.style.display = installed("pcguard") ? DisplayStyle.Flex : DisplayStyle.None; turvaTile.style.display = installed("turvapro") ? DisplayStyle.Flex : DisplayStyle.None; start.Refresh(); };
+        List<OsApp> launchers = new List<OsApp>();
+        List<VisualElement> launcherTiles = new List<VisualElement>();
+        Func<OsApp, bool> openLauncher = delegate(OsApp app)
+        {
+            if (osStorage == null) return false;
+            try { osStorage.CheckSession(); }
+            catch (Exception) { return false; }
+            if (app == null || !Os.Apps.Contains(app) || app.ModId == Os.ModId || app.Site || app.OnOpen == null || !VirusAv.Shows(app.Id)) return false;
+            Os.Opened(app.Id); return true;
+        };
+        Action updateLaunchers = delegate
+        {
+            List<OsApp> current = new List<OsApp>();
+            if (osStorage != null)
+            {
+                try { osStorage.CheckSession(); current = LauncherCatalog.Select(Os.Apps, Os.ModId, VirusAv.Shows); }
+                catch (Exception) { }
+            }
+            if (LauncherCatalog.Same(launchers, current)) return;
+            foreach (VisualElement old in launcherTiles) { if (selected == old) selected = null; old.RemoveFromHierarchy(); }
+            launcherTiles.Clear(); launchers = current;
+            foreach (OsApp entry in launchers)
+            {
+                if (!entry.Desktop) continue;
+                OsApp app = entry;
+                VisualElement tile = new VisualElement(); tile.style.width = 88; tile.style.height = 104; tile.style.alignItems = Align.Center;
+                Label icon = new Label(entry.Title.Substring(0, 1)); icon.style.color = Color.white; icon.style.fontSize = 36; icon.style.height = 52; icon.style.unityTextAlign = TextAnchor.MiddleCenter; tile.Add(icon);
+                Label text = new Label(entry.Title); text.style.color = Color.white; text.style.fontSize = 12; text.style.unityTextAlign = TextAnchor.UpperCenter; text.style.whiteSpace = WhiteSpace.Normal; text.style.width = 80; text.style.marginTop = 4; tile.Add(text);
+                tile.RegisterCallback<ClickEvent>(delegate(ClickEvent e)
+                {
+                    if (e.button != 0) return;
+                    if (selected != null) selected.style.backgroundColor = Color.clear;
+                    selected = tile; selected.style.backgroundColor = (Color)new Color32(120, 170, 230, 77);
+                    if (e.clickCount >= 2) openLauncher(app);
+                });
+                launcherTiles.Add(tile); desktop.Add(tile);
+            }
+            start.SetLaunchers(launchers, openLauncher);
+        };
+        Action updateGuard = delegate { guardTile.style.display = installed("pcguard") ? DisplayStyle.Flex : DisplayStyle.None; turvaTile.style.display = installed("turvapro") ? DisplayStyle.Flex : DisplayStyle.None; updateLaunchers(); start.Refresh(); };
         updateGuard(); desktop.schedule.Execute(updateGuard).Every(1000);
         VisualElement taskbar = new VisualElement();
         taskbar.style.height = 40;
