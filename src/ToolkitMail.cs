@@ -162,7 +162,7 @@ namespace ObenseuerOS
         {
             if (generation != searchGeneration || search == null || string.IsNullOrWhiteSpace(search.value) || rows.Exists(Matches) || rows.Count >= total) return;
             if (remaining == 0) { status.text = "No match in the messages loaded so far. Show more to keep searching."; return; }
-            Window.schedule.Execute(delegate
+            Window.schedule.Execute(delegate()
             {
                 if (generation != searchGeneration) return;
                 if (!LoadPage()) { RenderRows(); return; }
