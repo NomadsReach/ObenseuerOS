@@ -18,9 +18,11 @@ namespace ObenseuerOS
             Os.Handle(AppId, "lotto.state", State);
             Os.Handle(AppId, "lotto.quick", QuickPick);
             Os.Handle(AppId, "lotto.buy", Buy);
+            Os.Handle(AppId, "lotto.result", PurchaseResult);
             Os.Handle(AppId, "lotto.tickets", Tickets);
             Os.Handle(AppId, "lotto.results", Results);
             Os.Handle(AppId, "scratch.buy", ScratchBuy);
+            Os.Handle(AppId, "scratch.result", ScratchResult);
             Os.Handle(AppId, "scratch.reveal", ScratchReveal);
             Os.Handle(AppId, "scratch.history", ScratchHistory);
         }
@@ -97,6 +99,15 @@ namespace ObenseuerOS
             return ReceiptJson(LottoGame.Buy(state, lines, cid, print, LottoGame.TicketPrice, LottoGame.Minutes(WorldClock.Now)), Balance());
         }
 
+        private static string PurchaseResult(string args) { return PurchaseResultFor(LottoGame.Current, args); }
+
+        internal static string PurchaseResultFor(LottoSave state, string args)
+        {
+            JObject a = OsBridge.Args(args);
+            string cid = Cid(a), print = LottoGame.Print(Lines(a));
+            return new JObject(new JProperty("found", LottoGame.Saved(state, cid, print) != null)).ToString(Formatting.None);
+        }
+
         private static string Tickets(string args)
         {
             JObject a = OsBridge.Args(args);
@@ -139,6 +150,16 @@ namespace ObenseuerOS
                 rec = LottoScratch.Buy(state, kind, ship, cid, print, WorldClock.Now.Day);
             }
             return CardReply(rec);
+        }
+
+        private static string ScratchResult(string args) { return ScratchResultFor(LottoGame.Current, args); }
+
+        internal static string ScratchResultFor(LottoSave state, string args)
+        {
+            JObject a = OsBridge.Args(args);
+            string cid = Cid(a); ScratchKind kind = KindArg(a);
+            string print = kind.Key + (OsBridge.Flag(a, "ship") ? ":ship" : ":wallet");
+            return new JObject(new JProperty("found", LottoScratch.Saved(state, cid, print) != null)).ToString(Formatting.None);
         }
 
         private static string ScratchReveal(string args)

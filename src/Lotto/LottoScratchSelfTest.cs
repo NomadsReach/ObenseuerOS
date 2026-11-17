@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ObenseuerCore;
+using Newtonsoft.Json.Linq;
 
 namespace ObenseuerOS
 {
@@ -17,6 +18,9 @@ namespace ObenseuerOS
                 if (error != null) return kind.Key + " " + error;
             }
             if (!PruneOk()) return "scratch prune";
+            LottoSave state = new LottoSave(); state.Cards.Add(new ScratchRec { Cid = "lookup", Print = "oc:wallet" });
+            string lookup = "{\"cid\":\"lookup\",\"kind\":\"oc\",\"ship\":false}";
+            if (!(bool)JObject.Parse(LottoBridge.ScratchResultFor(state, lookup))["found"] || (bool)JObject.Parse(LottoBridge.ScratchResultFor(new LottoSave(), lookup))["found"]) return "scratch purchase lookup";
             if (Encoding.UTF8.GetByteCount(LottoBridge.ScratchHistoryJson(WorstCards(), int.MaxValue, float.MaxValue)) > OsBridge.MaxResultBytes) return "scratch history over 12 KB";
             return null;
         }

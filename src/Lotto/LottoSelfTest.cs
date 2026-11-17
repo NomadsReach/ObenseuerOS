@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace ObenseuerOS
 {
@@ -110,6 +111,8 @@ namespace ObenseuerOS
             rec.Print = LottoGame.Print(lines);
             state.Purchases.Add(rec);
             if (LottoGame.Saved(state, "c1", rec.Print) != rec || LottoGame.Saved(state, "c2", rec.Print) != null) return false;
+            string lookup = "{\"cid\":\"c1\",\"lines\":[[1,2,3,4,5,6],[7,8,9,10,11,12]]}";
+            if (!(bool)JObject.Parse(LottoBridge.PurchaseResultFor(state, lookup))["found"] || (bool)JObject.Parse(LottoBridge.PurchaseResultFor(new LottoSave(), lookup))["found"]) return false;
             try
             {
                 LottoGame.Saved(state, "c1", LottoGame.Print(new List<List<int>> { new List<int> { 1, 2, 3, 4, 5, 7 } }));
