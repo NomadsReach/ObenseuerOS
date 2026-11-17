@@ -17,6 +17,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
     private readonly List<Texture2D> textures = new List<Texture2D>();
     private readonly Dictionary<string, Texture2D> iconTextures = new Dictionary<string, Texture2D>();
     private ToolkitModWindows modWindows;
+    private ToolkitNotepad notepad;
     private ToolkitNotifications notifications;
     private VisualElement selected;
     private NotepadStorage storage;
@@ -71,6 +72,13 @@ internal sealed class ToolkitPrototype : MonoBehaviour
             if (prototype != null && prototype.modWindows != null && prototype.HasSession()) return prototype.modWindows.Open(app);
         }
         return false;
+    }
+
+    internal static OsResult OpenFile(string path)
+    {
+        foreach (ToolkitPrototype prototype in new List<ToolkitPrototype>(active))
+            if (prototype != null && prototype.notepad != null && prototype.HasSession()) return prototype.notepad.OpenExternal(path);
+        return OsResult.Unavailable;
     }
 
     internal static bool LaunchRegistered(OsApp app)
@@ -143,7 +151,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         desktop.style.paddingLeft = 8;
         desktop.style.paddingTop = 8;
         root.Add(desktop);
-        ToolkitNotepad notepad = new ToolkitNotepad(storage, delegate { if (explorer != null) explorer.RefreshIfOpen(); });
+        notepad = new ToolkitNotepad(storage, delegate { if (explorer != null) explorer.RefreshIfOpen(); });
         ToolkitMinesweeper minesweeper = new ToolkitMinesweeper();
         ToolkitSolitaire solitaire = new ToolkitSolitaire();
         ToolkitRecycle recycle = null;

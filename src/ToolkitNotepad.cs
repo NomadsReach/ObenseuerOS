@@ -92,6 +92,23 @@ namespace ObenseuerOS
             if (Discard("Open")) Load(file);
         }
 
+        internal OsResult OpenExternal(string file)
+        {
+            Window.style.display = DisplayStyle.Flex;
+            Window.BringToFront();
+            if (storage == null) return OsResult.Unavailable;
+            ExternalOpenAction action = ToolkitNotepadOpen.Decide(path, file, text.value != saved);
+            if (action == ExternalOpenAction.Focus) return OsResult.Ok;
+            if (action == ExternalOpenAction.Load) return Load(file) ? OsResult.Ok : OsResult.Unavailable;
+            VisualElement panel = Popup(8, 400);
+            Label question = new Label("Discard unsaved changes and open " + file + "?");
+            question.enableRichText = false; question.style.whiteSpace = WhiteSpace.Normal; panel.Add(question);
+            panel.Add(Button("Discard and open", delegate { Load(file); }));
+            panel.Add(Button("Cancel", delegate { HidePopup(); status.text = "Open cancelled."; }));
+            status.text = "Unsaved changes. Confirm before opening the requested file.";
+            return OsResult.Queued;
+        }
+
         private void Close()
         {
             if (!CanClose()) return;
@@ -208,7 +225,7 @@ namespace ObenseuerOS
             catch (Exception e) { status.text = "Not opened: " + e.Message; }
         }
 
-        private void Load(string selected)
+        private bool Load(string selected)
         {
             try
             {
@@ -221,8 +238,9 @@ namespace ObenseuerOS
                 status.text = "";
                 SetTitle();
                 try { storage.Opened(selected); } catch (Exception) { }
+                return true;
             }
-            catch (Exception e) { status.text = "Not opened: " + e.Message; }
+            catch (Exception e) { status.text = "Not opened: " + e.Message; return false; }
         }
 
         private void Save()

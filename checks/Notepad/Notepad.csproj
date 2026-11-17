@@ -9,5 +9,6 @@
     <Compile Include="..\..\src\ExplorerStorage.cs" Link="ExplorerStorage.cs" />
     <Compile Include="..\..\src\OsNotepadStorage.cs" Link="OsNotepadStorage.cs" />
     <Compile Include="..\..\src\OsPaths.cs" Link="OsPaths.cs" />
+    <Compile Include="..\..\src\ToolkitNotepadOpen.cs" Link="ToolkitNotepadOpen.cs" />
   </ItemGroup>
 </Project>

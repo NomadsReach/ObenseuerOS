@@ -18,6 +18,10 @@ internal static class Program
 
     private static void Main()
     {
+        Check(ToolkitNotepadOpen.Decide("/docs/one.txt", "/docs/one.txt", true) == ExternalOpenAction.Focus, "same file retains edits");
+        Check(ToolkitNotepadOpen.Decide("/docs/one.txt", "/docs/two.txt", true) == ExternalOpenAction.Confirm, "dirty file needs confirmation");
+        Check(ToolkitNotepadOpen.Decide("/docs/one.txt", "/docs/two.txt", false) == ExternalOpenAction.Load, "clean file opens");
+        Check(ToolkitNotepadOpen.Decide(null, "/docs/two.txt", true) == ExternalOpenAction.Confirm, "dirty untitled file needs confirmation");
         OsNotepadStorage.Attach();
         var storage = new OsNotepadStorage();
         int firstSession = storage.SessionId;
