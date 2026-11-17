@@ -4,6 +4,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <Compile Include="..\..\src\BrowserState.cs" />
     <Compile Include="..\..\src\OfflineWiki.cs" />
+    <Compile Include="..\..\src\Wiki\WikiTitle.cs" />
     <Compile Include="..\..\src\EyeState.cs" />
     <Compile Include="..\..\src\Ugui\NotepadStorage.cs" />
   </ItemGroup>

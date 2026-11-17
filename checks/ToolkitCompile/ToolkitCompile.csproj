@@ -18,6 +18,7 @@
     <Compile Include="..\..\src\NewsPhotos.cs" />
     <Compile Include="..\..\src\BrowserState.cs" />
     <Compile Include="..\..\src\OfflineWiki.cs" />
+    <Compile Include="..\..\src\Wiki\WikiTitle.cs" />
     <Compile Include="..\..\src\GuardPurchase.cs" />
     <Compile Include="..\..\src\TurvaReceipt.cs" />
     <Compile Include="..\..\src\ShadyReply.cs" />

@@ -11,6 +11,7 @@ namespace ObenseuerOS
     {
         internal string Title;
         internal string Text;
+        internal readonly List<string> Links = new List<string>();
     }
 
     internal static class OfflineWiki
@@ -21,6 +22,7 @@ namespace ObenseuerOS
         private const int MaxFiles = 2000;
         private static readonly TimeSpan MatchTimeout = TimeSpan.FromSeconds(2);
         private static readonly Regex Hidden = new Regex(@"<!--.*?-->|<(script|style|template|noscript)\b[^>]*>.*?</\1\s*>", RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.CultureInvariant, MatchTimeout);
+        private static readonly Regex Anchors = new Regex(@"<a\b[^>]*?\bhref\s*=\s*(?:""([^""]*)""|'([^']*)'|([^\s>]+))", RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.CultureInvariant, MatchTimeout);
         private static readonly Regex Breaks = new Regex(@"</?(p|div|br|li|h[1-6]|tr|hr)\b[^>]*>", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant, MatchTimeout);
         private static readonly Regex Tags = new Regex(@"<[^>]*>", RegexOptions.Singleline | RegexOptions.CultureInvariant, MatchTimeout);
         private static readonly Regex Spaces = new Regex(@"[ \t\f\v]+", RegexOptions.CultureInvariant, MatchTimeout);
@@ -73,9 +75,35 @@ namespace ObenseuerOS
             string title = headers[1].Substring(6).Trim(); long revision, fetched;
             if (title.Length == 0 || title.Length > 255 || !long.TryParse(headers[2].Substring(4), out revision) || revision < 0 || !long.TryParse(headers[3].Substring(8), out fetched) || fetched < 0) return null;
             string html = normalized.Substring(split + 2);
-            string text = Hidden.Replace(html, " "); text = Breaks.Replace(text, "\n"); text = Tags.Replace(text, " ");
+            string visible = Hidden.Replace(html, " ");
+            OfflineWikiPage page = new OfflineWikiPage { Title = title.Replace('_', ' ') };
+            HashSet<string> links = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (Match match in Anchors.Matches(visible))
+            {
+                string href = match.Groups[1].Success ? match.Groups[1].Value : match.Groups[2].Success ? match.Groups[2].Value : match.Groups[3].Value;
+                string target = LinkTitle(href);
+                if (target != null && links.Add(target)) page.Links.Add(target);
+                if (page.Links.Count >= 500) break;
+            }
+            string text = Breaks.Replace(visible, "\n"); text = Tags.Replace(text, " ");
             text = WebUtility.HtmlDecode(text).Replace("\r", ""); text = Spaces.Replace(text, " "); text = Newlines.Replace(text, "\n\n").Trim();
-            return new OfflineWikiPage { Title = title.Replace('_', ' '), Text = text };
+            page.Text = text;
+            return page;
+        }
+        internal static string LinkTitle(string href)
+        {
+            if (string.IsNullOrEmpty(href) || href.Length > 1024) return null;
+            href = WebUtility.HtmlDecode(href);
+            if (!href.StartsWith("/", StringComparison.Ordinal) || href.StartsWith("//", StringComparison.Ordinal) || href.IndexOf('?') >= 0) return null;
+            int hash = href.IndexOf('#'); if (hash >= 0) href = href.Substring(0, hash);
+            if (href.Length <= 1) return null;
+            try
+            {
+                string title;
+                if (!WikiTitle.TryNormalise(Uri.UnescapeDataString(href.Substring(1)), out title)) return null;
+                return title.Replace('_', ' ');
+            }
+            catch (UriFormatException) { return null; }
         }
     }
 }

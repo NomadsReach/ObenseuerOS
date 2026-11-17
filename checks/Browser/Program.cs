@@ -57,6 +57,10 @@ internal static class Program
         Check(!object.ReferenceEquals(first, EyeStates.ForSession(72, sharedDisk)));
         OfflineWikiPage wiki = OfflineWiki.Parse("OBXWIKI1\ntitle:Main_Page\nrev:3\nfetched:4\n\n<h1>Welcome</h1><script>bad()</script><p>Tea &amp; turnips</p>");
         Check(wiki != null && wiki.Title == "Main Page" && wiki.Text.Contains("Tea & turnips") && !wiki.Text.Contains("bad()"));
+        Check(OfflineWiki.LinkTitle("/INFRA#history") == "INFRA" && OfflineWiki.LinkTitle("/An_Article%20Name") == "An Article Name");
+        Check(OfflineWiki.LinkTitle("https://example.com/x") == null && OfflineWiki.LinkTitle("//example.com/x") == null && OfflineWiki.LinkTitle("/index.php?title=Bad") == null && OfflineWiki.LinkTitle("#section") == null && OfflineWiki.LinkTitle("/Special:Random") == null && OfflineWiki.LinkTitle("/A/../B") == null && OfflineWiki.LinkTitle("/A//B") == null);
+        OfflineWikiPage linked = OfflineWiki.Parse("OBXWIKI1\ntitle:Main_Page\nrev:3\nfetched:4\n\n<a href=\"/INFRA\">one</a><a href='/INFRA'>two</a><script><a href=\"/hidden\">bad</a></script>");
+        Check(linked != null && linked.Links.Count == 1 && linked.Links[0] == "INFRA");
         Check(OfflineWiki.Parse("OBXWIKI1\ntitle:Main_Page\nrev:no\nfetched:4\n\ntext") == null && OfflineWiki.Parse("bad") == null);
         bool wikiLimited; Check(OfflineWiki.Load(null, out wikiLimited).Count == 0 && !wikiLimited);
         string wikiFolder = Path.Combine(Path.GetTempPath(), "offline-wiki-check-" + Guid.NewGuid().ToString("N"));
