@@ -4,8 +4,21 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using Newtonsoft.Json.Linq;
 
+namespace ObenseuerCore.Ui
+{
+    internal static class UiEvents { internal static void Acquire() { } internal static void Release() { } }
+}
+
 namespace ObenseuerCore
 {
+    internal sealed class CoreLog
+    {
+        internal static CoreLog For(string owner) { return new CoreLog(); }
+        internal void Warn(string message) { }
+        internal void Error(string message) { }
+        internal void Info(string message) { }
+        internal void Debug(string key, string message) { }
+    }
     internal enum MoneyCurrency { OC, RM }
     internal static class Cash
     {
@@ -47,6 +60,7 @@ namespace ObenseuerOS
     internal sealed class OsNotepadStorage : NotepadStorage
     {
         internal int SessionId { get { return 0; } }
+        internal bool SessionCurrent { get { return true; } }
         internal void CheckSession() { }
         public string[] List() { return null; }
         public string Read(string path) { return null; }
@@ -56,6 +70,8 @@ namespace ObenseuerOS
     }
     internal sealed class OsNotice { internal string From, Title, Body; }
     internal static class OsDesktopState { internal static string UserName() { return ""; } internal static List<OsNotice> TakeNotices() { return new List<OsNotice>(); } }
+    internal static class OsView { internal static bool Visible { get { return false; } } internal static bool Show(RectTransform screen) { return false; } internal static void Dismiss() { } }
+    internal static class OsLaptopPrompt { internal static bool IsLaptopName(string name) { return false; } }
     internal sealed class ChatRoomDef { internal string Id, Name; internal bool Contact; }
     internal static class ChatGame
     {
@@ -72,4 +88,28 @@ namespace ObenseuerOS
     {
         internal static string Send(string args) { return ""; }
     }
+}
+
+internal sealed class GameController
+{
+    internal static GameController instance;
+    internal void ControlsDisabled(GameObject owner, bool ShowCursor) { }
+    internal void ControlsEnabled(GameObject owner) { }
+}
+internal sealed class ThirdPersonCameraController
+{
+    internal static ThirdPersonCameraController instance;
+    internal Transform FollowTarget;
+    internal bool followPlayerDisabled;
+    internal void DisableRotation() { }
+    internal void EnableRotation() { }
+}
+internal sealed class ThirdPersonCameraCollision { internal static ThirdPersonCameraCollision instance; internal bool disableCollisionUpdate; }
+internal sealed class OpenSewerCharacterController { internal static OpenSewerCharacterController instance; }
+internal sealed class InputManager
+{
+    internal enum InputType { Keyboard }
+    internal static InputManager instance;
+    internal InputType inputType;
+    internal bool GetKeyDown(string key) { return false; }
 }

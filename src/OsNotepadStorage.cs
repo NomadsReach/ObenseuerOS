@@ -9,6 +9,7 @@ namespace ObenseuerOS
         private static int generation;
         private readonly int session = generation;
         internal int SessionId { get { return session; } }
+        internal bool SessionCurrent { get { return session == generation; } }
 
         internal static void Attach()
         {
@@ -19,7 +20,7 @@ namespace ObenseuerOS
 
         internal void CheckSession()
         {
-            if (session != generation) throw new InvalidOperationException("the game session changed; reopen the OS");
+            if (!SessionCurrent) throw new InvalidOperationException("the game session changed; reopen the OS");
             if (SaveData.Busy) throw new InvalidOperationException("the game is saving or loading");
         }
 

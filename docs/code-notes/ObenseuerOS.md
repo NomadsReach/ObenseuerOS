@@ -148,3 +148,7 @@
 - `src/Os.cs:Open` recognizes an already-open Toolkit desktop, and `src/Os.cs:Close` uses `src/ToolkitPrototype.cs:DismissNative` to check all active native close guards before closing their registered computer app. The legacy web path remains the fallback.
 
 - `src/NativeDesktopClose.cs:NativeDesktopClose.Dismiss` blocks nested close requests and refuses to close if the active host set changes while guards run. `checks/Launchers/Program.cs:Program.Main` covers guard denial, multiple hosts, reentry and host changes.
+
+- `src/ToolkitPrototype.cs:SessionVisible` distinguishes an active save session from temporary save/load busy status; `src/OsNotepadStorage.cs:SessionCurrent` keeps an autosave from treating the Toolkit desktop as closed or reconciling away native mod windows. `checks/Notepad/Program.cs:Program.Main` covers busy and changed-session states. World placement, input, close guards, and camera restoration still need in-game verification.
+
+- `checks/ToolkitCompile/ToolkitCompile.csproj:Compile` compiles `src/OsLaptop.cs:OsLaptop` against Unity references and game stubs, but does not run the Unity camera, control lock, or host teardown. Those paths require an in-game check.

@@ -43,11 +43,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         {
             foreach (ToolkitPrototype prototype in active)
             {
-                if (prototype == null || !prototype.isActiveAndEnabled || !prototype.gameObject.activeInHierarchy) continue;
-                OsNotepadStorage current = prototype.storage as OsNotepadStorage;
-                if (current == null) continue;
-                try { current.CheckSession(); return true; }
-                catch (Exception) { }
+                if (prototype != null && prototype.SessionVisible) return true;
             }
             return false;
         }
@@ -62,12 +58,21 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         catch (Exception) { return false; }
     }
 
+    private bool SessionVisible
+    {
+        get
+        {
+            OsNotepadStorage current = storage as OsNotepadStorage;
+            return isActiveAndEnabled && gameObject.activeInHierarchy && current != null && current.SessionCurrent;
+        }
+    }
+
     internal static bool OpenNative(OsApp app)
     {
         foreach (ToolkitPrototype prototype in new List<ToolkitPrototype>(active))
         {
             if (prototype == null || prototype.modWindows == null) continue;
-            prototype.modWindows.Reconcile();
+            if (!prototype.SessionVisible || prototype.HasSession()) prototype.modWindows.Reconcile();
             if (prototype.modWindows.Has(app) && prototype.HasSession()) return prototype.modWindows.Open(app);
         }
         for (int i = active.Count - 1; i >= 0; i--)
@@ -87,7 +92,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
     {
         List<ToolkitPrototype> current = new List<ToolkitPrototype>();
         foreach (ToolkitPrototype prototype in new List<ToolkitPrototype>(active))
-            if (prototype != null && prototype.HasSession()) current.Add(prototype);
+            if (prototype != null && prototype.SessionVisible) current.Add(prototype);
         return current;
     }
 
@@ -107,7 +112,10 @@ internal sealed class ToolkitPrototype : MonoBehaviour
 
     internal static bool LaunchRegistered(OsApp app)
     {
-        if (!Visible || app == null || !Os.Apps.Contains(app) || app.ModId == Os.ModId || app.Site || !VirusAv.Shows(app.Id)) return false;
+        bool ready = false;
+        foreach (ToolkitPrototype prototype in new List<ToolkitPrototype>(active))
+            if (prototype != null && prototype.HasSession()) { ready = true; break; }
+        if (!ready || app == null || !Os.Apps.Contains(app) || app.ModId == Os.ModId || app.Site || !VirusAv.Shows(app.Id)) return false;
         if (app.BuildUi != null) return OpenNative(app);
         if (app.OnOpen == null) return false;
         Os.Opened(app.Id);
@@ -511,11 +519,11 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         if (clock == null || money == null || Time.unscaledTime < nextStatusUpdate) return;
         nextStatusUpdate = Time.unscaledTime + 1f;
         if (storage is OsNotepadStorage) Os.SyncWindow();
-        if (modWindows != null) modWindows.Reconcile();
+        if (modWindows != null && (!SessionVisible || HasSession())) modWindows.Reconcile();
         if (notifications != null)
         {
             if (HasSession()) foreach (OsNotice notice in OsDesktopState.TakeNotices()) notifications.Add(notice);
-            else notifications.Clear();
+            else if (!SessionVisible) notifications.Clear();
         }
         if (WorldClock.IsAvailable)
         {
