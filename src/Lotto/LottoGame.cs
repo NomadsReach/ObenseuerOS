@@ -197,6 +197,8 @@ namespace ObenseuerOS
             return false;
         }
 
+        internal static bool Refund(LottoSave state, int oc) { return Pay(state, 0, oc); }
+
         private static void RetryOwed(LottoSave state)
         {
             for (int i = state.Owed.Count - 1; i >= 0; i--)

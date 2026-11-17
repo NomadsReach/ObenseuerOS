@@ -46,6 +46,12 @@ namespace ObenseuerOS
             replay.Bets.Add(rec);
             if (BetBook.Saved(replay, "c1", "p1") != rec || BetBook.Saved(replay, "c2", "p1") != null) return "replay";
             if (!Refused(replay)) return "conflict accepted";
+            BetSave lookup = new BetSave(); lookup.Bets.Add(new BetRec { Cid = "lookup", Print = "fb-1-1-1|home|10" });
+            string request = "{\"cid\":\"lookup\",\"fixture\":\"fb-1-1-1\",\"pick\":\"home\",\"stake\":10}";
+            if (!(bool)Newtonsoft.Json.Linq.JObject.Parse(BetBridge.ResultFor(lookup, request))["found"] || (bool)Newtonsoft.Json.Linq.JObject.Parse(BetBridge.ResultFor(new BetSave(), request))["found"]) return "bet result lookup";
+            BetBridge.CheckExpectedOdds(Newtonsoft.Json.Linq.JObject.Parse("{\"expectedOdds\":211}"), 211);
+            try { BetBridge.CheckExpectedOdds(Newtonsoft.Json.Linq.JObject.Parse("{\"expectedOdds\":211}"), 212); return "changed odds accepted"; }
+            catch (OsBridgeException e) { if (e.Code != "denied") return "changed odds wrong error"; }
             if (Size(BetBridge.MineJson(Worst(), null, 0)) > 12288) return "mine too large";
             if (Size(BetBridge.FixturesJson(Worst(), BetModel.Football, 0, 0)) > 12288) return "fixtures too large";
             if (Size(BetBridge.ResultsJson(Worst(), BetModel.Volleyball, 0, int.MaxValue / 2)) > 12288) return "results too large";

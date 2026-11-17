@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ObenseuerCore;
+using Newtonsoft.Json.Linq;
 
 namespace ObenseuerOS
 {
@@ -17,6 +18,15 @@ namespace ObenseuerOS
                 if (error != null) return kind.Key + " " + error;
             }
             if (!PruneOk()) return "scratch prune";
+            if (!RecordOk()) return "scratch record recovery";
+            LottoSave state = new LottoSave(); state.Cards.Add(new ScratchRec { Cid = "lookup", Print = "oc:wallet" });
+            string lookup = "{\"cid\":\"lookup\",\"kind\":\"oc\",\"ship\":false}";
+            if (!(bool)JObject.Parse(LottoBridge.ScratchResultFor(state, new ShopSave(), lookup))["found"] || (bool)JObject.Parse(LottoBridge.ScratchResultFor(new LottoSave(), new ShopSave(), lookup))["found"]) return "scratch purchase lookup";
+            ShopSave orders = new ShopSave(); orders.Orders.Add(new OrderRec { Cid = "shipped", Print = "oc:ship", PaidOc = 55 });
+            string shipped = "{\"cid\":\"shipped\",\"kind\":\"oc\",\"ship\":true}";
+            if (!(bool)JObject.Parse(LottoBridge.ScratchResultFor(new LottoSave(), orders, shipped))["found"]) return "scratch shipment lookup";
+            try { LottoBridge.ScratchResultFor(new LottoSave(), orders, "{\"cid\":\"shipped\",\"kind\":\"oc\",\"ship\":false}"); return "scratch shipment conflict"; }
+            catch (OsBridgeException) { }
             if (Encoding.UTF8.GetByteCount(LottoBridge.ScratchHistoryJson(WorstCards(), int.MaxValue, float.MaxValue)) > OsBridge.MaxResultBytes) return "scratch history over 12 KB";
             return null;
         }
@@ -56,6 +66,24 @@ namespace ObenseuerOS
             for (int i = 1; i <= 30; i++) state.Cards.Add(Card(i, i > 5));
             LottoScratch.Prune(state);
             return state.Cards.Count == 25 && LottoScratch.OpenCount(state) == 5 && state.Cards[0].Id == 1;
+        }
+
+        private static bool RecordOk()
+        {
+            LottoSave state = new LottoSave(); ScratchRec card = new ScratchRec { Id = 1, Paid = 45 }; int refunds = 0;
+            try { LottoScratch.Record(state, card, value => { throw new InvalidOperationException(); }, () => { refunds++; return true; }); return false; }
+            catch (OsBridgeException e) { if (!e.Message.Contains("refunded")) return false; }
+            if (refunds != 1 || state.Cards.Count != 0 || state.NextCard != 0 || state.ScratchToday != 0) return false;
+            try { LottoScratch.Record(state, card, value => { throw new InvalidOperationException(); }, () => { refunds++; return false; }); return false; }
+            catch (OsBridgeException e) { if (!e.Message.Contains("being returned")) return false; }
+            if (refunds != 2 || state.Cards.Count != 0) return false;
+            try { LottoScratch.Record(state, card, value => { state.Cards.Add(value); throw new InvalidOperationException(); }, () => { refunds++; return true; }); return false; }
+            catch (InvalidOperationException) { }
+            if (refunds != 2 || state.Cards.Count != 1 || state.NextCard != 1 || state.ScratchToday != 1) return false;
+            ScratchRec shipped = new ScratchRec { Id = 2, Shipped = true };
+            try { LottoScratch.Record(state, shipped, value => { throw new InvalidOperationException(); }, null); return false; }
+            catch (OsBridgeException e) { if (!e.Message.Contains("shipped")) return false; }
+            return state.Cards.Count == 1 && state.NextCard == 1 && state.ScratchToday == 1;
         }
 
         private static ScratchRec Card(int id, bool revealed)

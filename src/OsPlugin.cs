@@ -13,10 +13,10 @@ namespace ObenseuerOS
 {
     [BepInPlugin(Os.ModId, "ObenseuerOS", "0.2.0")]
 #if BEPINEX5
-    [BepInDependency("obenseuer.moddingframework", "0.10.0")]
+    [BepInDependency("obenseuer.moddingframework", "0.12.2")]
     [BepInDependency("obenseuer.moddingframework.webui", "0.10.0")]
 #else
-    [BepInDependency("obenseuer.moddingframework", ">=0.10.0")]
+    [BepInDependency("obenseuer.moddingframework", ">=0.12.2")]
     [BepInDependency("obenseuer.moddingframework.webui", ">=0.10.0")]
 #endif
     public class OsPlugin : BaseUnityPlugin
@@ -47,6 +47,7 @@ namespace ObenseuerOS
                 Log.Info(error == null ? "self-check ok" : "self-check failed: " + error);
             }
             Setup("files", () => OsFiles.Attach());
+            Setup("notepad session", () => OsNotepadStorage.Attach());
             Setup("shop gates", () => ShopGates.Attach());
             Setup("shop orders", () => ShopOrders.Attach());
             Setup("bet book", () => BetBook.Attach());
@@ -55,9 +56,7 @@ namespace ObenseuerOS
             Setup("market", () => MarketHost.Attach(Config.Bind("Market", "Currency", MarketHost.LegacyCurrency() ?? "RM", new ConfigDescription("Money the market trades in. Changing it closes open positions at the next load and pays them back in the old currency.", new AcceptableValueList<string>("RM", "OC"))).Value));
             Setup("stal-ex", () => StalExBridge.Attach());
             Setup("wiki", () => WikiBridge.Attach(
-                Config.Bind("Wiki", "Enabled", true, "Allow the Stalburg Wiki to contact stalburg.net. Off keeps the wiki offline even after the player allows it.").Value,
-                Config.Bind("Wiki", "CacheMaxMB", 128, "Most space the saved wiki copy may use, in megabytes. The oldest pages are removed first.").Value,
-                Config.Bind("Wiki", "MinIntervalMs", 1000, "Least time between two requests to stalburg.net, in milliseconds. Values below 500 are raised to 500.").Value));
+                Config.Bind("Wiki", "CacheMaxMB", 128, "Most space the saved wiki copy may use, in megabytes. The oldest pages are removed first.").Value));
             Setup("viruses", () => VirusCore.Attach(
                 Config.Bind("Viruses", "Enabled", true, "Computer viruses, pop-ups and infections. Off stops new infections and cleans existing ones, restoring files; a bought antivirus keeps working.").Value,
                 Config.Bind("Viruses", "MoneyTheft", true, "Let viruses take small amounts of OC from the wallet and RM from a bank account, within daily and weekly caps.").Value));
@@ -83,17 +82,20 @@ namespace ObenseuerOS
             SaveController.PlayerWillLoadGame += OnSaveLoad;
             ComputerApps.ScreenChanged += OsView.OnScreenChanged;
             Cash.MoneyChanged += OsView.OnMoneyChanged;
-            if (!ComputerApps.Register(Os.ModId, Os.AppId, DeskTitle, null, host => OsView.Show())) Log.Warn("OS not added to the computer");
+            if (!ComputerApps.Register(Os.ModId, Os.AppId, DeskTitle, null, host => ToolkitPrototype.Open(host, new OsNotepadStorage()))) Log.Warn("OS not added to the computer");
+            if (Config.Bind("Debug", "UguiPrototype", false, "Show the experimental uGUI desktop prototype in the computer app list.").Value &&
+                !ComputerApps.Register(Os.ModId, "os.ugui-prototype", "Viewports 8 uGUI prototype", null, host => OsUguiPrototype.Build(host, new OsNotepadStorage())))
+                Log.Warn("uGUI prototype not added to the computer");
         }
 
         public static bool OpenLaptop()
         {
-            return OsView.Show();
+            return !OsView.Visible && ComputerApps.OpenStandalone(Os.ModId, Os.AppId);
         }
 
         public static bool OpenLaptop(GameObject laptop)
         {
-            return OsLaptop.Open(instance, laptop) || OsView.Show();
+            return !OsView.Visible && OsLaptop.Open(instance, laptop);
         }
 
         private void Update()

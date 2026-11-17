@@ -121,6 +121,9 @@ namespace ObenseuerOS
             state.Orders.Add(new OrderRec { N = 3, Name = "Order 0003", State = "placed", Cid = "c3", Print = print });
             if (ShopOrders.Saved(state, "c3", print) == null) return "saved cid not found";
             if (ShopOrders.Saved(state, "c4", print) != null) return "unknown cid found";
+            string lookup = "{\"cid\":\"c3\",\"lines\":[{\"id\":\"a\",\"qty\":3},{\"id\":\"b\",\"qty\":2}],\"tier\":\"t\",\"pay\":\"wallet\",\"via\":\"parcel\"}";
+            if (!(bool)JObject.Parse(ShopBridge.ResultFor(state, lookup))["found"]) return "purchase result lookup";
+            if ((bool)JObject.Parse(ShopBridge.ResultFor(new ShopSave(), lookup))["found"]) return "missing purchase result";
             if (!Refuses(state, "c3", ShopOrders.Fingerprint(cart, "t", "bank:x", "parcel"))) return "cid with other pay accepted";
             if (!Refuses(state, "c3", ShopOrders.Fingerprint(bigger, "t", "wallet", "parcel"))) return "saved cid with other lines accepted";
             ShopOrders.Arrive(state, "Order 0003");

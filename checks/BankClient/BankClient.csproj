@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework></PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <Compile Include="..\..\src\TransactionClient.cs" />
+    <Compile Include="..\..\src\BankQuote.cs" />
+    <Compile Include="..\..\src\BankInvoicePage.cs" />
+    <Compile Include="..\..\src\GuardPurchase.cs" />
+    <Compile Include="..\..\src\TurvaReceipt.cs" />
+    <Compile Include="..\..\src\ShadyReply.cs" />
+    <Compile Include="..\..\src\VirusPopupRules.cs" />
+    <Compile Include="..\..\src\VirusDesktopState.cs" />
+  </ItemGroup>
+</Project>

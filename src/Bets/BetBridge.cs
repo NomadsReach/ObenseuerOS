@@ -6,13 +6,12 @@ using ObenseuerCore;
 
 namespace ObenseuerOS
 {
-    internal static class BetBridge
+    internal static partial class BetBridge
     {
         private const string AppId = "bets";
         internal const int FixturesPage = 12;
         internal const int MinePage = 30;
         internal const int ResultsPage = 20;
-        private const int MaxCid = 64;
         private const int MaxPage = 100000;
 
         internal static void Register()
@@ -21,6 +20,7 @@ namespace ObenseuerOS
             Os.Handle(AppId, "bet.fixtures", Fixtures);
             Os.Handle(AppId, "bet.quote", Quote);
             Os.Handle(AppId, "bet.place", Place);
+            Os.Handle(AppId, "bet.result", Result);
             Os.Handle(AppId, "bet.mine", Mine);
             Os.Handle(AppId, "bet.results", Results);
             Os.Handle(AppId, "bet.table", Table);
@@ -79,8 +79,11 @@ namespace ObenseuerOS
             FixtureRec match = Match(fixture);
             string problem = BetBook.Problem(BetBook.Current, match, stake, BetBook.Now());
             if (problem != null) throw new OsBridgeException("denied", problem);
+            CheckExpectedOdds(a, BetBook.OddsOf(match, pick));
             return Receipt(BetBook.Place(BetBook.Current, match, pick, stake, cid, print, BetBook.Now()));
         }
+
+        private static string Result(string args) { return ResultFor(BetBook.Current, args); }
 
         private static string Mine(string args)
         {
@@ -203,41 +206,6 @@ namespace ObenseuerOS
             FixtureRec fixture = BetBook.Find(BetBook.Current, id);
             if (fixture == null) throw new OsBridgeException("bad_args", "There is no match with that id.");
             return fixture;
-        }
-
-        private static string CidArg(JObject a)
-        {
-            string cid = OsBridge.Text(a, "cid");
-            if (string.IsNullOrEmpty(cid) || cid.Length > MaxCid) throw new OsBridgeException("bad_args", "cid is required and up to 64 characters");
-            return cid;
-        }
-
-        private static string FixtureArg(JObject a, out int sport)
-        {
-            string id = OsBridge.Text(a, "fixture");
-            int season;
-            int round;
-            int match;
-            if (!BetSchedule.TryParse(id, out sport, out season, out round, out match)) throw new OsBridgeException("bad_args", "fixture is not a match id");
-            return id;
-        }
-
-        private static string PickArg(JObject a, int sport)
-        {
-            string pick = OsBridge.Text(a, "pick");
-            if (!BetSchedule.PickValid(sport, pick)) throw new OsBridgeException("bad_args", "pick is not valid for this sport");
-            return pick;
-        }
-
-        private static int StakeArg(JObject a)
-        {
-            JToken token = a["stake"];
-            if (token == null || token.Type != JTokenType.Integer) throw new OsBridgeException("bad_args", "stake must be a whole number of OC");
-            long value;
-            if (!long.TryParse(token.ToString(Formatting.None), out value)) value = long.MaxValue;
-            if (value > int.MaxValue) return int.MaxValue;
-            if (value < int.MinValue) return int.MinValue;
-            return (int)value;
         }
 
         private static int SportArg(JObject a)

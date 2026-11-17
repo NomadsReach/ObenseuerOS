@@ -47,6 +47,7 @@ namespace ObenseuerOS
             if (path == null) return Os.Refuse("OpenFile", modId, OsResult.Invalid, "path must be a plain file name like notes.txt");
             if (!OsBridge.WorldReady()) return Os.Refuse("OpenFile", modId, OsResult.Unavailable, "no save is loaded yet, open files once the player is in the game");
             if (OsFiles.Read(path) == null) return OsResult.Missing;
+            if (ToolkitPrototype.Visible) return ToolkitPrototype.OpenFile(path);
             if (!Os.IsAvailable) return Os.Refuse("OpenFile", modId, OsResult.Unavailable, "the OS view is not available");
             return OsView.OpenFile(path) ? OsResult.Ok : OsResult.Queued;
         }

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using BepInEx;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -21,10 +20,8 @@ namespace ObenseuerOS
         private static bool pageReady;
         private static int lastMinute = -1;
         private static string webFolder;
-        private static bool live;
         private static string held;
         private static string heldApp;
-        private static readonly NoticeQueue notices = new NoticeQueue();
 
         internal static bool Available
         {
@@ -38,7 +35,7 @@ namespace ObenseuerOS
         {
             get
             {
-                return live;
+                return false;
             }
         }
 
@@ -57,32 +54,29 @@ namespace ObenseuerOS
 
         internal static bool Show(RectTransform screen)
         {
-            if (!Available) return false;
+            if (ToolkitPrototype.Visible || !Available) return false;
             if ((view == null || view.IsClosed) && !Create()) return false;
-            bool was = Visible;
             view.PinTo(screen);
             if (!view.Show()) return false;
             Push();
-            if (!was) Os.RaiseWindow(true);
+            Os.SyncWindow();
             if (screen != null) Log.Debug("view.pinned", "OS pinned, projected bounds " + ProjectedBounds(screen));
             return true;
         }
 
         internal static void Dismiss()
         {
-            OsLaptop.Close(false);
             if (view == null) return;
             bool was = view.IsVisible;
             if (was) view.Hide();
-            ComputerApps.Close(Os.AppId);
-            if (was) Os.RaiseWindow(false);
+            Os.SyncWindow();
         }
 
         internal static void Reset(bool mainMenu)
         {
             Dismiss();
             Os.SceneReset(mainMenu);
-            if (mainMenu) notices.Clear();
+            OsDesktopState.Reset(mainMenu);
             heldApp = null;
             held = null;
             if (view == null) return;
@@ -103,13 +97,9 @@ namespace ObenseuerOS
 
         internal static bool Notify(OsNotice notice)
         {
+            if (ToolkitPrototype.Visible) return OsDesktopState.AddNotice(notice);
             if (Deliver(new JObject(new JProperty("v", 1), new JProperty("type", "toast"), new JProperty("title", notice.Title), new JProperty("body", notice.Body), new JProperty("from", notice.From)))) return true;
-            return notices.Add(notice);
-        }
-
-        internal static void ClearNotices(string modId)
-        {
-            notices.RemoveMod(modId);
+            return OsDesktopState.AddNotice(notice);
         }
 
         internal static OsResult OpenApp(string appId)
@@ -165,23 +155,8 @@ namespace ObenseuerOS
             if (WikiBridge.SavesCopies && !view.MapFolder("wikisite", WikiBridge.Folder)) Log.Warn("wiki site folder not mapped");
             if (!view.MapFolder("sdk", Path.Combine(webFolder, "sdk"))) Log.Warn("sdk folder not mapped");
             foreach (OsApp app in Os.Apps) Map(app);
-            live = false;
-            try
-            {
-                live = AllowLiveHost(view);
-            }
-            catch (MissingMethodException)
-            {
-            }
-            if (!live) Log.Warn("wiki live pages off");
             view.Dismissed += Dismiss;
             return true;
-        }
-
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        private static bool AllowLiveHost(WebView target)
-        {
-            return target.AllowFrameHost(WikiTitle.Host);
         }
 
         internal static void OnScreenChanged(RectTransform screen)
@@ -269,11 +244,6 @@ namespace ObenseuerOS
             }
         }
 
-        internal static string UserName()
-        {
-            return (PlayerState.FirstName + " " + PlayerState.LastName).Trim();
-        }
-
         private static void SendReply(JObject request)
         {
             JObject reply = OsBridge.Reply(request);
@@ -292,14 +262,14 @@ namespace ObenseuerOS
             ordered.AddRange(Os.Apps.FindAll(x => x.ModId != Os.ModId));
             foreach (OsApp app in ordered)
             {
-                if (app.Site) sites.Add(SiteEntry(app));
-                else if (VirusAv.Shows(app.Id)) apps.Add(AppEntry(app));
+                if (app.Site && app.Folder != null) sites.Add(SiteEntry(app));
+                else if (!app.Site && app.BuildUi == null && VirusAv.Shows(app.Id)) apps.Add(AppEntry(app));
             }
             JObject list = new JObject(new JProperty("v", 1), new JProperty("type", "apps"), new JProperty("apps", apps), new JProperty("sites", sites));
-            string user = UserName();
+            string user = OsDesktopState.UserName();
             if (user.Length > 0) list.Add(new JProperty("user", user));
             Send(list);
-            foreach (OsNotice notice in notices.Take())
+            if (!ToolkitPrototype.Visible) foreach (OsNotice notice in OsDesktopState.TakeNotices())
             {
                 Send(new JObject(new JProperty("v", 1), new JProperty("type", "toast"), new JProperty("title", notice.Title), new JProperty("body", notice.Body), new JProperty("from", notice.From), new JProperty("quiet", true)));
             }

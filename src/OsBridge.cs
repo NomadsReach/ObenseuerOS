@@ -280,7 +280,7 @@ namespace ObenseuerOS
 
         private static string AccountName(string args)
         {
-            return JsonConvert.SerializeObject(OsView.UserName());
+            return JsonConvert.SerializeObject(OsDesktopState.UserName());
         }
 
         private static string ModName(JObject a)
@@ -417,7 +417,7 @@ namespace ObenseuerOS
             return "true";
         }
 
-        private static string Stamp()
+        internal static string Stamp()
         {
             if (!WorldClock.IsAvailable) return "";
             WorldTime now = WorldClock.Now;

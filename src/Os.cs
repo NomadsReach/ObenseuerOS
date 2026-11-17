@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using ObenseuerCore;
+using UnityEngine.UIElements;
 
 namespace ObenseuerOS
 {
@@ -18,7 +19,7 @@ namespace ObenseuerOS
         {
             get
             {
-                return ComputerApps.IsAvailable && OsView.Available;
+                return ComputerApps.IsAvailable;
             }
         }
 
@@ -140,12 +141,12 @@ namespace ObenseuerOS
 
         public static bool Open()
         {
-            return OsView.Show();
+            return ToolkitPrototype.Visible || ComputerApps.OpenStandalone(ModId, AppId);
         }
 
         public static void Close()
         {
-            OsView.Dismiss();
+            if (!ToolkitPrototype.DismissNative()) OsView.Dismiss();
         }
     }
 
@@ -156,6 +157,10 @@ namespace ObenseuerOS
         internal readonly string Title;
         internal string Icon;
         internal readonly Action OnOpen;
+        internal Action<VisualElement> BuildUi;
+        internal Func<bool> CanClose;
+        internal Action<bool> OnClosed;
+        internal Action<string, string> OnEvent;
         internal string IconFile;
         internal string Folder;
         internal string Page;
@@ -165,6 +170,7 @@ namespace ObenseuerOS
         internal bool Desktop = true;
         internal bool Pinned;
         internal bool Site;
+        internal Func<VisualElement, string, OsSitePage> BuildSite;
         internal string Host;
         internal string Description;
         internal string[] Keywords;

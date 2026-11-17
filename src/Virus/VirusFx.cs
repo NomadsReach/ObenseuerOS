@@ -10,6 +10,7 @@ namespace ObenseuerOS
         private const float IntervalSeconds = 20f;
         private static readonly Random Rnd = new Random();
         private static float nextAt = -1f;
+        internal static event Action<VirusPulse> Pulsed;
 
         internal static void Attach()
         {
@@ -18,7 +19,7 @@ namespace ObenseuerOS
 
         internal static void Tick()
         {
-            if (!OsView.Visible)
+            if (!OsView.Visible && !ToolkitPrototype.Visible)
             {
                 nextAt = -1f;
                 return;
@@ -38,6 +39,8 @@ namespace ObenseuerOS
         {
             VirusPulse pulse = VirusRules.Pulse(VirusCore.Active, VirusCore.CheapLapsed, Rnd);
             if (pulse.Popups == 0 && !pulse.Error && !pulse.Nag) return;
+            Action<VirusPulse> handler = Pulsed;
+            if (handler != null) handler(pulse);
             OsView.Deliver(new JObject(
                 new JProperty("v", 1),
                 new JProperty("type", "event"),

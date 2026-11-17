@@ -6,7 +6,7 @@ using ObenseuerCore;
 
 namespace ObenseuerOS
 {
-    internal static class ShopBridge
+    internal static partial class ShopBridge
     {
         private const string AppId = "shop";
         internal const int PageSize = 16;
@@ -16,8 +16,6 @@ namespace ObenseuerOS
         internal const int MaxShop = 24;
         private const int MaxItemsText = 60;
         internal const int MaxOrders = 30;
-        private const int MaxAskedQty = 100000;
-        private const int MaxCid = 64;
         internal const int MaxTiers = 10;
         internal const int MaxStores = 24;
         private const int MaxDescription = 400;
@@ -30,6 +28,7 @@ namespace ObenseuerOS
             Os.Handle(AppId, "shop.list", ListItems);
             Os.Handle(AppId, "shop.quote", QuoteCart);
             Os.Handle(AppId, "shop.buy", BuyCart);
+            Os.Handle(AppId, "shop.result", Result);
             Os.Handle(AppId, "shop.orders", ListOrders);
             Os.Handle(AppId, "shop.dismiss", DismissOrder);
             Os.Handle(AppId, "shop.account", Account);
@@ -183,6 +182,11 @@ namespace ObenseuerOS
             return Receipt(ShopOrders.Place(quote, cid, print));
         }
 
+        private static string Result(string args)
+        {
+            return ResultFor(ShopGates.Current, args);
+        }
+
         internal static void Notify()
         {
             OsView.Deliver(new JObject(new JProperty("v", 1), new JProperty("type", "event"), new JProperty("app", AppId), new JProperty("name", "changed")));
@@ -310,57 +314,12 @@ namespace ObenseuerOS
             return item == null ? null : item.DisplayName;
         }
 
-        private static string Required(JObject a, string key)
-        {
-            string text = OsBridge.Text(a, key);
-            if (string.IsNullOrEmpty(text)) throw new OsBridgeException("bad_args", key + " is required");
-            return text;
-        }
-
-        private static string Cid(JObject a)
-        {
-            string cid = OsBridge.Text(a, "cid");
-            if (string.IsNullOrEmpty(cid) || cid.Length > MaxCid) throw new OsBridgeException("bad_args", "cid is required and up to 64 characters");
-            return cid;
-        }
-
-        private static string PayOf(JObject a)
-        {
-            string pay = Required(a, "pay");
-            if (pay != ShopOrders.WalletPay && !pay.StartsWith("bank:", StringComparison.Ordinal)) throw new OsBridgeException("bad_args", "pay must be wallet or bank:<name>");
-            return pay;
-        }
-
-        private static string DeliveryOf(JObject a)
-        {
-            string via = OsBridge.Text(a, "via");
-            if (via == null) return ShopOrders.ViaParcel;
-            if (via != ShopOrders.ViaParcel && via != ShopOrders.ViaMail) throw new OsBridgeException("bad_args", "via must be parcel or mail");
-            return via;
-        }
-
         private static bool Flag(JObject a, string key)
         {
             JToken token = a[key];
             if (token == null) return true;
             if (token.Type != JTokenType.Boolean) throw new OsBridgeException("bad_args", key + " must be true or false");
             return (bool)token;
-        }
-
-        private static List<ShopLine> Lines(JObject a)
-        {
-            JArray array = a["lines"] as JArray;
-            if (array == null || !ShopOrders.LinesOk(array.Count)) throw new OsBridgeException("bad_args", "a cart needs 1 to 12 lines");
-            List<ShopLine> lines = new List<ShopLine>();
-            foreach (JToken token in array)
-            {
-                JObject line = token as JObject;
-                string id = line == null ? null : OsBridge.Text(line, "id");
-                JToken qty = line == null ? null : line["qty"];
-                if (string.IsNullOrEmpty(id) || qty == null || qty.Type != JTokenType.Integer || (long)qty < 1) throw new OsBridgeException("bad_args", "each line needs an id and a quantity of 1 or more");
-                lines.Add(new ShopLine { Key = id, Qty = (int)Math.Min((long)qty, MaxAskedQty) });
-            }
-            return lines;
         }
 
         internal sealed class Row

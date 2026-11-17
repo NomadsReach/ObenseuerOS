@@ -41,6 +41,7 @@ namespace ObenseuerOS
             Os.Handle(AppId, "exchange.news", News);
             Os.Handle(AppId, "exchange.portfolio", (args) => Read(StalExMarket.Get().Portfolio()));
             Os.Handle(AppId, "exchange.preview", Preview);
+            Os.Handle(AppId, "exchange.result", Result);
             Os.Handle(AppId, "exchange.buy", (args) => Place("buy", args));
             Os.Handle(AppId, "exchange.sell", (args) => Place("sell", args));
             Os.Handle(AppId, "exchange.short", (args) => Place("short", args));
@@ -89,6 +90,23 @@ namespace ObenseuerOS
             Ok(raw);
             Remember(save, cid, print, raw);
             return Without(raw, "message");
+        }
+
+        private static string Result(string args)
+        {
+            return ResultFor(save, args);
+        }
+
+        private static string ResultFor(StalExSave state, string args)
+        {
+            JObject a = OsBridge.Args(args);
+            string action = Required(a, "action");
+            if (action != "buy" && action != "sell" && action != "short" && action != "cover") throw new OsBridgeException("bad_args", "unknown order action");
+            string ticker = Required(a, "ticker");
+            double shares = Number(a, "shares");
+            bool margin = OsBridge.Flag(a, "margin");
+            string print = JsonConvert.SerializeObject(new object[] { action, ticker, shares, margin });
+            return new JObject(new JProperty("found", Replay(state, Cid(a), print) != null)).ToString(Formatting.None);
         }
 
         private static string Read(string json)
@@ -140,6 +158,12 @@ namespace ObenseuerOS
             for (int i = 0; i < MaxCids + 5; i++) Remember(state, "c" + i, "p", "r");
             if (state.Cids.Count != MaxCids || state.Cids[0].Cid != "c5") return "cid cap";
             if (Replay(state, "c10", "p") != "r") return "cid replay";
+            StalExSave lookup = new StalExSave();
+            string print = JsonConvert.SerializeObject(new object[] { "buy", "SIP", 1.0, false });
+            Remember(lookup, "lookup", print, "{}");
+            string request = new JObject(new JProperty("action", "buy"), new JProperty("ticker", "SIP"), new JProperty("shares", 1), new JProperty("margin", false), new JProperty("cid", "lookup")).ToString(Formatting.None);
+            if (!(bool)JObject.Parse(ResultFor(lookup, request))["found"]) return "cid result lookup";
+            if ((bool)JObject.Parse(ResultFor(new StalExSave(), request))["found"]) return "cid result missing";
             try
             {
                 Replay(state, "c10", "other");

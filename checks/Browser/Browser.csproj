@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework></PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <Compile Include="..\..\src\BrowserState.cs" />
+    <Compile Include="..\..\src\BrowserSiteCatalog.cs" />
+    <Compile Include="..\..\src\OfflineWiki.cs" />
+    <Compile Include="..\..\src\Wiki\WikiTitle.cs" />
+    <Compile Include="..\..\src\Wiki\WikiImage.cs" />
+    <Compile Include="..\..\src\EyeState.cs" />
+    <Compile Include="..\..\src\EyeRoute.cs" />
+    <Compile Include="..\..\src\Ugui\NotepadStorage.cs" />
+  </ItemGroup>
+</Project>

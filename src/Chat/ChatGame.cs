@@ -133,7 +133,7 @@ namespace ObenseuerOS
 
         private static string PlayerName()
         {
-            string name = OsView.UserName();
+            string name = OsDesktopState.UserName();
             return name.Length > 0 ? name : FallbackPlayer;
         }
 

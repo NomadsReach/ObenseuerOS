@@ -5,6 +5,7 @@ using System.Reflection;
 using BepInEx;
 using Newtonsoft.Json.Linq;
 using ObenseuerCore;
+using UnityEngine.UIElements;
 
 namespace ObenseuerOS
 {
@@ -19,6 +20,10 @@ namespace ObenseuerOS
         public bool Desktop = true;
         public bool Pinned;
         public Action OnOpen;
+        public Action<VisualElement> BuildUi;
+        public Func<bool> CanClose;
+        public Action<bool> OnClosed;
+        public Action<string, string> OnEvent;
     }
 
     public sealed class OsAppArgs
@@ -41,6 +46,7 @@ namespace ObenseuerOS
         public string[] Keywords;
         public string Folder;
         public string Page = "index.html";
+        public Func<VisualElement, string, OsSitePage> BuildUi;
     }
 
     public static partial class Os
@@ -57,6 +63,7 @@ namespace ObenseuerOS
         private static Action<OsAppArgs> appClosed;
         private static Action windowOpened;
         private static Action windowClosed;
+        private static readonly WindowVisibility WindowState = new WindowVisibility();
         private static readonly Dictionary<string, string> OpenApps = new Dictionary<string, string>();
         private static readonly Dictionary<string, RateLimit> ModLimits = new Dictionary<string, RateLimit>();
 
@@ -112,7 +119,7 @@ namespace ObenseuerOS
         {
             get
             {
-                return OsView.Visible;
+                return ToolkitPrototype.Visible || OsView.Visible;
             }
         }
 
@@ -123,7 +130,7 @@ namespace ObenseuerOS
                 try
                 {
                     if (!OsBridge.WorldReady()) return null;
-                    string name = OsView.UserName();
+                    string name = OsDesktopState.UserName();
                     return name.Length == 0 ? null : name;
                 }
                 catch (Exception e)
@@ -140,12 +147,16 @@ namespace ObenseuerOS
             {
                 if (!Accept("RegisterApp", modId)) return false;
                 if (options == null) return Refuse("RegisterApp", modId, false, "options must not be null");
-                if ((options.Folder == null) == (options.OnOpen == null)) return Refuse("RegisterApp", modId, false, "set exactly one of Folder (a page app) or OnOpen (a launcher app)");
+                if (!NativeAppRegistration.Valid(options.Folder != null, options.OnOpen != null, options.BuildUi != null, options.CanClose != null || options.OnClosed != null || options.OnEvent != null)) return Refuse("RegisterApp", modId, false, "set exactly one of Folder, OnOpen or BuildUi; CanClose, OnClosed and OnEvent require BuildUi");
                 string title = OsScope.CleanTitle(options.Title);
                 if (!CheckNew("RegisterApp", modId, appId, title)) return false;
                 if (CountOf(modId, false) >= OsScope.MaxAppsPerMod) return Refuse("RegisterApp", modId, false, "a mod may register 8 apps");
                 if (options.Width < 0 || options.Height < 0) return Refuse("RegisterApp", modId, false, "width and height are 0 for the default or a size in pixels");
                 OsApp app = new OsApp(modId, appId, title, null, options.OnOpen);
+                app.BuildUi = options.BuildUi;
+                app.CanClose = options.CanClose;
+                app.OnClosed = options.OnClosed;
+                app.OnEvent = options.OnEvent;
                 app.Desktop = options.Desktop;
                 app.Pinned = options.Pinned;
                 app.Width = Size(options.Width, 360);
@@ -190,7 +201,8 @@ namespace ObenseuerOS
             try
             {
                 if (!Accept("Emit", modId)) return false;
-                if (OwnedApp("Emit", modId, appId) == null) return false;
+                OsApp app = OwnedApp("Emit", modId, appId);
+                if (app == null) return false;
                 if (!OsScope.ValidName(name)) return Refuse("Emit", modId, false, "name must be 1 to 64 letters, digits, '.', '_' or '-' and not start with 'os.'");
                 if (!OsScope.FitsArgs(json)) return Refuse("Emit", modId, false, "json must be text of at most 12 KB");
                 JToken data;
@@ -204,6 +216,7 @@ namespace ObenseuerOS
                 }
                 if (!OsScope.Allow(ModLimits, "emit " + modId, OsScope.EmitsPerSecond, 1000, OsScope.NowMs())) return Refuse("Emit", modId, false, "30 events a second");
                 if (!OpenApps.ContainsKey(appId)) return false;
+                if (app.BuildUi != null) return ToolkitPrototype.EmitNative(app, name, json);
                 return OsView.Deliver(new JObject(new JProperty("v", 1), new JProperty("type", "event"), new JProperty("app", appId), new JProperty("name", name), new JProperty("data", data)));
             }
             catch (Exception e)
@@ -220,7 +233,8 @@ namespace ObenseuerOS
                 if (!Accept("Notify", modId)) return false;
                 if (!OsScope.PlainText(title, 1, 60) || !OsScope.PlainText(body ?? "", 0, 200)) return Refuse("Notify", modId, false, "title is 1 to 60 characters and body up to 200, with no control characters");
                 if (!OsScope.Allow(ModLimits, "notify " + modId, OsScope.NoticesPer10Seconds, 10000, OsScope.NowMs())) return Refuse("Notify", modId, false, "3 notices per 10 seconds");
-                if (OsView.Notify(new OsNotice(modId, FromOf(modId), title, body ?? ""))) return true;
+                OsNotice notice = new OsNotice(modId, FromOf(modId), title, body ?? "");
+                if (ToolkitPrototype.Visible ? OsDesktopState.AddNotice(notice) : OsView.Notify(notice)) return true;
                 return Refuse("Notify", modId, false, "the OS is closed and 20 notices are already queued");
             }
             catch (Exception e)
@@ -257,6 +271,8 @@ namespace ObenseuerOS
                 OsApp app = OwnedApp("OpenApp", modId, appId);
                 if (app == null) return OsResult.Invalid;
                 if (app.Site) return Refuse("OpenApp", modId, OsResult.Invalid, appId + " is a site, it opens in Stalburg Web");
+                if (app.BuildUi != null) return ToolkitPrototype.LaunchRegistered(app) ? OsResult.Ok : OsResult.Unavailable;
+                if (app.OnOpen != null && ToolkitPrototype.Visible) return ToolkitPrototype.LaunchRegistered(app) ? OsResult.Ok : OsResult.Unavailable;
                 if (!IsAvailable) return OsResult.Unavailable;
                 return OsView.OpenApp(appId);
             }
@@ -284,7 +300,9 @@ namespace ObenseuerOS
                 site.Host = options.Host;
                 site.Description = options.Description ?? "";
                 site.Keywords = options.Keywords ?? new string[0];
-                if (!SetPage(site, "RegisterSite", modId, options.Folder, options.Page)) return false;
+                if (options.BuildUi == null && options.Folder == null) return Refuse("RegisterSite", modId, false, "set Folder or BuildUi");
+                if (options.Folder != null && !SetPage(site, "RegisterSite", modId, options.Folder, options.Page)) return false;
+                site.BuildSite = options.BuildUi;
                 Apps.Add(site);
                 OsView.Map(site);
                 OsView.Refresh();
@@ -316,9 +334,11 @@ namespace ObenseuerOS
             }
         }
 
-        internal static void RaiseWindow(bool opened)
+        internal static void SyncWindow()
         {
-            if (opened) Raise(windowOpened, "WindowOpened");
+            bool toolkit = ToolkitPrototype.Visible;
+            if (!WindowState.Update(!toolkit && OsView.Visible, toolkit)) return;
+            if (WindowState.Visible) Raise(windowOpened, "WindowOpened");
             else Raise(windowClosed, "WindowClosed");
         }
 

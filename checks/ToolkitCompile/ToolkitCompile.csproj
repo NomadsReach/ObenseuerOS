@@ -1,0 +1,64 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>$(NoWarn);0649;CA1416</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\..\src\CloseConfirmation.cs" />
+    <Reference Include="$(UnityManaged)/UnityEngine*.dll" />
+    <EmbeddedResource Include="../../prototype-icons/*.png" LogicalName="desktop-icons/%(Filename)%(Extension)" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <Compile Include="..\..\src\Toolkit*.cs" />
+    <Compile Include="..\..\src\OsSitePage.cs" />
+    <Compile Include="..\..\examples\HelloOs\src\HelloSite.cs" />
+    <Compile Include="..\..\src\TerminalSession.cs" />
+    <Compile Include="..\..\src\MailClient.cs" />
+    <Compile Include="..\..\src\MailPages.cs" />
+    <Compile Include="..\..\src\MailDraft.cs" />
+    <Compile Include="..\..\src\TransactionClient.cs" />
+    <Compile Include="..\..\src\BankQuote.cs" />
+    <Compile Include="..\..\src\BankInvoicePage.cs" />
+    <Compile Include="..\..\src\NewsClient.cs" />
+    <Compile Include="..\..\src\NewsPhotos.cs" />
+    <Compile Include="..\..\src\BrowserState.cs" />
+    <Compile Include="..\..\src\BrowserSiteCatalog.cs" />
+    <Compile Include="..\..\src\LauncherCatalog.cs" />
+    <Compile Include="..\..\src\NativeDesktopClose.cs" />
+    <Compile Include="..\..\src\OsLaptop.cs" />
+    <Compile Include="..\..\src\OsScreenFinder.cs" />
+    <Compile Include="..\..\src\OfflineWiki.cs" />
+    <Compile Include="..\..\src\Wiki\WikiTitle.cs" />
+    <Compile Include="..\..\src\Wiki\WikiImage.cs" />
+    <Compile Include="..\..\src\GuardPurchase.cs" />
+    <Compile Include="..\..\src\TurvaReceipt.cs" />
+    <Compile Include="..\..\src\ShadyReply.cs" />
+    <Compile Include="..\..\src\VirusPopupRules.cs" />
+    <Compile Include="..\..\src\VirusDesktopState.cs" />
+    <Compile Include="..\..\src\EyeState.cs" />
+    <Compile Include="..\..\src\EyeRoute.cs" />
+    <Compile Include="..\..\src\JobsList.cs" />
+    <Compile Include="..\..\src\ScratchProgress.cs" />
+    <Compile Include="..\..\src\ScratchReply.cs" />
+    <Compile Include="..\..\src\BetReceipt.cs" />
+    <Compile Include="..\..\src\MarketChart.cs" />
+    <Compile Include="..\..\src\Chat\ChatHistory.cs" />
+    <Compile Include="..\..\src\Chat\ChatSave.cs" />
+    <Compile Include="..\..\src\ExplorerStorage.cs" />
+    <Compile Include="..\..\src\RecycleStorage.cs" />
+    <Compile Include="..\..\src\SolitaireGame.cs" />
+    <Compile Include="..\..\src\Ugui\MinesweeperGame.cs" />
+    <Compile Include="..\..\src\Ugui\MinesweeperInput.cs" />
+    <Compile Include="..\..\src\Ugui\MinesweeperLayout.cs" />
+    <Compile Include="..\..\src\Ugui\NotepadStorage.cs" />
+    <Compile Include="..\..\src\Ugui\NotepadRecovery.cs" />
+    <Compile Include="$(FrameworkSource)/src/Ui/ToolkitUi.cs" />
+    <Compile Include="$(FrameworkSource)/src/Ui/ToolkitTextFocus.cs" />
+    <Compile Include="$(FrameworkSource)/src/Ui/ToolkitResizeHandle.cs" />
+    <Compile Include="$(FrameworkSource)/src/Ui/ToolkitWindowBounds.cs" />
+    <Compile Include="$(FrameworkSource)/src/Ui/ToolkitPinnedBounds.cs" />
+    <Compile Include="$(FrameworkSource)/src/Ui/UiAppearance.cs" />
+    <Compile Include="$(FrameworkSource)/src/Ui/UiAppearanceRules.cs" />
+    <Compile Include="$(FrameworkSource)/checks/UiAppearance/Stubs.cs" />
+  </ItemGroup>
+</Project>

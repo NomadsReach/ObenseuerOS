@@ -119,7 +119,7 @@ namespace ObenseuerOS
             {
                 if (!Accept("Clear", modId)) return OsResult.Invalid;
                 foreach (OsApp app in Apps.FindAll(x => x.ModId == modId)) Drop(app);
-                OsView.ClearNotices(modId);
+                OsDesktopState.ClearNotices(modId);
                 OsContent.ClearMod(modId);
                 OsView.Refresh();
                 return OsMail.ClearFrom(modId);
@@ -132,6 +132,15 @@ namespace ObenseuerOS
 
         internal static void Drop(OsApp app)
         {
+            if (app.Site && app.BuildSite != null)
+            {
+                Apps.Remove(app);
+                OsBridge.RemoveApp(app.Id);
+                Closed(app.Id);
+                ToolkitPrototype.CloseNativeSite(app);
+                return;
+            }
+            if (app.BuildUi != null) ToolkitPrototype.CloseNative(app);
             Closed(app.Id);
             Apps.Remove(app);
             OsBridge.RemoveApp(app.Id);

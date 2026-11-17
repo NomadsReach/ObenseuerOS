@@ -62,6 +62,7 @@ namespace Example.Hello
             site.Keywords = new string[] { "hello", "example" };
             site.Folder = web;
             site.Page = "site.html";
+            site.BuildUi = HelloSite.Build;
             Os.RegisterSite(ModId, SiteId, site);
             Os.AddNewsSource(ModId, "Local", Story);
             Events.HourPassed += OnHour;

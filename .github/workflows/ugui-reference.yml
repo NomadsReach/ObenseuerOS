@@ -1,0 +1,105 @@
+name: OS checks and reference
+on:
+  push:
+    branches: [work/ugui-desktop-prototype]
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  rules:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: NomadsReach/Obenseuer-Modding-Framework
+          ref: 8918506ce8d5c85baaafc349e14b9643783fa874
+          path: framework-source
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - run: dotnet run --project checks/Minesweeper/Minesweeper.csproj -c Release
+      - run: dotnet run --project checks/Notepad/Notepad.csproj -c Release
+      - run: dotnet run --project checks/Solitaire/Solitaire.csproj -c Release
+      - run: dotnet run --project checks/Terminal/Terminal.csproj -c Release
+      - run: dotnet run --project checks/ChatHistory/ChatHistory.csproj -c Release
+      - run: dotnet run --project checks/MailClient/MailClient.csproj -c Release
+      - run: dotnet run --project checks/BankClient/BankClient.csproj -c Release
+      - run: dotnet run --project checks/BankBridge/BankBridge.csproj -c Release
+      - run: dotnet run --project checks/News/News.csproj -c Release
+      - run: dotnet run --project checks/Market/Market.csproj -c Release
+      - run: dotnet run --project checks/ShopResult/ShopResult.csproj -c Release
+      - run: dotnet run --project checks/Browser/Browser.csproj -c Release
+      - run: dotnet run --project checks/Launchers/Launchers.csproj -c Release
+      - run: dotnet run --project checks/DesktopState/DesktopState.csproj -c Release
+      - run: dotnet run --project checks/ModTaskbar/ModTaskbar.csproj -c Release
+        env:
+          FrameworkSource: ${{ github.workspace }}/framework-source
+      - run: dotnet run --project checks/Jobs/Jobs.csproj -c Release
+      - run: dotnet run --project checks/ScratchRecord/ScratchRecord.csproj -c Release
+      - run: dotnet run --project checks/BetRecord/BetRecord.csproj -c Release
+      - run: dotnet run --project checks/BetIdentity/BetIdentity.csproj -c Release
+  reference:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install playwright
+      - run: python -m playwright install --with-deps chromium
+      - run: python tools/desktop-icons.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: toolkit-desktop-icons
+          path: prototype-icons/
+          if-no-files-found: error
+      - run: python tools/ugui-reference.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: current-os-reference
+          path: |
+            reference-desktop.png
+            reference-notepad.png
+          if-no-files-found: error
+  toolkit-compile:
+    needs: reference
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: NomadsReach/Obenseuer-Modding-Framework
+          ref: 8918506ce8d5c85baaafc349e14b9643783fa874
+          path: framework-source
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - uses: actions/download-artifact@v4
+        with:
+          name: toolkit-desktop-icons
+          path: prototype-icons
+      - name: Check OS project icon resources
+        run: python tools/check-os-icons.py
+      - name: Check offline wiki package layout
+        run: python tools/check-wiki-package.py
+      - name: Get Unity managed references
+        shell: bash
+        run: |
+          curl --fail --location --retry 3 --output "$RUNNER_TEMP/unity.tar.xz" 'https://download.unity3d.com/download_unity/88f89d0d8b31/LinuxEditorTargetInstaller/UnitySetup-Linux-Server-Support-for-Editor-6000.0.77f1.tar.xz'
+          printf '%s  %s\n' '5713c03d9a5abd7686f95a43360ace06' "$RUNNER_TEMP/unity.tar.xz" | md5sum --check
+          tar -xf "$RUNNER_TEMP/unity.tar.xz" -C "$RUNNER_TEMP" --wildcards './Editor/Data/PlaybackEngines/LinuxStandaloneSupport/Variations/mono/Managed/UnityEngine*.dll'
+      - name: Compile Toolkit windows against Unity
+        run: dotnet build checks/ToolkitCompile/ToolkitCompile.csproj -c Release -p:UnityManaged="$RUNNER_TEMP/Editor/Data/PlaybackEngines/LinuxStandaloneSupport/Variations/mono/Managed" -p:FrameworkSource="$GITHUB_WORKSPACE/framework-source"
+      - name: Verify embedded desktop icons
+        run: dotnet run --project checks/IconResources/IconResources.csproj -c Release -- checks/ToolkitCompile/bin/Release/ToolkitCompile.dll

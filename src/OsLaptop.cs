@@ -54,6 +54,7 @@ namespace ObenseuerOS
             RectTransform rect = null;
             Vector3 target = Vector3.zero;
             Quaternion look = Quaternion.identity;
+            bool opened = false;
             try
             {
                 Transform root = Root(laptop.transform);
@@ -64,7 +65,7 @@ namespace ObenseuerOS
                 if (!found) return false;
                 if (main == null || GameController.instance == null || ThirdPersonCameraController.instance == null || ThirdPersonCameraCollision.instance == null || OpenSewerCharacterController.instance == null || ThirdPersonCameraController.instance.FollowTarget != null)
                 {
-                    Log.Warn("laptop screen: camera or controls not ready, using the full window");
+                    Log.Warn("laptop screen: camera or controls not ready");
                     return false;
                 }
                 rect = MakePin(screen);
@@ -78,15 +79,16 @@ namespace ObenseuerOS
                 rect.GetWorldCorners(corners);
                 if (!(Vector3.Dot(corners[3] - corners[0], Vector3.Cross(Vector3.up, -normal)) > 0f))
                 {
-                    Log.Warn("laptop screen: pin is mirrored, using the full window");
+                    Log.Warn("laptop screen: pin is mirrored");
                     UnityEngine.Object.Destroy(rect.gameObject);
                     return false;
                 }
-                if (!OsView.Show(rect))
+                if (!ComputerApps.OpenPinned(Os.ModId, Os.AppId, rect))
                 {
                     UnityEngine.Object.Destroy(rect.gameObject);
                     return false;
                 }
+                opened = true;
                 host = owner;
                 if (holder == null)
                 {
@@ -106,8 +108,8 @@ namespace ObenseuerOS
             }
             catch (Exception e)
             {
-                Log.Error("laptop screen: start failed, using the full window: " + e);
-                OsView.Dismiss();
+                Log.Error("laptop screen: start failed: " + e);
+                if (opened) ForcePinned(rect);
                 if (rect != null) UnityEngine.Object.Destroy(rect.gameObject);
                 return false;
             }
@@ -139,8 +141,9 @@ namespace ObenseuerOS
                 run = null;
                 if (snap || cam == null)
                 {
-                    Restore();
-                    Release();
+                    ForcePinned(pin);
+                    try { Restore(); }
+                    finally { Release(); }
                     return;
                 }
                 returning = true;
@@ -157,13 +160,19 @@ namespace ObenseuerOS
         {
             try
             {
-                if (active && !returning && (cam == null || !OsView.Visible)) Close(false);
-                else if (active && !returning && Time.frameCount >= exitFrame && ExitPressed()) OsView.Dismiss();
+                if (active && !returning && (cam == null || pin == null || ComputerApps.PinnedScreen != pin)) Close(false);
+                else if (active && !returning && Time.frameCount >= exitFrame && !ToolkitPrototype.TextEditing && ExitPressed()) ComputerApps.RequestClose(Os.AppId);
             }
             catch (Exception e)
             {
                 Abort("tick: " + e);
             }
+        }
+
+        private static void ForcePinned(RectTransform target)
+        {
+            try { ComputerApps.ClosePinned(Os.AppId, target); }
+            catch (Exception e) { Log.Error("laptop screen: host cleanup failed: " + e); }
         }
 
         private static bool ExitPressed()
@@ -182,10 +191,10 @@ namespace ObenseuerOS
             }
             finally
             {
+                ForcePinned(pin);
                 Release();
             }
             Log.Error("laptop screen: session aborted: " + reason);
-            OsView.Dismiss();
         }
 
         private static IEnumerator Travel(Vector3 position, Quaternion rotation, bool back)
@@ -208,9 +217,12 @@ namespace ObenseuerOS
             }
             if (back || Time.realtimeSinceStartup - started > MaxMoveSeconds)
             {
-                Restore();
-                Release();
-                if (!back) OsView.Dismiss();
+                try
+                {
+                    if (!back) ForcePinned(pin);
+                    Restore();
+                }
+                finally { Release(); }
             }
         }
 
