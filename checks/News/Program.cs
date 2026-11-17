@@ -22,6 +22,7 @@ internal static class Program
         Check(packaged.Pick("Sport", 0, 0, true) == "football-1.thumb.jpg");
         Check(packaged.Pick("Lottery", 0, 0, false) == "lottery-2.jpg");
         Check(packaged.Pick("Markets", 0, 0, false) == "game-01.jpg");
+        Check(packaged.PickTag("industry", 0, true) == "game-05.thumb.jpg");
         bool busy = false; int calls = 0;
         NewsClient client = new NewsClient(request => { calls++; Check((string)request["app"] == "news"); return JObject.Parse("{\"ok\":true,\"result\":{\"days\":[]}}"); }, () => { if (busy) throw new InvalidOperationException("stale"); });
         Check(client.Available && !new NewsClient(null, null).Available);

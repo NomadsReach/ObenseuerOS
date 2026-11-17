@@ -35,6 +35,25 @@ internal static class Program
         BrowserState fresh = new BrowserState(storage); storage.FailWrite = true;
         try { fresh.Visit("one.ts", "One"); throw new Exception("expected write failure"); } catch (InvalidOperationException) { }
         Check(storage.Value == null && fresh.Current == "" && fresh.History.Count == 0);
+        Storage eyeDisk = new Storage { Value = "{\"name\":\"Ricky\",\"acts\":[{\"k\":\"like\",\"p\":1}],\"status\":[{\"t\":\"Hello\"}],\"extra\":7}" };
+        EyeState eye = new EyeState(eyeDisk); Check(eye.Name == "Ricky" && eye.Has("like", 1) && eye.Statuses.Count == 1);
+        eye.Like(1); Check(!eye.Has("like", 1)); eye.Share(2); eye.Comment(2, "Hello there"); eye.Publish("New status");
+        Check(eye.Has("share", 2) && eye.Actions.Count == 2 && eye.Statuses.Count == 2 && (int)JObject.Parse(eyeDisk.Value)["extra"] == 7);
+        try { eye.Share(2); throw new Exception("expected duplicate share"); } catch (InvalidOperationException) { }
+        string before = eyeDisk.Value; eyeDisk.FailWrite = true;
+        try { eye.Like(0); throw new Exception("expected write failure"); } catch (InvalidOperationException) { }
+        Check(!eye.Has("like", 0) && eyeDisk.Value == before);
+        eyeDisk.FailWrite = false; eyeDisk.Value = "bad data";
+        try { new EyeState(eyeDisk); throw new Exception("expected invalid data"); } catch (InvalidOperationException) { }
+        Check(eyeDisk.Value == "bad data");
+        JArray tooMany = new JArray(); for (int i = 0; i < 41; i++) tooMany.Add(new JObject(new JProperty("k", "like"), new JProperty("p", 0)));
+        eyeDisk.Value = new JObject(new JProperty("name", "Ricky"), new JProperty("acts", tooMany), new JProperty("status", new JArray())).ToString();
+        string oversized = eyeDisk.Value;
+        try { new EyeState(eyeDisk); throw new Exception("expected oversized data rejection"); } catch (InvalidOperationException) { }
+        Check(eyeDisk.Value == oversized);
+        Storage sharedDisk = new Storage(); EyeState first = EyeStates.ForSession(71, sharedDisk); EyeState second = EyeStates.ForSession(71, sharedDisk);
+        Check(object.ReferenceEquals(first, second)); first.Login("Ricky"); second.Publish("Shared"); Check(first.Statuses.Count == 1);
+        Check(!object.ReferenceEquals(first, EyeStates.ForSession(72, sharedDisk)));
         Console.WriteLine("Browser state checks passed");
     }
 }

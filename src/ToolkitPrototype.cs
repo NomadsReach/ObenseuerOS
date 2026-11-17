@@ -20,6 +20,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
     private ToolkitSettings settings;
     private ToolkitNews news;
     private ToolkitLottery lottery;
+    private ToolkitEye eye;
     private Label clock;
     private Label money;
     private float nextStatusUpdate;
@@ -98,10 +99,12 @@ internal sealed class ToolkitPrototype : MonoBehaviour
                 case 14: jobs.Open(); return true;
                 case 15: lottery.Open(); return true;
                 case 16: bets.Open(); return true;
+                case 17: eye.Open(); return true;
                 default: return false;
             }
         };
         browser = new ToolkitBrowser(storage, launch, osStorage == null ? (Action)null : osStorage.CheckSession);
+        eye = new ToolkitEye(osStorage == null ? (Func<EyeState>)(() => new EyeState(storage)) : () => EyeStates.ForSession(osStorage.SessionId, storage), osStorage == null ? (Action)null : osStorage.CheckSession, OsView.UserName, new NewsClient(osStorage == null ? (Func<Newtonsoft.Json.Linq.JObject, Newtonsoft.Json.Linq.JObject>)null : OsBridge.Reply, osStorage == null ? (Action)null : osStorage.CheckSession), launch);
         jobs = new ToolkitJobs(new TransactionClient("jobs", osStorage == null ? (Func<Newtonsoft.Json.Linq.JObject, Newtonsoft.Json.Linq.JObject>)null : OsBridge.Reply, osStorage == null ? (Action)null : osStorage.CheckSession), osStorage == null ? (Action)null : osStorage.CheckSession, launch);
         terminal = new ToolkitTerminal(storage, storage as ExplorerStorage, OsView.UserName,
             delegate { if (!WorldClock.IsAvailable) return "The game clock is not ready."; WorldTime now = WorldClock.Now; return string.Format("The current date is: {0}.1.1843, {1}", now.CalendarDay, now.Weekday); },
@@ -174,6 +177,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         windows.Add(browser.Window);
         windows.Add(jobs.Window);
         windows.Add(lottery.Window);
+        windows.Add(eye.Window);
         windows.Add(bets.Window);
         ToolkitStart start = new ToolkitStart(Names, Icons, Texture, launch, delegate { if (canClose()) ComputerApps.Close(storage == null ? "os.toolkit-prototype" : "os.toolkit-os"); });
         VisualElement taskbar = new VisualElement();
@@ -272,6 +276,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
     {
         if (news != null) news.Release();
         if (lottery != null) lottery.Release();
+        if (eye != null) eye.Release();
         if (settings != null) settings.Release();
         if (explorer != null) explorer.Release();
         foreach (Texture2D texture in textures) if (texture != null) Destroy(texture);

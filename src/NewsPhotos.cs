@@ -27,9 +27,13 @@ namespace ObenseuerOS
         internal string Pick(string section, int day, int index, bool thumbnail)
         {
             string tag = section == "Markets" ? "money" : section == "Sport" ? "football" : section == "Lottery" ? "lottery" : section == "Weather" ? "weather" : section == "Local" ? "street" : "scene";
+            return PickTag(tag, unchecked(day * 7 + index), thumbnail);
+        }
+
+        internal string PickTag(string tag, int seed, bool thumbnail)
+        {
             List<string> pool;
             if ((!tags.TryGetValue(tag, out pool) || pool.Count == 0) && (!tags.TryGetValue("scene", out pool) || pool.Count == 0)) return null;
-            int seed = unchecked(day * 7 + index);
             int at = (int)(Math.Abs((long)seed) % pool.Count);
             return pool[at] + (thumbnail ? ".thumb.jpg" : ".jpg");
         }
