@@ -34,6 +34,9 @@ namespace ObenseuerCore
     internal static class ComputerApps
     {
         internal static RectTransform ActiveScreen { get { return null; } }
+        internal static RectTransform PinnedScreen { get { return null; } }
+        internal static bool OpenPinned(string mod, string id, RectTransform target) { return false; }
+        internal static bool RequestClose(string id) { return false; }
         internal static void SetCloseGuard(Transform host, Func<bool> close) { }
         internal static void Close(string id) { }
     }

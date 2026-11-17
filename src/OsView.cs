@@ -54,7 +54,7 @@ namespace ObenseuerOS
 
         internal static bool Show(RectTransform screen)
         {
-            if (!Available) return false;
+            if (ToolkitPrototype.Visible || !Available) return false;
             if ((view == null || view.IsClosed) && !Create()) return false;
             view.PinTo(screen);
             if (!view.Show()) return false;
@@ -66,7 +66,6 @@ namespace ObenseuerOS
 
         internal static void Dismiss()
         {
-            OsLaptop.Close(false);
             if (view == null) return;
             bool was = view.IsVisible;
             if (was) view.Hide();

@@ -86,19 +86,18 @@ namespace ObenseuerOS
             if (Config.Bind("Debug", "UguiPrototype", false, "Show the experimental uGUI desktop prototype in the computer app list.").Value &&
                 !ComputerApps.Register(Os.ModId, "os.ugui-prototype", "Viewports 8 uGUI prototype", null, host => OsUguiPrototype.Build(host, new OsNotepadStorage())))
                 Log.Warn("uGUI prototype not added to the computer");
-            if (Config.Bind("Debug", "ToolkitPrototype", false, "Show the experimental UI Toolkit desktop prototype in the computer app list.").Value &&
-                !ComputerApps.Register(Os.ModId, "os.toolkit-os", "Viewports 8 UI Toolkit prototype", null, host => ToolkitPrototype.Open(host, new OsNotepadStorage())))
+            if (!ComputerApps.Register(Os.ModId, "os.toolkit-os", "Viewports 8 UI Toolkit prototype", null, host => ToolkitPrototype.Open(host, new OsNotepadStorage())))
                 Log.Warn("UI Toolkit prototype not added to the computer");
         }
 
         public static bool OpenLaptop()
         {
-            return OsView.Show();
+            return !OsView.Visible && ComputerApps.OpenStandalone(Os.ModId, "os.toolkit-os");
         }
 
         public static bool OpenLaptop(GameObject laptop)
         {
-            return OsLaptop.Open(instance, laptop) || OsView.Show();
+            return !OsView.Visible && OsLaptop.Open(instance, laptop);
         }
 
         private void Update()

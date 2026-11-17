@@ -19,6 +19,8 @@ internal sealed class ToolkitPrototype : MonoBehaviour
     private readonly Dictionary<string, Texture2D> iconTextures = new Dictionary<string, Texture2D>();
     private ToolkitModWindows modWindows;
     private ToolkitNotepad notepad;
+    private VisualElement desktopRoot;
+    private RectTransform pinnedTarget;
     private ToolkitNotifications notifications;
     private ToolkitTaskbar windowTaskbar;
     private VisualElement selected;
@@ -85,6 +87,9 @@ internal sealed class ToolkitPrototype : MonoBehaviour
 
     internal static bool DismissNative()
     {
+        foreach (ToolkitPrototype prototype in new List<ToolkitPrototype>(active))
+            if (prototype != null && prototype.pinnedTarget != null && prototype.pinnedTarget == ComputerApps.PinnedScreen)
+            { ComputerApps.RequestClose("os.toolkit-os"); return true; }
         return closeGate.Dismiss(ActiveSessions, delegate(ToolkitPrototype prototype) { return prototype.canClose == null || prototype.canClose(); }, delegate { ComputerApps.Close("os.toolkit-os"); });
     }
 
@@ -143,6 +148,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
 
     internal static void Open(RectTransform host, NotepadStorage storage)
     {
+        if (OsView.Visible) throw new InvalidOperationException("Close the existing OS before opening the Toolkit desktop.");
         GameObject owner = new GameObject("UI Toolkit comparison");
         owner.transform.SetParent(host, false);
         ToolkitPrototype prototype = owner.AddComponent<ToolkitPrototype>();
@@ -155,9 +161,36 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         }
     }
 
+    internal static bool TextEditing
+    {
+        get
+        {
+            foreach (ToolkitPrototype prototype in new List<ToolkitPrototype>(active))
+            {
+                if (prototype == null || !prototype.SessionVisible || prototype.desktopRoot == null || prototype.desktopRoot.panel == null) continue;
+                VisualElement focused = prototype.desktopRoot.panel.focusController.focusedElement as VisualElement;
+                while (focused != null)
+                {
+                    if (focused is TextField) return true;
+                    focused = focused.parent;
+                }
+            }
+            return false;
+        }
+    }
+
+    private void CloseDesktop()
+    {
+        if (pinnedTarget != null && pinnedTarget == ComputerApps.PinnedScreen) ComputerApps.RequestClose("os.toolkit-os");
+        else if (canClose()) ComputerApps.Close(storage == null ? "os.toolkit-prototype" : "os.toolkit-os");
+    }
+
     private void Build()
     {
-        VisualElement root = ToolkitUi.CreateOverlay(transform);
+        RectTransform screen = ComputerApps.PinnedScreen;
+        pinnedTarget = screen != null && transform.IsChildOf(screen) ? screen : null;
+        VisualElement root = pinnedTarget == null ? ToolkitUi.CreateOverlay(transform) : ToolkitUi.CreatePinnedOverlay(transform, pinnedTarget);
+        desktopRoot = root;
         root.style.flexGrow = 1;
         root.style.backgroundColor = (Color)new Color32(45, 95, 139, 255);
         Image wallpaper = new Image();
@@ -369,7 +402,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         windowTaskbar.Register(lottery.Window, "Lottery", "", false);
         windowTaskbar.Register(eye.Window, "EYEbook", "", false);
         windowTaskbar.Register(bets.Window, "NaSpoBet", "", false);
-        ToolkitStart start = new ToolkitStart(Names, Icons, Texture, launch, delegate { if (canClose()) ComputerApps.Close(storage == null ? "os.toolkit-prototype" : "os.toolkit-os"); }, delegate(int index) { return index < 14 || installed(Ids[index]); });
+        ToolkitStart start = new ToolkitStart(Names, Icons, Texture, launch, CloseDesktop, delegate(int index) { return index < 14 || installed(Ids[index]); });
         VisualElement pinned = new VisualElement(); pinned.style.flexDirection = FlexDirection.Row;
         Dictionary<OsApp, Label> pinnedBadges = new Dictionary<OsApp, Label>();
         Dictionary<OsApp, VisualElement> pinnedButtons = new Dictionary<OsApp, VisualElement>();
@@ -486,7 +519,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
             if (target == null || target == start.Menu || start.Menu.Contains(target) || target == startIcon || (startIcon != null && startIcon.Contains(target))) return;
             start.Hide();
         }, TrickleDown.TrickleDown);
-        UnityEngine.UIElements.Button close = new UnityEngine.UIElements.Button(delegate { if (canClose()) ComputerApps.Close(storage == null ? "os.toolkit-prototype" : "os.toolkit-os"); });
+        UnityEngine.UIElements.Button close = new UnityEngine.UIElements.Button(CloseDesktop);
         close.text = "Close";
         close.style.position = UnityEngine.UIElements.Position.Absolute;
         close.style.right = 16;

@@ -162,3 +162,5 @@
 - `src/ToolkitMail.cs:LoadRows`, `src/ToolkitMail.cs:SearchMore`, `src/MailPages.cs:Append` load mail a page at a time and search up to ten extra pages in scheduled steps; the user can continue with Show more. Failed pages do not advance the offset, and selection applies to loaded matching messages.
 
 - `src/ToolkitModWindows.cs:Close`, `src/OsModApi.cs:OsAppOptions.OnClosed` notify successfully opened native apps after closure, with a forced flag for teardown. The window is removed before the callback, and callback exceptions are logged. A forced close does not guarantee that game-save storage is available.
+
+- `src/OsLaptop.cs:Open`, `src/ToolkitPrototype.cs:Build`, `src/OsPlugin.cs:OpenLaptop` use the framework pinned host for laptop UI Toolkit and use guarded close for normal exit. The laptop owns camera and controls; scene teardown forces cleanup. This route requires in-game camera, input, target-loss and close-guard verification.
