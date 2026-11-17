@@ -101,9 +101,12 @@ namespace ObenseuerOS
 
         internal static bool Notify(OsNotice notice)
         {
+            if (ToolkitPrototype.Visible) return notices.Add(notice);
             if (Deliver(new JObject(new JProperty("v", 1), new JProperty("type", "toast"), new JProperty("title", notice.Title), new JProperty("body", notice.Body), new JProperty("from", notice.From)))) return true;
             return notices.Add(notice);
         }
+
+        internal static List<OsNotice> TakeNotices() { return notices.Take(); }
 
         internal static void ClearNotices(string modId)
         {
@@ -282,7 +285,7 @@ namespace ObenseuerOS
             string user = UserName();
             if (user.Length > 0) list.Add(new JProperty("user", user));
             Send(list);
-            foreach (OsNotice notice in notices.Take())
+            if (!ToolkitPrototype.Visible) foreach (OsNotice notice in notices.Take())
             {
                 Send(new JObject(new JProperty("v", 1), new JProperty("type", "toast"), new JProperty("title", notice.Title), new JProperty("body", notice.Body), new JProperty("from", notice.From), new JProperty("quiet", true)));
             }

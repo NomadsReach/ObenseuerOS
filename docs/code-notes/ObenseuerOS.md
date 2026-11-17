@@ -86,3 +86,5 @@
 
 
 - `src/OsModApi.cs:Os.RegisterApp`, `src/ToolkitModWindows.cs:ToolkitModWindows` — A mod can register a trusted C# UI Toolkit app with `BuildUi`; the callback receives the window content element. `CanClose` optionally guards user-initiated closure. The Toolkit host owns the window and forcibly removes it on unregistration, invalid session, or host shutdown. Native registrations appear only in the Toolkit desktop, while HTML page registrations remain available in the legacy desktop. This API does not sandbox managed mod code.
+
+- `src/ToolkitPrototype.cs:ToolkitPrototype.Update`, `src/ToolkitNotifications.cs:ToolkitNotifications` — The live Toolkit desktop drains the existing queued mod notices on the Unity update loop. It shows recent notices and temporary popups, caps the list at 20, and clears it when the host is disabled. When both desktops are visible, notices are routed to the Toolkit desktop; otherwise the web desktop continues to receive them directly when active. `src/ToolkitPrototype.cs:ToolkitPrototype.Build` connects the pinned browser icon to Stalburg Web.

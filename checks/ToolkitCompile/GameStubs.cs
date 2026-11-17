@@ -53,7 +53,8 @@ namespace ObenseuerOS
         public bool Valid(string path) { return false; }
         public void Opened(string path) { }
     }
-    internal static class OsView { internal static string UserName() { return ""; } }
+    internal sealed class OsNotice { internal string From, Title, Body; }
+    internal static class OsView { internal static string UserName() { return ""; } internal static List<OsNotice> TakeNotices() { return new List<OsNotice>(); } }
     internal sealed class ChatRoomDef { internal string Id, Name; internal bool Contact; }
     internal static class ChatGame
     {

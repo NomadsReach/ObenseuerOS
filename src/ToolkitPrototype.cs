@@ -16,6 +16,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
     private static readonly List<ToolkitPrototype> active = new List<ToolkitPrototype>();
     private readonly List<Texture2D> textures = new List<Texture2D>();
     private ToolkitModWindows modWindows;
+    private ToolkitNotifications notifications;
     private VisualElement selected;
     private NotepadStorage storage;
     private ToolkitExplorer explorer;
@@ -336,11 +337,14 @@ internal sealed class ToolkitPrototype : MonoBehaviour
                 icon.RegisterCallback<ClickEvent>(delegate(ClickEvent e) { if (e.button == 0) start.Toggle(); });
             }
             if (name == "folder-filled") icon.RegisterCallback<ClickEvent>(delegate(ClickEvent e) { if (e.button == 0) explorer.Open(); });
+            if (name == "world") icon.RegisterCallback<ClickEvent>(delegate(ClickEvent e) { if (e.button == 0) browser.Open(); });
             taskbar.Add(icon);
         }
         VisualElement spacer = new VisualElement();
         spacer.style.flexGrow = 1;
         taskbar.Add(spacer);
+        notifications = new ToolkitNotifications(root);
+        taskbar.Add(notifications.Tray);
         money = new Label();
         money.style.color = Color.white;
         money.style.unityTextAlign = TextAnchor.MiddleRight;
@@ -383,6 +387,11 @@ internal sealed class ToolkitPrototype : MonoBehaviour
         if (clock == null || money == null || Time.unscaledTime < nextStatusUpdate) return;
         nextStatusUpdate = Time.unscaledTime + 1f;
         if (modWindows != null) modWindows.Reconcile();
+        if (notifications != null)
+        {
+            if (HasSession()) foreach (OsNotice notice in OsView.TakeNotices()) notifications.Add(notice);
+            else notifications.Clear();
+        }
         if (WorldClock.IsAvailable)
         {
             WorldTime now = WorldClock.Now;
@@ -413,6 +422,7 @@ internal sealed class ToolkitPrototype : MonoBehaviour
     private void OnDisable()
     {
         if (modWindows != null) modWindows.CloseAll();
+        if (notifications != null) notifications.Clear();
     }
 
     private void OnDestroy()
