@@ -42,6 +42,12 @@ jobs:
           python-version: '3.12'
       - run: python -m pip install playwright
       - run: python -m playwright install --with-deps chromium
+      - run: python tools/desktop-icons.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: toolkit-desktop-icons
+          path: prototype-icons/
+          if-no-files-found: error
       - run: python tools/ugui-reference.py
       - uses: actions/upload-artifact@v4
         with:
@@ -51,6 +57,7 @@ jobs:
             reference-notepad.png
           if-no-files-found: error
   toolkit-compile:
+    needs: reference
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -66,6 +73,10 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
+      - uses: actions/download-artifact@v4
+        with:
+          name: toolkit-desktop-icons
+          path: prototype-icons
       - name: Get Unity managed references
         shell: bash
         run: |
@@ -74,3 +85,5 @@ jobs:
           tar -xf "$RUNNER_TEMP/unity.tar.xz" -C "$RUNNER_TEMP" --wildcards './Editor/Data/PlaybackEngines/LinuxStandaloneSupport/Variations/mono/Managed/UnityEngine*.dll'
       - name: Compile Toolkit windows against Unity
         run: dotnet build checks/ToolkitCompile/ToolkitCompile.csproj -c Release -p:UnityManaged="$RUNNER_TEMP/Editor/Data/PlaybackEngines/LinuxStandaloneSupport/Variations/mono/Managed" -p:FrameworkSource="$GITHUB_WORKSPACE/framework-source"
+      - name: Verify embedded desktop icons
+        run: dotnet run --project checks/IconResources/IconResources.csproj -c Release -- checks/ToolkitCompile/bin/Release/net10.0/ToolkitCompile.dll

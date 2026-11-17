@@ -6,6 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="$(UnityManaged)/UnityEngine*.dll" />
+    <EmbeddedResource Include="../../prototype-icons/*.png" LogicalName="desktop-icons/%(Filename)%(Extension)" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <Compile Include="..\..\src\Toolkit*.cs" />
     <Compile Include="..\..\src\TerminalSession.cs" />

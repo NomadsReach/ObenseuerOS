@@ -77,3 +77,5 @@ The sample mod in `examples\HelloOs` builds against these outputs.
 
 - Icons are from Tabler Icons 3.48.0 (MIT licence, copyright 2020-2026 Paweł Kuna). The licence is in `web\icons\LICENSE-tabler.txt`.
 - Stalburg and its people belong to Obenseuer and its creators. The desktop art is original.
+
+Toolkit desktop icons are generated from the existing SVG artwork. The public OS workflow publishes them as the `toolkit-desktop-icons` artifact; place those PNGs in `prototype-icons/` before building the OS. The source generator is `tools/desktop-icons.py` and requires Playwright with Chromium.
