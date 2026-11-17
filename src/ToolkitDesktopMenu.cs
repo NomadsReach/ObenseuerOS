@@ -18,7 +18,7 @@ namespace ObenseuerOS
         {
             this.root = root; this.desktop = desktop; this.settings = settings;
             menu = new VisualElement(); menu.style.position = Position.Absolute; menu.style.width = 200;
-            menu.style.backgroundColor = new Color32(245, 245, 245, 255); menu.style.paddingTop = 4; menu.style.paddingBottom = 4;
+            menu.style.backgroundColor = (Color)new Color32(245, 245, 245, 255); menu.style.paddingTop = 4; menu.style.paddingBottom = 4;
             menu.style.display = DisplayStyle.None; menu.focusable = true;
             wallpapers = new ScrollView(); wallpapers.style.maxHeight = 260; wallpapers.style.display = DisplayStyle.None;
             AddButton(menu, "Change wallpaper  ▸", delegate { wallpapers.style.display = wallpapers.style.display == DisplayStyle.None ? DisplayStyle.Flex : DisplayStyle.None; });
