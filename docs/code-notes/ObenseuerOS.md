@@ -94,3 +94,7 @@
 - `src/ToolkitExplorer.cs:ToolkitExplorer.Render` — Space selects the focused file, Enter selects and opens it, and Delete first selects the focused file before asking for confirmation. This prevents a keyboard Delete from asking to remove a previously selected file instead of the focused row.
 
 - `tools/desktop-icons.py:main`, `ObenseuerOS.csproj:RequireToolkitIcons`, `checks/IconResources/Program.cs:Main` — The Toolkit build rasterizes, requires, and embeds every bundled OS SVG icon plus the Viewports mark. CI verifies the resource names and PNG signatures so a mod can use any registered bundled icon name without a browser renderer.
+
+- `src/ToolkitMail.cs:ToolkitMail.ShowMessage`, `src/MailDraft.cs:MailDraft.SetReply` - Eligible inbox messages provide inline replies through the existing mail bridge. Unsent replies are retained per message in the current save session, survive mailbox redraws and compose-draft clearing, and participate in the close guard. A successful send clears only that reply; failures retain it.
+- `src/ToolkitMail.cs:ToolkitMail.Delete` - Deleting a message with an unsent quick reply requires a second confirmation; replies are removed only after each corresponding deletion succeeds.
+- `src/MailClient.cs:MailClient.SendReply` - The reply draft is cleared only after the existing mail bridge returns a result; bridge failures leave the text available for the current session.

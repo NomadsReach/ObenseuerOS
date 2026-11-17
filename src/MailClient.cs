@@ -14,6 +14,17 @@ namespace ObenseuerOS
             this.checkSession = checkSession;
         }
 
+        internal bool SendReply(MailDraft draft, int id, string to, string subject)
+        {
+            string text = draft.Reply(id);
+            if (string.IsNullOrWhiteSpace(text)) return false;
+            if (!subject.StartsWith("Re: ", StringComparison.OrdinalIgnoreCase)) subject = "Re: " + subject;
+            JObject args = new JObject(new JProperty("to", to), new JProperty("subject", subject), new JProperty("body", text));
+            if (Call("mail.send", args) == null) return false;
+            draft.SetReply(id, "");
+            return true;
+        }
+
         internal JToken Call(string method, JObject args)
         {
             if (checkSession != null) checkSession();

@@ -83,7 +83,7 @@ namespace ObenseuerOS
             LoadRows();
             if (composing) Compose("", "", "");
             else if (current != null) ShowMessage(current); else Hint();
-            if (Dirty() && !composing) status.text = "Unsent draft kept for this session. Select Compose to continue.";
+            if (Dirty() && !composing) status.text = "Unsent mail kept for this session.";
         }
 
         private void SignUp()
@@ -184,9 +184,19 @@ namespace ObenseuerOS
         private void Delete()
         {
             List<int> ids = Targets(); if (ids.Count == 0) return;
-            if (folder == "trash" && !armedDelete) { armedDelete = true; status.text = "Delete again to permanently delete the selected messages."; return; }
+            bool hasReplies = ids.Exists(id => draft.Reply(id).Length > 0);
+            if ((folder == "trash" || hasReplies) && !armedDelete)
+            {
+                armedDelete = true;
+                status.text = hasReplies ? "Delete again to discard unsent replies and delete the selected messages." : "Delete again to permanently delete the selected messages.";
+                return;
+            }
             armedDelete = false;
-            foreach (int id in ids) if (Call("mail.delete", Args("id", id)) == null) { picked.Clear(); current = null; LoadRows(); return; }
+            foreach (int id in ids)
+            {
+                if (Call("mail.delete", Args("id", id)) == null) { picked.Clear(); current = null; LoadRows(); return; }
+                draft.SetReply(id, "");
+            }
             picked.Clear(); current = null; Refresh(); status.text = folder == "trash" ? "Deleted." : "Moved to Trash.";
         }
 
@@ -239,7 +249,20 @@ namespace ObenseuerOS
             int left = from.LastIndexOf('<'), right = from.LastIndexOf('>');
             string address = left >= 0 && right > left ? from.Substring(left + 1, right - left - 1).Trim() : from.Trim();
             if ((string)message["folder"] == "inbox" && recipients.Contains(address))
-                view.Add(Button("Reply", delegate { string s = (string)message["subject"] ?? ""; Compose(address, s.StartsWith("Re: ", StringComparison.OrdinalIgnoreCase) ? s : "Re: " + s, ""); }));
+            {
+                TextField reply = new TextField("Quick reply"); reply.multiline = true; reply.maxLength = 3000; reply.style.height = 100;
+                reply.SetValueWithoutNotify(draft.Reply(id));
+                reply.RegisterValueChangedCallback(delegate(ChangeEvent<string> e) { draft.SetReply(id, e.newValue); armedClose = false; armedDelete = false; });
+                view.Add(reply);
+                view.Add(Button("Reply", delegate
+                {
+                    string text = draft.Reply(id);
+                    if (string.IsNullOrWhiteSpace(text)) { reply.Focus(); return; }
+                    try { if (!client.SendReply(draft, id, address, (string)message["subject"] ?? "")) return; }
+                    catch (Exception e) { status.text = e.Message; return; }
+                    reply.SetValueWithoutNotify(""); armedClose = false; status.text = "Sent.";
+                }));
+            }
             view.Add(Button("Forward", delegate
             {
                 string s = (string)message["subject"] ?? "";
@@ -250,7 +273,7 @@ namespace ObenseuerOS
 
         private void Compose(string to, string subject, string text)
         {
-            if ((to.Length > 0 || subject.Length > 0 || text.Length > 0) && Dirty())
+            if ((to.Length > 0 || subject.Length > 0 || text.Length > 0) && draft.ComposeDirty)
             {
                 string key = to + "\n" + subject + "\n" + text;
                 if (armedReplace != key) { armedReplace = key; status.text = "Draft not sent. Choose the same action again to replace it."; return; }
